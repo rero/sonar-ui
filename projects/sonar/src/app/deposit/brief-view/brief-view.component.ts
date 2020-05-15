@@ -14,29 +14,35 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../user.service';
 
 @Component({
   selector: 'sonar-deposit-brief-view',
   templateUrl: './brief-view.component.html'
 })
-export class BriefViewComponent {
+export class BriefViewComponent implements OnInit {
   /** Record data */
   record: any;
+
+  // Logged user
+  user: any;
 
   /**
    * Constructor.
    *
    * @param _userService User service.
    */
-  constructor(private _userService: UserService) {}
+  constructor(private _userService: UserService) { }
 
   /**
-   * Return current logged user
+   * Component initialisation.
+   *
    */
-  get user(): any {
-    return this._userService.user;
+  ngOnInit() {
+    this._userService.user$.subscribe((user) => {
+      this.user = user;
+    });
   }
 
   /**
@@ -61,7 +67,7 @@ export class BriefViewComponent {
       return false;
     }
 
-    return this.user.is_moderator;
+    return this.user && this.user.is_moderator;
   }
 
   /**

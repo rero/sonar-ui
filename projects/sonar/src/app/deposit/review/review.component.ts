@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '@rero/ng-core';
@@ -28,10 +28,13 @@ import { DepositService } from '../deposit.service';
   selector: 'sonar-deposit-review',
   templateUrl: './review.component.html'
 })
-export class ReviewComponent {
+export class ReviewComponent implements OnInit {
   /** Deposit record */
   @Input()
   deposit: any = null;
+
+  // Logged user
+  user: any;
 
   /** Used to retrieve value for the comment */
   @ViewChild('comment', { static: false })
@@ -47,10 +50,13 @@ export class ReviewComponent {
   ) { }
 
   /**
-   * Return current logged user
+   * Component initialisation.
+   *
    */
-  get user(): any {
-    return this._userService.user;
+  ngOnInit() {
+    this._userService.user$.subscribe((user) => {
+      this.user = user;
+    });
   }
 
   /**
@@ -85,7 +91,7 @@ export class ReviewComponent {
       )
       .subscribe((deposit: any) => {
         this._toastr.success(this._translateService.instant('Review has been done successfully!'));
-        this._router.navigate(['records', 'deposits'], {
+        this._router.navigate(['records', 'deposits', 'deposits'], {
           queryParams: { q: '', pid: deposit.pid }
         });
       });

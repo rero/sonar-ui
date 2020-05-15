@@ -32,6 +32,7 @@ import { OrganisationComponent } from './record/organisation/organisation.compon
 import { DetailComponent as UserDetailComponent } from './record/user/detail/detail.component';
 import { UserComponent } from './record/user/user.component';
 import { AdminComponent } from './_layout/admin/admin.component';
+import { RoleGuard } from './guard/role.guard';
 
 const canReadDeposit = (): Observable<ActionStatus> => {
   return of({
@@ -75,10 +76,12 @@ const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent },
       {
-        path: 'records',
+        path: 'records/documents',
+        canActivate: [ RoleGuard ],
         loadChildren: () =>
           import('./record-wrapper/record-wrapper.module').then(m => m.RecordWrapperModule),
         data: {
+          role: 'admin',
           showSearchInput: true,
           types: [
             {
@@ -87,19 +90,19 @@ const routes: Routes = [
               component: DocumentComponent,
               detailComponent: DocumentDetailComponent,
               aggregations: AggregationFilter.filter
-            },
-            {
-              key: 'organisations',
-              label: 'Organisations',
-              component: OrganisationComponent,
-              detailComponent: OrganisationDetailComponent
-            },
-            {
-              key: 'users',
-              label: 'Users',
-              component: UserComponent,
-              detailComponent: UserDetailComponent
-            },
+            }
+          ]
+        }
+      },
+      {
+        path: 'records/deposits',
+        canActivate: [ RoleGuard ],
+        loadChildren: () =>
+          import('./record-wrapper/record-wrapper.module').then(m => m.RecordWrapperModule),
+        data: {
+          role: 'publisher',
+          showSearchInput: true,
+          types: [
             {
               key: 'deposits',
               label: 'Deposits',
@@ -113,7 +116,47 @@ const routes: Routes = [
         }
       },
       {
+        path: 'records/organisations',
+        canActivate: [ RoleGuard ],
+        loadChildren: () =>
+          import('./record-wrapper/record-wrapper.module').then(m => m.RecordWrapperModule),
+        data: {
+          role: 'admin',
+          showSearchInput: true,
+          types: [
+            {
+              key: 'organisations',
+              label: 'Organisations',
+              component: OrganisationComponent,
+              detailComponent: OrganisationDetailComponent
+            }
+          ]
+        }
+      },
+      {
+        path: 'records/users',
+        canActivate: [ RoleGuard ],
+        loadChildren: () =>
+          import('./record-wrapper/record-wrapper.module').then(m => m.RecordWrapperModule),
+        data: {
+          role: 'admin',
+          showSearchInput: true,
+          types: [
+            {
+              key: 'users',
+              label: 'Users',
+              component: UserComponent,
+              detailComponent: UserDetailComponent
+            }
+          ]
+        }
+      },
+      {
         path: 'deposit/:id',
+        canActivate: [ RoleGuard ],
+        data: {
+          role: 'publisher'
+        },
         children: [
           {
             path: 'create',
@@ -144,7 +187,10 @@ const routes: Routes = [
           key: 'documents',
           label: 'Documents',
           component: DocumentComponent,
-          aggregations: AggregationFilter.filter
+          aggregations: AggregationFilter.filter,
+          preFilters: {
+            view: 'sonar'
+          }
         }
       ]
     }
@@ -164,7 +210,7 @@ const routes: Routes = [
           component: DocumentComponent,
           aggregations: AggregationFilter.filter,
           preFilters: {
-            organisation: 'unisi'
+            view: 'unisi'
           }
         }
       ]

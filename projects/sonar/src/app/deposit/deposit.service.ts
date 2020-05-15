@@ -27,6 +27,9 @@ import { UserService } from '../user.service';
   providedIn: 'root'
 })
 export class DepositService {
+  // Logged user
+  private _user: any;
+
   /**
    * Constructor.
    *
@@ -46,7 +49,11 @@ export class DepositService {
     private _translateService: TranslateService,
     private _dialogService: DialogService,
     private _recordService: RecordService
-  ) { }
+  ) {
+    this._userService.user$.subscribe((user) => {
+      this._user = user;
+    });
+  }
 
   /**
    * Returns deposit endpoint.
@@ -280,7 +287,7 @@ export class DepositService {
       return true;
     }
 
-    if (deposit.status === 'to_validate' && this._userService.user.is_moderator) {
+    if (deposit.status === 'to_validate' && this._user && this._user.is_moderator) {
       return true;
     }
 

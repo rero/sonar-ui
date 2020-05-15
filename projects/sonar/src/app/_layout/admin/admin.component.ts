@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UserService } from '../../user.service';
 
@@ -22,7 +22,7 @@ import { UserService } from '../../user.service';
   selector: 'sonar-layout-admin',
   templateUrl: './admin.component.html'
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit {
   // Logged user
   user: any;
 
@@ -38,16 +38,17 @@ export class AdminComponent {
    * @param _spinner Spinner service.
    * @param _userService User service.
    */
-  constructor(private _spinner: NgxSpinnerService, private _userService: UserService) {
+  constructor(private _spinner: NgxSpinnerService, private _userService: UserService) { }
+
+  ngOnInit() {
     this._spinner.show();
 
-    this._userService.loadLoggedUser().subscribe(user => {
-      if (user) {
+    this._userService.user$.subscribe((user) => {
+      if (user !== null) {
         this.user = user;
+        this._spinner.hide();
+        this.ready = true;
       }
-
-      this._spinner.hide();
-      this.ready = true;
     });
   }
 }
