@@ -178,6 +178,10 @@ _('contribution_role_cre');
 _('contribution_role_prt');
 _('contribution_role_dgs');
 
+// Investigator role
+_('investigator');
+_('coinvestigator');
+
 // Deposit status
 _('deposit_status_in_progress');
 _('deposit_status_to_validate');

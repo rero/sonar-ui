@@ -1,0 +1,84 @@
+<!--
+ SONAR User Interface
+ Copyright (C) 2020 RERO
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published by
+ the Free Software Foundation, version 3 of the License.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<ng-container *ngIf="record$ | async as record">
+  <h1 class="mb-4">{{ record.metadata.name }}</h1>
+  <dl class="row mt-4">
+    <ng-container *ngIf="record.metadata.description">
+      <dt class="col-sm-3" translate>Description</dt>
+      <dd class="col-sm-9" [innerHtml]="record.metadata.description | nl2br"></dd>
+    </ng-container>
+
+    <dt class="col-sm-3" translate>Start date</dt>
+    <dd class="col-sm-9">{{ record.metadata.startDate | dateTranslate: 'longDate' }}</dd>
+
+    <ng-container *ngIf="record.metadata.endDate">
+      <dt class="col-sm-3" translate>End date</dt>
+      <dd class="col-sm-9">{{ record.metadata.endDate | dateTranslate: 'longDate' }}</dd>
+    </ng-container>
+
+    <ng-container *ngIf="record.metadata.identifiedBy">
+      <dt class="col-sm-3" translate>Identifier</dt>
+      <dd class="col-sm-9">
+        <sonar-record-identifier [type]="record.metadata.identifiedBy.type" [value]="record.metadata.identifiedBy.value"
+          [source]="record.metadata.identifiedBy.source"></sonar-record-identifier>
+      </dd>
+    </ng-container>
+
+    <dt class="col-sm-3" translate>Investigators</dt>
+    <dd class="col-sm-9">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item px-0 py-1" *ngFor="let investigator of record.metadata.investigators">
+          {{ investigator.agent.preferred_name }}<span class="badge badge-secondary text-light ml-1"
+            *ngFor="let role of investigator.role">{{ role | translate  }}</span>
+          <dl class="row mb-0" *ngIf="investigator.affiliation || investigator.identifiedBy">
+            <ng-container *ngIf="investigator.affiliation">
+              <dt class="col-sm-2" translate>Affiliation</dt>
+              <dd class="col-sm-10 mb-0">{{ investigator.affiliation }}</dd>
+            </ng-container>
+
+            <ng-container *ngIf="investigator.identifiedBy">
+              <dt class="col-sm-2" translate>Identifier</dt>
+              <dd class="col-sm-10">
+                <sonar-record-identifier [type]="investigator.identifiedBy.type"
+                  [value]="investigator.identifiedBy.value" [source]="investigator.identifiedBy.source">
+                </sonar-record-identifier>
+              </dd>
+            </ng-container>
+          </dl>
+        </li>
+      </ul>
+    </dd>
+
+    <dt class="col-sm-3" translate>Funding organisations</dt>
+    <dd class="col-sm-9">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item px-0 py-1"
+          *ngFor="let funding_organisation of record.metadata.funding_organisations">
+          {{ funding_organisation.agent.preferred_name }}
+          <dl class="row mb-0" *ngIf="funding_organisation.identifiedBy">
+            <dt class="col-sm-2" translate>Identifier</dt>
+            <dd class="col-sm-10">
+              <sonar-record-identifier [type]="funding_organisation.identifiedBy.type"
+                [value]="funding_organisation.identifiedBy.value" [source]="funding_organisation.identifiedBy.source">
+              </sonar-record-identifier>
+            </dd>
+          </dl>
+        </li>
+      </ul>
+    </dd>
+  </dl>
+</ng-container>

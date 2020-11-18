@@ -33,6 +33,8 @@ import { DetailComponent as DocumentDetailComponent } from './record/document/de
 import { DocumentComponent } from './record/document/document.component';
 import { DetailComponent as OrganisationDetailComponent } from './record/organisation/detail/detail.component';
 import { OrganisationComponent } from './record/organisation/organisation.component';
+import { BriefViewComponent as ProjectBriefViewComponent } from './record/project/brief-view/brief-view.component';
+import { DetailComponent as ProjectDetailComponent } from './record/project/detail/detail.component';
 import { DetailComponent as UserDetailComponent } from './record/user/detail/detail.component';
 import { UserComponent } from './record/user/user.component';
 import { UserService } from './user.service';
@@ -219,6 +221,16 @@ export class AppRoutingModule {
         aggregations: AggregationFilter.filter,
         aggregationsExpand: ['status', 'user', 'contributor'],
         aggregationsOrder: ['status', 'user', 'contributor']
+      },
+      {
+        type: 'projects',
+        briefView: ProjectBriefViewComponent,
+        detailView: ProjectDetailComponent,
+        editorSettings: {
+          longMode: true
+        },
+        aggregationsExpand: ['organisation', 'user'],
+        aggregationsOrder: ['organisation', 'user']
       }
     ];
 
