@@ -129,12 +129,24 @@
         </div>
 
         <dl class="row mb-0">
+          <!-- PROJECTS -->
+          <ng-container *ngIf="record.projects">
+            <dt class="col-lg-4" translate>Linked projects</dt>
+            <dd class="col-lg-8">
+              <ul class="list-unstyled mb-0">
+                <li class="p-0" *ngFor="let project of record.projects">
+                  <a [routerLink]="['/', 'records', 'projects', 'detail', project.pid]">{{ project.name }}</a>
+                </li>
+              </ul>
+            </dd>
+          </ng-container>
+
           <!-- OTHER EDITION -->
           <ng-container *ngIf="record.otherEdition">
             <dt class="col-lg-4" translate>
               Other electronic version
             </dt>
-            <dd class="col-lg-6">
+            <dd class="col-lg-8">
               <p class="m-0" *ngFor="let otherEdition of record.otherEdition">
                 {{ otherEdition.publicNote }} : <a [href]="otherEdition.document.electronicLocator"
                   target="_blank">{{ otherEdition.document.electronicLocator }}</a>

@@ -81,4 +81,14 @@
       </ul>
     </dd>
   </dl>
+
+  <ng-container *ngIf="record.metadata.documents && record.metadata.documents.length > 0">
+    <h4 translate>Linked documents</h4>
+    <ul>
+      <li *ngFor="let document of record.metadata.documents">
+        <a
+          [routerLink]="['/', 'records', 'documents', 'detail', document.pid]">{{ document.title[0].mainTitle | languageValue }}</a>
+      </li>
+    </ul>
+  </ng-container>
 </ng-container>
