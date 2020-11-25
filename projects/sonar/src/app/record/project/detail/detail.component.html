@@ -38,48 +38,52 @@
       </dd>
     </ng-container>
 
-    <dt class="col-sm-3" translate>Investigators</dt>
-    <dd class="col-sm-9">
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item px-0 py-1" *ngFor="let investigator of record.metadata.investigators">
-          {{ investigator.agent.preferred_name }}<span class="badge badge-secondary text-light ml-1"
-            *ngFor="let role of investigator.role">{{ role | translate  }}</span>
-          <dl class="row mb-0" *ngIf="investigator.affiliation || investigator.identifiedBy">
-            <ng-container *ngIf="investigator.affiliation">
-              <dt class="col-sm-2" translate>Affiliation</dt>
-              <dd class="col-sm-10 mb-0">{{ investigator.affiliation }}</dd>
-            </ng-container>
+    <ng-container *ngIf="record.metadata.investigators">
+      <dt class="col-sm-3" translate>Investigators</dt>
+      <dd class="col-sm-9">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item px-0 py-1" *ngFor="let investigator of record.metadata.investigators">
+            {{ investigator.agent.preferred_name }}<span class="badge badge-secondary text-light ml-1"
+              *ngFor="let role of investigator.role">{{ role | translate  }}</span>
+            <dl class="row mb-0" *ngIf="investigator.affiliation || investigator.identifiedBy">
+              <ng-container *ngIf="investigator.affiliation">
+                <dt class="col-sm-2" translate>Affiliation</dt>
+                <dd class="col-sm-10 mb-0">{{ investigator.affiliation }}</dd>
+              </ng-container>
 
-            <ng-container *ngIf="investigator.identifiedBy">
+              <ng-container *ngIf="investigator.identifiedBy">
+                <dt class="col-sm-2" translate>Identifier</dt>
+                <dd class="col-sm-10">
+                  <sonar-record-identifier [type]="investigator.identifiedBy.type"
+                    [value]="investigator.identifiedBy.value" [source]="investigator.identifiedBy.source">
+                  </sonar-record-identifier>
+                </dd>
+              </ng-container>
+            </dl>
+          </li>
+        </ul>
+      </dd>
+    </ng-container>
+
+    <ng-container *ngIf="record.metadata.funding_organisations">
+      <dt class="col-sm-3" translate>Funding organisations</dt>
+      <dd class="col-sm-9">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item px-0 py-1"
+            *ngFor="let funding_organisation of record.metadata.funding_organisations">
+            {{ funding_organisation.agent.preferred_name }}
+            <dl class="row mb-0" *ngIf="funding_organisation.identifiedBy">
               <dt class="col-sm-2" translate>Identifier</dt>
               <dd class="col-sm-10">
-                <sonar-record-identifier [type]="investigator.identifiedBy.type"
-                  [value]="investigator.identifiedBy.value" [source]="investigator.identifiedBy.source">
+                <sonar-record-identifier [type]="funding_organisation.identifiedBy.type"
+                  [value]="funding_organisation.identifiedBy.value" [source]="funding_organisation.identifiedBy.source">
                 </sonar-record-identifier>
               </dd>
-            </ng-container>
-          </dl>
-        </li>
-      </ul>
-    </dd>
-
-    <dt class="col-sm-3" translate>Funding organisations</dt>
-    <dd class="col-sm-9">
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item px-0 py-1"
-          *ngFor="let funding_organisation of record.metadata.funding_organisations">
-          {{ funding_organisation.agent.preferred_name }}
-          <dl class="row mb-0" *ngIf="funding_organisation.identifiedBy">
-            <dt class="col-sm-2" translate>Identifier</dt>
-            <dd class="col-sm-10">
-              <sonar-record-identifier [type]="funding_organisation.identifiedBy.type"
-                [value]="funding_organisation.identifiedBy.value" [source]="funding_organisation.identifiedBy.source">
-              </sonar-record-identifier>
-            </dd>
-          </dl>
-        </li>
-      </ul>
-    </dd>
+            </dl>
+          </li>
+        </ul>
+      </dd>
+    </ng-container>
   </dl>
 
   <ng-container *ngIf="record.metadata.documents && record.metadata.documents.length > 0">
