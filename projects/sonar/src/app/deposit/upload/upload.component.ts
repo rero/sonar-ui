@@ -338,7 +338,7 @@ export class UploadComponent implements OnInit, AfterContentChecked, OnDestroy {
       )
       .subscribe((deposit: any) => {
         this._spinner.hide();
-        this._router.navigate(['deposit', deposit.metadata.pid, 'metadata']);
+        this._router.navigate(['deposit', deposit.id, 'metadata']);
       });
   }
 

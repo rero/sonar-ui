@@ -14,7 +14,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<ng-template #defaultTitle>{{ 'Deposit' | translate }} #{{ record.metadata.pid }}</ng-template>
+<ng-template #defaultTitle>{{ 'Deposit' | translate }} #{{ record.id }}</ng-template>
 
 <ng-container *ngIf="record && user">
   <div class="float-right"></div>
@@ -85,13 +85,13 @@
   </div>
 
   <div *ngIf="canContinueProcess()">
-    <a href class="btn btn-primary btn-small" [routerLink]="['/deposit', record.metadata.pid, 'create']" translate>
+    <a href class="btn btn-primary btn-small" [routerLink]="['/deposit', record.id, 'create']" translate>
       Continue process
     </a>
   </div>
 
   <div *ngIf="canReview()">
-    <a href class="btn btn-primary btn-small" [routerLink]="['/deposit', record.metadata.pid, 'create']" translate>
+    <a href class="btn btn-primary btn-small" [routerLink]="['/deposit', record.id, 'create']" translate>
       Review deposit
     </a>
   </div>

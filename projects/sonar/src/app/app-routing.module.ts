@@ -151,7 +151,7 @@ export class AppRoutingModule {
           {
             key: 'users',
             redirectUrl: (record: any) => {
-              return of(`/users/profile/${record.metadata.pid}`);
+              return of(`/users/profile/${record.id}`);
             }
           }
         ]
@@ -230,6 +230,7 @@ export class AppRoutingModule {
         editorSettings: {
           longMode: true
         },
+        recordResource: true,
         aggregationsExpand: ['organisation', 'user'],
         aggregationsOrder: ['organisation', 'user']
       }
@@ -261,6 +262,7 @@ export class AppRoutingModule {
               aggregationsBucketSize: 10,
               files: config.files || null,
               searchFields: config.searchFields || null,
+              recordResource: config.recordResource || null,
               canAdd: () => this._can(config.type, 'add'),
               canUpdate: (record: any) => this._can(config.type, 'update', record),
               canDelete: (record: any) => this._can(config.type, 'delete', record),
