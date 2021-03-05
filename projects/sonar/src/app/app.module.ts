@@ -23,8 +23,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { BsLocaleService, ModalModule } from 'ngx-bootstrap';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgxDropzoneModule } from 'ngx-dropzone';
@@ -49,6 +50,7 @@ import { DetailComponent as DocumentDetailComponent } from './record/document/de
 import { DocumentComponent } from './record/document/document.component';
 import { FileComponent } from './record/document/file/file.component';
 import { PublicationPipe } from './record/document/publication.pipe';
+import { IdentifierComponent } from './record/identifier/identifier.component';
 import { DetailComponent as OrganisationDetailComponent } from './record/organisation/detail/detail.component';
 import { OrganisationComponent } from './record/organisation/organisation.component';
 import { BriefViewComponent as ProjectBriefViewComponent } from './record/project/brief-view/brief-view.component';
@@ -56,7 +58,6 @@ import { DetailComponent as ProjectDetailComponent } from './record/project/deta
 import { DetailComponent as UserDetailComponent } from './record/user/detail/detail.component';
 import { UserComponent } from './record/user/user.component';
 import { AdminComponent } from './_layout/admin/admin.component';
-import { IdentifierComponent } from './record/identifier/identifier.component';
 
 export function minElementError(err: any, field: FormlyFieldConfig) {
   return `This field must contain at least ${field.templateOptions.minItems} element.`;

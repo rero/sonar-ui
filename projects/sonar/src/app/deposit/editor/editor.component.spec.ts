@@ -24,7 +24,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { FormlyModule } from '@ngx-formly/core';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { ModalModule } from 'ngx-bootstrap';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
 import { of } from 'rxjs';
 import { FileLinkPipe } from '../../core/file-link.pipe';

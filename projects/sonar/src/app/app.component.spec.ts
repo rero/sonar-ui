@@ -19,8 +19,8 @@ import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { BsLocaleService } from 'ngx-bootstrap';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
