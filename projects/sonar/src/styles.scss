@@ -27,6 +27,7 @@ $secondary: rgb(246, 130, 17) !default;
 @import "~font-awesome/scss/font-awesome.scss";
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~ngx-toastr/toastr-bs4-alert";
+@import '~ngx-bootstrap/datepicker/bs-datepicker';
 
 pre {
   white-space: pre-wrap;
