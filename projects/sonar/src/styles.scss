@@ -62,5 +62,22 @@ pre {
 }
 
 .card.wrapper {
-  @extend .my-3
+  border: none;
+  @extend .py-1;
+
+  .card-header {
+    border: none;
+    background: none;
+    padding-left: 0;
+  }
+
+  .card-body {
+    padding-left: 0;
+  }
+
+  .border-left {
+    padding-left: map_get($spacers, 3) !important;
+    margin-bottom: map_get($spacers, 3) !important;
+    border-left: 3px solid #dee2e6 !important
+  }
 }
