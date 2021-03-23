@@ -50,6 +50,7 @@ import { DetailComponent as DocumentDetailComponent } from './record/document/de
 import { DocumentComponent } from './record/document/document.component';
 import { FileComponent } from './record/document/file/file.component';
 import { PublicationPipe } from './record/document/publication.pipe';
+import { DetailComponent as HepvsProjectDetailComponent } from './record/hepvs/project/detail/detail.component';
 import { IdentifierComponent } from './record/identifier/identifier.component';
 import { DetailComponent as OrganisationDetailComponent } from './record/organisation/detail/detail.component';
 import { OrganisationComponent } from './record/organisation/organisation.component';
@@ -89,7 +90,8 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     FileComponent,
     ProjectBriefViewComponent,
     ProjectDetailComponent,
-    IdentifierComponent
+    IdentifierComponent,
+    HepvsProjectDetailComponent
   ],
   imports: [
     BrowserModule,

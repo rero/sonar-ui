@@ -31,6 +31,7 @@ import { RoleGuard } from './guard/role.guard';
 import { AggregationFilter } from './record/document/aggregation-filter';
 import { DetailComponent as DocumentDetailComponent } from './record/document/detail/detail.component';
 import { DocumentComponent } from './record/document/document.component';
+import { DetailComponent as HepvsProjectDetailComponent } from './record/hepvs/project/detail/detail.component';
 import { DetailComponent as OrganisationDetailComponent } from './record/organisation/detail/detail.component';
 import { OrganisationComponent } from './record/organisation/organisation.component';
 import { BriefViewComponent as ProjectBriefViewComponent } from './record/project/brief-view/brief-view.component';
@@ -169,6 +170,14 @@ export class AppRoutingModule {
 
     this._updateSearchRouteData();
 
+    // Observable to resolve projects detail component
+    const projectDetail$ = this._userService.user$.pipe(map((user) => {
+      if (user.organisation?.code === 'hepvs') {
+        return HepvsProjectDetailComponent;
+      }
+      return ProjectDetailComponent;
+    }));
+
     const recordsRoutesConfiguration = [
       {
         type: 'documents',
@@ -232,7 +241,7 @@ export class AppRoutingModule {
         type: 'projects',
         label: 'Research projects',
         briefView: ProjectBriefViewComponent,
-        detailView: ProjectDetailComponent,
+        detailView: projectDetail$,
         editorSettings: {
           longMode: true
         },
