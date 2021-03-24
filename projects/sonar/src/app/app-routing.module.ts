@@ -135,6 +135,12 @@ export class AppRoutingModule {
                 label: this._translateService.instant('Full-text'),
                 path: 'fulltext'
               }
+            ],
+            searchFilters: [
+              {
+                label: this._translateService.instant('Open access'),
+                filter: 'open_access'
+              }
             ]
           }
         ]
