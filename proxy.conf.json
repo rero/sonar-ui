@@ -52,5 +52,14 @@
     "pathRewrite": {
       "^/static/": "https://localhost:5000/static/"
     }
+  },
+  "/lang/*": {
+    "target": "https://localhost:5000",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/lang": "https://localhost:5000/lang"
+    }
   }
 }

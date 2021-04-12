@@ -15,13 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { Pipe, PipeTransform } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 /**
  * Return the value of source array, corresponding of given language.
  */
 @Pipe({
-  name: 'languageValue'
+  name: 'languageValue',
 })
 export class LanguageValuePipe implements PipeTransform {
   /**
@@ -29,11 +31,11 @@ export class LanguageValuePipe implements PipeTransform {
    *
    * @param _translateService Translate service.
    */
-  constructor(private _translateService: TranslateService) { }
+  constructor(private _translateService: TranslateService) {}
 
-  transform(value: any[], ...args: any[]): string {
+  transform(value: any[], ...args: any[]): Observable<string> {
     if (!value || value.length === 0) {
-      return '';
+      return of('');
     }
 
     if (!args[0]) {
@@ -48,21 +50,26 @@ export class LanguageValuePipe implements PipeTransform {
       fr: 'fre',
       en: 'eng',
       de: 'ger',
-      it: 'ita'
+      it: 'ita',
     };
 
-    const currentLang = this._translateService.currentLang;
+    return this._translateService.onLangChange.pipe(
+      startWith({ lang: this._translateService.currentLang }),
+      map((event: LangChangeEvent) => {
+        if (!languageMap[event.lang]) {
+          return value[0][args[0]];
+        }
 
-    if (!languageMap[currentLang]) {
-      return value[0][args[0]];
-    }
+        const itemFound = value.find(
+          (element) => element[args[1]] === languageMap[event.lang]
+        );
 
-    value.forEach(element => {
-      if (element[args[1]] === languageMap[currentLang]) {
-        return element[args[0]];
-      }
-    });
+        if (itemFound) {
+          return itemFound[args[0]];
+        }
 
-    return value[0][args[0]];
+        return value[0][args[0]];
+      })
+    );
   }
 }

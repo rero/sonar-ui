@@ -209,7 +209,7 @@
       <ul>
         <li *ngFor="let document of record.metadata.documents">
           <a [routerLink]="['/', 'records', 'documents', 'detail', document.pid]">
-            {{ document.title[0].mainTitle | languageValue }}
+            {{ document.title[0].mainTitle | languageValue | async }}
           </a>
         </li>
       </ul>

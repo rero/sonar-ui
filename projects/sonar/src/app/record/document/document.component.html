@@ -24,13 +24,13 @@
   <div class="col-12 col-lg-10">
     <h4 class="mb-2">
       <a [href]="detailUrl.link" *ngIf="detailUrl.external; else routingLink">
-        <span [innerHTML]="record.metadata.title[0].mainTitle | languageValue | nl2br"></span><ng-container *ngIf="record.metadata.title[0].subtitle">
-          :&nbsp;{{ record.metadata.title[0].subtitle | languageValue }}</ng-container>
+        <span [innerHTML]="record.metadata.title[0].mainTitle | languageValue | async | nl2br"></span><ng-container *ngIf="record.metadata.title[0].subtitle">
+          :&nbsp;{{ record.metadata.title[0].subtitle | languageValue | async }}</ng-container>
       </a>
       <ng-template #routingLink>
         <a [routerLink]="detailUrl.link">
-          <span [innerHTML]="record.metadata.title[0].mainTitle | languageValue | nl2br"></span><ng-container
-            *ngIf="record.metadata.title[0].subtitle">:&nbsp;{{ record.metadata.title[0].subtitle | languageValue }}
+          <span [innerHTML]="record.metadata.title[0].mainTitle | languageValue | async | nl2br"></span><ng-container
+            *ngIf="record.metadata.title[0].subtitle">:&nbsp;{{ record.metadata.title[0].subtitle | languageValue | async }}
           </ng-container>
         </a>
       </ng-template>

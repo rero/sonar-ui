@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   LangChangeEvent,
-  TranslateService as NgxTranslateService,
+  TranslateService as NgxTranslateService
 } from '@ngx-translate/core';
 import { TranslateService } from '@rero/ng-core';
 import cookie from 'cookie';
@@ -39,7 +40,8 @@ export class AppComponent implements OnDestroy, OnInit {
    */
   constructor(
     private _translateService: TranslateService,
-    private _ngxTranslateService: NgxTranslateService
+    private _ngxTranslateService: NgxTranslateService,
+    private _httpClient: HttpClient
   ) {}
 
   /**
@@ -48,7 +50,12 @@ export class AppComponent implements OnDestroy, OnInit {
   ngOnInit() {
     this._changeLanguageSubscription = this._ngxTranslateService.onLangChange.subscribe(
       (event: LangChangeEvent) => {
-        document.cookie = `lang=${event.lang}`;
+        document.cookie = `lang=${event.lang}; path=/`;
+        // Change the language in flask application. Mandatory to set the responseType
+        // as `text` to avoid an error in the response.
+        this._httpClient
+          .get(`/lang/${event.lang}`, { responseType: 'text' })
+          .subscribe();
       }
     );
 
