@@ -128,7 +128,8 @@ export class AppRoutingModule {
               'language',
               'author',
               'subject',
-              'organisation'
+              'organisation',
+              'sections'
             ],
             aggregationsBucketSize: 10,
             searchFields: [
@@ -194,6 +195,7 @@ export class AppRoutingModule {
           'author',
           'subject',
           'organisation',
+          'sections'
         ],
         editorSettings: {
           longMode: true
