@@ -259,7 +259,7 @@ export class AppRoutingModule {
         },
         recordResource: true,
         aggregationsExpand: ['organisation', 'user'],
-        aggregationsOrder: ['organisation', 'user'],
+        aggregationsOrder: ['organisation', 'user', 'status'],
         exportFormats: [
           {
             label: 'CSV',

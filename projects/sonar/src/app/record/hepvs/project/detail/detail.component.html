@@ -17,6 +17,8 @@
 <ng-container *ngIf="record$ | async as record">
   <h1 class="mb-4">{{ record.metadata.name }}</h1>
 
+  <sonar-record-validation [record]="record" [type]="type"></sonar-record-validation>
+
   <div class="my-3" *ngIf="record.metadata.keywords">
     <h5 class="d-inline mr-1" *ngFor="let keyword of record.metadata.keywords">
       <span class="badge badge-secondary text-light font-weight-light">

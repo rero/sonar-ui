@@ -14,23 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
-import { ResultItem } from '@rero/ng-core';
-import { validation_status } from '../../validation/constants';
 
-@Component({
-  templateUrl: './brief-view.component.html'
-})
-export class BriefViewComponent implements ResultItem {
-  // Constant for validation status.
-  readonly validationStatus = validation_status;
+export enum validation_status {
+  'IN_PROGRESS' = 'in_progress',
+  'VALIDATED' = 'validated',
+  'TO_VALIDATE' = 'to_validate',
+  'REJECTED' = 'rejected',
+  'ASK_FOR_CHANGES' = 'ask_for_changes'
+}
 
-  // Record data.
-  record: any;
-
-  // Resource type.
-  type: string;
-
-  // Detail URL object.
-  detailUrl: { link: string, external: boolean };
+export enum validation_action {
+  'SAVE' = 'save',
+  'PUBLISH' = 'publish',
+  'APPROVE' = 'approve',
+  'REJECT' = 'reject',
+  'ASK_FOR_CHANGES' = 'ask_for_changes'
 }

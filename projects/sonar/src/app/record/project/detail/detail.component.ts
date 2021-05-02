@@ -28,6 +28,9 @@ export class DetailComponent {
   /** Resolve logged user */
   user$: Observable<any>;
 
+  /** Type of resource. */
+  type: string;
+
   /**
    * Constructor.
    *

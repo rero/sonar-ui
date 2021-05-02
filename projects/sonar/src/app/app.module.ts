@@ -58,6 +58,7 @@ import { BriefViewComponent as ProjectBriefViewComponent } from './record/projec
 import { DetailComponent as ProjectDetailComponent } from './record/project/detail/detail.component';
 import { DetailComponent as UserDetailComponent } from './record/user/detail/detail.component';
 import { UserComponent } from './record/user/user.component';
+import { ValidationComponent } from './record/validation/validation.component';
 import { AdminComponent } from './_layout/admin/admin.component';
 
 export function minElementError(err: any, field: FormlyFieldConfig) {
@@ -91,7 +92,8 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     ProjectBriefViewComponent,
     ProjectDetailComponent,
     IdentifierComponent,
-    HepvsProjectDetailComponent
+    HepvsProjectDetailComponent,
+    ValidationComponent
   ],
   imports: [
     BrowserModule,
