@@ -250,7 +250,13 @@ export class AppRoutingModule {
         },
         recordResource: true,
         aggregationsExpand: ['organisation', 'user'],
-        aggregationsOrder: ['organisation', 'user']
+        aggregationsOrder: ['organisation', 'user'],
+        exportFormats: [
+          {
+            label: 'CSV',
+            format: 'text/csv'
+          }
+        ]
       }
     ];
 
@@ -281,6 +287,7 @@ export class AppRoutingModule {
               files: config.files || null,
               searchFields: config.searchFields || null,
               recordResource: config.recordResource || null,
+              exportFormats: config.exportFormats || null,
               canAdd: () => this._can(config.type, 'add'),
               canUpdate: (record: any) => this._can(config.type, 'update', record),
               canDelete: (record: any) => this._can(config.type, 'delete', record),
