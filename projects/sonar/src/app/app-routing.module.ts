@@ -141,7 +141,8 @@ export class AppRoutingModule {
             searchFilters: [
               {
                 label: this._translateService.instant('Open access'),
-                filter: 'open_access'
+                filter: 'open_access',
+                value: 'true'
               }
             ]
           }
