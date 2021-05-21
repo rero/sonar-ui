@@ -111,7 +111,7 @@
   "Secondary team": "Secondary team",
   "Show more": "Mehr anzeigen",
   "Specific collections": "Besondere Sammlungen",
-  "Subjects": "Schlagworte",
+  "Subjects": "Themen",
   "Submit": "Absenden",
   "Thank you for submitting a publication!": "Danke für das Einreichen einer Veröffentlichung!",
   "The files have been updated successfully.": "Die Dateien sind erfolgreich aktualisiert worden.",
@@ -149,7 +149,7 @@
   "step_diffusion": "Verbreitung",
   "step_metadata": "Metadaten",
   "step_projects": "Forschungsprojekte",
-  "subject": "Schlagwort",
+  "subject": "Thema",
   "supported by {{ organisations }}": "gefördert durch {{ organisations }}",
   "year": "Jahr"
 }
