@@ -66,7 +66,8 @@
         </ng-container>
 
         <ng-container *ngIf="showPreview && deposit.metadata">
-          <h3 class="mb-2" [innerHtml]="deposit.metadata.title | nl2br"></h3>
+          <hr class="my-5" *ngIf="currentStep === 'diffusion'">
+          <h3 class="mt-0 mb-2" [innerHtml]="deposit.metadata.title | nl2br"></h3>
           <p class="m-0">
             <strong></strong>
           </p>

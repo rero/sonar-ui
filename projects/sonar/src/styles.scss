@@ -27,7 +27,7 @@ $secondary: rgb(246, 130, 17) !default;
 @import "~font-awesome/scss/font-awesome.scss";
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~ngx-toastr/toastr-bs4-alert";
-@import '~ngx-bootstrap/datepicker/bs-datepicker';
+@import "~ngx-bootstrap/datepicker/bs-datepicker";
 
 pre {
   white-space: pre-wrap;
@@ -75,9 +75,17 @@ pre {
     padding-left: 0;
   }
 
-  .border-left {
+  .border-left, .object {
     padding-left: map_get($spacers, 3) !important;
     margin-bottom: map_get($spacers, 3) !important;
-    border-left: 3px solid #dee2e6 !important
+    border-left: 3px solid #dee2e6 !important;
+  }
+
+  .array-item {
+    margin-left: 0 !important;
+
+    .object {
+      padding-left: 0 !important;
+    }
   }
 }
