@@ -19,6 +19,4 @@
   <a href="#" routerLink="{{ detailUrl.link }}">{{ record.metadata.name }}</a>
 </h4>
 <p class="mb-0"><span class="badge badge-primary">{{ record.metadata.code }}</span></p>
-<p class="mt-2" *ngIf="record.metadata.description">
-  {{ record.metadata.description | truncateText: 50 }}
-</p>
+<p class="mt-2" *ngIf="record.metadata.description" [innerHtml]="record.metadata.description | markdown"></p>

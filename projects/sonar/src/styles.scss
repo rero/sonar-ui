@@ -28,6 +28,7 @@ $secondary: rgb(246, 130, 17) !default;
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~ngx-toastr/toastr-bs4-alert";
 @import "~ngx-bootstrap/datepicker/bs-datepicker";
+@import "~simplemde/dist/simplemde.min.css";
 
 pre {
   white-space: pre-wrap;
@@ -88,4 +89,9 @@ pre {
       padding-left: 0 !important;
     }
   }
+}
+
+// Markdown editor
+.CodeMirror, .CodeMirror-scroll {
+	min-height: 120px;
 }

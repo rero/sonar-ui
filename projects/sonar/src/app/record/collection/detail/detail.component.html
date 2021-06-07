@@ -19,7 +19,7 @@
   <dl class="row mt-4">
     <ng-container *ngIf="record.metadata.description">
       <dt class="col-sm-3" translate>Description</dt>
-      <dd class="col-sm-9" [innerHtml]="record.metadata.description | languageValue | async | nl2br"></dd>
+      <dd class="col-sm-9" [innerHtml]="record.metadata.description | languageValue | async | markdown"></dd>
     </ng-container>
   </dl>
 </ng-container>
