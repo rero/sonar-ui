@@ -37,8 +37,9 @@
                 </button>
                 <ul id="dropdown-import" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
                   <li role="menuitem">
-                    <a class="dropdown-item" href
-                      (click)="$event.preventDefault(); extractPdfMetadata()">{{ 'Analyze uploaded PDF' | translate }}</a>
+                    <a class="dropdown-item" href (click)="$event.preventDefault(); extractPdfMetadata()">
+                      {{ 'Analyze uploaded PDF' | translate }}
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -95,8 +96,9 @@
             <ng-container *ngIf="deposit.metadata.otherLanguageTitle && deposit.metadata.otherLanguageTitle.title">
               <dt class="col-sm-3" translate>Title in other language</dt>
               <dd class="col-sm-9">
-                <span
-                  class="badge badge-secondary text-light">{{ deposit.metadata.otherLanguageTitle.language | uppercase }}</span>
+                <span class="badge badge-secondary text-light">
+                  {{ deposit.metadata.otherLanguageTitle.language | uppercase }}
+                </span>
                 {{ deposit.metadata.otherLanguageTitle.title }}
               </dd>
             </ng-container>
@@ -160,10 +162,25 @@
               </dd>
             </ng-container>
 
-            <ng-container *ngIf="deposit.metadata.specificCollections && deposit.metadata.specificCollections.length">
-              <dt class="col-sm-3" translate>Specific collections</dt>
+            <ng-container *ngIf="deposit.metadata.collections && deposit.metadata.collections.length">
+              <dt class="col-sm-3" translate>Collections</dt>
               <dd class="col-sm-9">
-                {{ deposit.metadata.specificCollections | join:' ; ' }}
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item py-1 pl-0" *ngFor="let collection of deposit.metadata.collections">
+                    <ng-container *ngIf="collection.$ref; else fullCollection">
+                      <ng-container *ngIf="collection.$ref | getRecord: 'collections' | async as savedCollection">
+                        {{ savedCollection.metadata.name | languageValue | async }}
+                        <span class="badge badge-secondary text-light ml-2" translate>Existing collection</span>
+                      </ng-container>
+                    </ng-container>
+                    <ng-template #fullCollection>
+                      {{ collection.name | languageValue | async }}
+                      <ng-container *ngIf="collection.description">
+                        <br><small [innerHtml]="collection.description | languageValue | async | nl2br"></small>
+                      </ng-container>
+                    </ng-template>
+                  </li>
+                </ul>
               </dd>
             </ng-container>
 
@@ -197,8 +214,8 @@
               <dd class="col-sm-9">
                 <p class="m-0" *ngFor="let author of deposit.contributors">
                   {{ author.name }}
-                  <span
-                    class="badge badge-secondary text-light ml-1">{{ ('contribution_role_' + author.role) | translate }}</span>
+                  <span class="badge badge-secondary text-light ml-1">{{ ('contribution_role_' + author.role) |
+                    translate }}</span>
                   <span class="badge badge-secondary text-light ml-1" *ngIf="author.orcid">{{ author.orcid }}</span>
                   <small class="text-muted ml-1" *ngIf="author.affiliation"><i>{{ author.affiliation }}</i></small>
                 </p>
@@ -230,9 +247,14 @@
                         <small>
                           <div *ngFor="let investigator of project.investigators">
                             {{ investigator.name }}
-                            <span class="badge badge-secondary text-light ml-1">{{ investigator.role | translate }}</span>
-                            <span class="badge badge-secondary text-light ml-1" *ngIf="investigator.affiliation">{{ investigator.affiliation }}</span>
-                            <span class="badge badge-secondary text-light ml-1" *ngIf="investigator.orcid">{{ investigator.orcid }}</span>
+                            <span class="badge badge-secondary text-light ml-1">
+                              {{ investigator.role | translate }}
+                            </span>
+                            <span class="badge badge-secondary text-light ml-1" *ngIf="investigator.affiliation">
+                              {{ investigator.affiliation }}
+                            </span>
+                            <span class="badge badge-secondary text-light ml-1" *ngIf="investigator.orcid">
+                              {{ investigator.orcid }}</span>
                           </div>
                         </small>
                       </div>
@@ -241,7 +263,9 @@
                         <small>
                           <div *ngFor="let funding_organisation of project.funding_organisations">
                             {{ funding_organisation.name }}
-                            <span class="badge badge-secondary text-light ml-1" *ngIf="funding_organisation.identifier">{{ funding_organisation.identifier }}</span>
+                            <span class="badge badge-secondary text-light ml-1" *ngIf="funding_organisation.identifier">
+                              {{ funding_organisation.identifier }}
+                            </span>
                           </div>
                         </small>
                       </div>

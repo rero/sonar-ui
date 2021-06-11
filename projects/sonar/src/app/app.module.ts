@@ -46,6 +46,8 @@ import { ReviewComponent } from './deposit/review/review.component';
 import { UploadComponent } from './deposit/upload/upload.component';
 import { HttpInterceptor } from './interceptor/http.interceptor';
 import { LanguageValuePipe } from './pipe/language-value.pipe';
+import { BriefViewComponent as CollectionBriefViewComponent } from './record/collection/brief-view/brief-view.component';
+import { DetailComponent as CollectionDetailComponent } from './record/collection/detail/detail.component';
 import { DetailComponent as DocumentDetailComponent } from './record/document/detail/detail.component';
 import { DocumentComponent } from './record/document/document.component';
 import { FileComponent } from './record/document/file/file.component';
@@ -93,7 +95,9 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     ProjectDetailComponent,
     IdentifierComponent,
     HepvsProjectDetailComponent,
-    ValidationComponent
+    ValidationComponent,
+    CollectionBriefViewComponent,
+    CollectionDetailComponent
   ],
   imports: [
     BrowserModule,

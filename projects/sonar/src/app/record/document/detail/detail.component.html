@@ -215,6 +215,20 @@
             </ng-container>
           </ng-container>
 
+          <!-- COLLECTIONS -->
+          <ng-container *ngIf="record.collections">
+            <dt class="col-lg-4" translate>Collections</dt>
+            <dd class="col-lg-8">
+              <ul class="list-unstyled mb-0">
+                <li class="p-0" *ngFor="let collection of record.collections">
+                  <a [routerLink]="['/', 'records', 'collections', 'detail', collection.pid]">
+                    {{ collection.name | languageValue | async }}
+                  </a>
+                </li>
+              </ul>
+            </dd>
+          </ng-container>
+
           <!-- LICENSE -->
           <ng-container *ngIf="record.usageAndAccessPolicy">
             <dt class="col-lg-4" translate>License</dt>

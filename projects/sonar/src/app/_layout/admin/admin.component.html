@@ -31,8 +31,15 @@
             <li class="nav-item" *ngIf="user.is_admin">
               <a class="nav-link" routerLink="/records/users" translate>Users</a>
             </li>
-            <li class="nav-item" *ngIf="user.is_moderator">
-              <a class="nav-link" routerLink="/records/documents" translate>Documents</a>
+            <li class="nav-item dropdown" *ngIf="user.is_moderator" dropdown>
+              <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false" dropdownToggle translate>
+                Documents
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" *dropdownMenu>
+                <a class="dropdown-item" routerLink="/records/documents" translate>Documents</a>
+                <a class="dropdown-item" routerLink="/records/collections" translate>Collections</a>
+              </div>
             </li>
             <li class="nav-item" *ngIf="user.is_submitter">
               <a class="nav-link" routerLink="/records/projects" translate>Research projects</a>

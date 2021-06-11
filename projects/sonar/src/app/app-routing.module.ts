@@ -28,6 +28,8 @@ import { EditorComponent as DepositEditorComponent } from './deposit/editor/edit
 import { UploadComponent } from './deposit/upload/upload.component';
 import { CanAddGuard } from './guard/can-add.guard';
 import { RoleGuard } from './guard/role.guard';
+import { BriefViewComponent as CollectionBriefViewComponent } from './record/collection/brief-view/brief-view.component';
+import { DetailComponent as CollectionDetailComponent } from './record/collection/detail/detail.component';
 import { AggregationFilter } from './record/document/aggregation-filter';
 import { DetailComponent as DocumentDetailComponent } from './record/document/detail/detail.component';
 import { DocumentComponent } from './record/document/document.component';
@@ -124,7 +126,7 @@ export class AppRoutingModule {
               'document_type',
               'controlled_affiliation',
               'year',
-              'specific_collection',
+              'collection',
               'language',
               'author',
               'subject',
@@ -194,7 +196,7 @@ export class AppRoutingModule {
           'document_type',
           'controlled_affiliation',
           'year',
-          'specific_collection',
+          'collection',
           'language',
           'author',
           'subject',
@@ -266,6 +268,18 @@ export class AppRoutingModule {
             format: 'text/csv'
           }
         ]
+      },
+      {
+        type: 'collections',
+        label: 'Collections',
+        briefView: CollectionBriefViewComponent,
+        detailView: CollectionDetailComponent,
+        files: {
+          enabled: true
+        },
+        editorSettings: {
+          longMode: true
+        }
       }
     ];
 
