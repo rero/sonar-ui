@@ -21,5 +21,13 @@
       <dt class="col-sm-3" translate>Description</dt>
       <dd class="col-sm-9" [innerHtml]="record.metadata.description | languageValue | async | markdown"></dd>
     </ng-container>
+    <ng-container *ngIf="record.metadata.parent">
+      <dt class="col-sm-3" translate>Parent collection</dt>
+      <dd class="col-sm-9">
+        <a [routerLink]="['/', 'records', 'collections', 'detail', record.metadata.parent.pid]">
+          {{ record.metadata.parent.name | languageValue | async }}
+        </a>
+      </dd>
+    </ng-container>
   </dl>
 </ng-container>
