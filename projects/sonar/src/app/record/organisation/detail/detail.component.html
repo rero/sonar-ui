@@ -14,7 +14,7 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<ng-container *ngIf="record$ | async as record">
+<ng-container *ngIf="record">
   <h1 class="mb-4">{{ record.metadata.name }}</h1>
   <dl class="row mt-4">
     <dt class="col-sm-3" translate>Code</dt>
@@ -43,7 +43,8 @@
         <dt class="col-sm-3">{{ 'Custom field' | translate }} {{ i }}</dt>
         <dd class="col-sm-9">
           <ng-container *ngIf="record.metadata['documentsCustomField' + i].label">
-            {{ 'Label' | translate }}: {{ record.metadata['documentsCustomField' + i].label | languageValue | async }}<br>
+            {{ 'Label' | translate }}: {{ record.metadata['documentsCustomField' + i].label | languageValue | async }}
+            <br>
           </ng-container>
           <i class="fa fa-{{ record.metadata['documentsCustomField' + i].includeInFacets ? 'check' : 'remove' }}"></i>
           {{ 'Include in facets' | translate }}
@@ -51,4 +52,30 @@
       </ng-container>
     </ng-container>
   </dl>
+
+  <div class="row mt-3">
+    <div class="col" *ngIf="subdivisions.length">
+      <div class="card mt-3">
+        <div class="card-header font-weight-bold" translate>Subdivisions</div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" *ngFor="let subdivision of subdivisions">
+            <a [routerLink]="['/', 'records', 'subdivisions', 'detail', subdivision.id]">
+              {{ subdivision.metadata.name | languageValue | async }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col" *ngIf="collections.length">
+      <div class="card mt-3">
+        <div class="card-header font-weight-bold" translate>Collections</div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" *ngFor="let collection of collections">
+            <a [routerLink]="['/', 'records', 'collections', 'detail', collection.id]">
+              {{ collection.metadata.name | languageValue | async }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </ng-container>
