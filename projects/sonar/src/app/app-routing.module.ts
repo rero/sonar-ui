@@ -38,6 +38,8 @@ import { DetailComponent as OrganisationDetailComponent } from './record/organis
 import { OrganisationComponent } from './record/organisation/organisation.component';
 import { BriefViewComponent as ProjectBriefViewComponent } from './record/project/brief-view/brief-view.component';
 import { DetailComponent as ProjectDetailComponent } from './record/project/detail/detail.component';
+import { BriefViewComponent as SubdivisionBriefViewComponent } from './record/subdivision/brief-view/brief-view.component';
+import { DetailComponent as SubdivisionDetailComponent } from './record/subdivision/detail/detail.component';
 import { DetailComponent as UserDetailComponent } from './record/user/detail/detail.component';
 import { UserComponent } from './record/user/user.component';
 import { UserService } from './user.service';
@@ -131,7 +133,7 @@ export class AppRoutingModule {
               'author',
               'subject',
               'organisation',
-              'sections',
+              'subdivision',
               'customField1',
               'customField2',
               'customField3'
@@ -201,7 +203,7 @@ export class AppRoutingModule {
           'author',
           'subject',
           'organisation',
-          'sections',
+          'subdivision',
           'customField1',
           'customField2',
           'customField3'
@@ -230,7 +232,11 @@ export class AppRoutingModule {
       {
         type: 'users',
         briefView: UserComponent,
-        detailView: UserDetailComponent
+        detailView: UserDetailComponent,
+        aggregationsOrder: ['subdivision'],
+        editorSettings: {
+          longMode: true
+        }
       },
       {
         type: 'organisations',
@@ -248,7 +254,7 @@ export class AppRoutingModule {
         briefView: BriefViewComponent,
         aggregations: AggregationFilter.filter,
         aggregationsExpand: ['status', 'user', 'contributor'],
-        aggregationsOrder: ['status', 'user', 'contributor']
+        aggregationsOrder: ['status', 'user', 'contributor', 'subdivision']
       },
       {
         type: 'projects',
@@ -276,6 +282,15 @@ export class AppRoutingModule {
         files: {
           enabled: true
         },
+        editorSettings: {
+          longMode: true
+        }
+      },
+      {
+        type: 'subdivisions',
+        label: 'Subdivisions',
+        briefView: SubdivisionBriefViewComponent,
+        detailView: SubdivisionDetailComponent,
         editorSettings: {
           longMode: true
         }

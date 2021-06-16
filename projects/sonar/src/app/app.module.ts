@@ -58,6 +58,8 @@ import { DetailComponent as OrganisationDetailComponent } from './record/organis
 import { OrganisationComponent } from './record/organisation/organisation.component';
 import { BriefViewComponent as ProjectBriefViewComponent } from './record/project/brief-view/brief-view.component';
 import { DetailComponent as ProjectDetailComponent } from './record/project/detail/detail.component';
+import { BriefViewComponent as SubdivisionBriefViewComponent } from './record/subdivision/brief-view/brief-view.component';
+import { DetailComponent as SubdivisionDetailComponent } from './record/subdivision/detail/detail.component';
 import { DetailComponent as UserDetailComponent } from './record/user/detail/detail.component';
 import { UserComponent } from './record/user/user.component';
 import { ValidationComponent } from './record/validation/validation.component';
@@ -97,7 +99,9 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     HepvsProjectDetailComponent,
     ValidationComponent,
     CollectionBriefViewComponent,
-    CollectionDetailComponent
+    CollectionDetailComponent,
+    SubdivisionBriefViewComponent,
+    SubdivisionDetailComponent
   ],
   imports: [
     BrowserModule,
