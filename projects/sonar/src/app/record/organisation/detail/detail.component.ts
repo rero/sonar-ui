@@ -14,13 +14,59 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { RecordService } from '@rero/ng-core';
+import { combineLatest, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
-  templateUrl: './detail.component.html'
+  templateUrl: './detail.component.html',
 })
-export class DetailComponent {
+export class DetailComponent implements OnInit {
   /** Observable resolving record data */
   record$: Observable<any>;
+
+  /** Organisation record. */
+  record: any;
+
+  /** Subdivisions list. */
+  subdivisions: Array<any> = [];
+
+  /** Collections list. */
+  collections: Array<any> = [];
+
+  /**
+   * Constructor.
+   *
+   * @param _recordService: Record service.
+   */
+  constructor(private _recordService: RecordService) {}
+
+  /**
+   * Component init.
+   *
+   * Load the collections and subdivisions for the organisation.
+   */
+  ngOnInit(): void {
+    this.record$
+      .pipe(
+        switchMap((record: any) => {
+          this.record = record;
+          return combineLatest([
+            this._recordService.getRecords(
+              'subdivisions',
+              `organisation.pid:${record.id}`
+            ),
+            this._recordService.getRecords(
+              'collections',
+              `organisation.pid:${record.id}`
+            ),
+          ]);
+        })
+      )
+      .subscribe((result: any) => {
+        this.subdivisions = result[0].hits.hits;
+        this.collections = result[1].hits.hits;
+      });
+  }
 }
