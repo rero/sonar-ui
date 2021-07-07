@@ -191,11 +191,11 @@
           </ng-container>
 
           <!-- CLASSIFICATION -->
-          <ng-container *ngIf="record.classification">
+          <ng-container *ngIf="UDCclassifiations">
             <dt class="col-lg-4" translate>Classification</dt>
             <dd class="col-lg-8">
-              <ng-container *ngFor="let classification of record.classification">
-                {{ ('classification_' + classification.classificationPortion) | translate }}
+              <ng-container *ngFor="let classification of UDCclassifiations; let last = last;">{{ ('classification_' +
+                classification.classificationPortion) | translate }}<span *ngIf="!last">&nbsp;;&nbsp;</span>
               </ng-container>
             </dd>
           </ng-container>

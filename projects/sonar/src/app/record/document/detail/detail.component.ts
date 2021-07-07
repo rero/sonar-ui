@@ -19,7 +19,7 @@ import {
   OnDestroy,
   OnInit,
   TemplateRef,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
@@ -156,6 +156,21 @@ export class DetailComponent implements OnDestroy, OnInit {
    */
   get mainFile(): any {
     return this.filteredFiles.length === 0 ? null : this.filteredFiles[0];
+  }
+
+  /**
+   * Return the list of UDC classifications.
+   *
+   * @returns List of UDC classifications.
+   */
+  get UDCclassifiations(): Array<any> {
+    if (!this.record.classification) {
+      return [];
+    }
+
+    return this.record.classification.filter((item: any) => {
+      return item.type === 'bf:ClassificationUdc';
+    });
   }
 
   /**
