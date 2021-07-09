@@ -21,7 +21,6 @@ import {
   TranslateService as NgxTranslateService
 } from '@ngx-translate/core';
 import { TranslateService } from '@rero/ng-core';
-import cookie from 'cookie';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -48,18 +47,18 @@ export class AppComponent implements OnDestroy, OnInit {
    * Component init hook.
    */
   ngOnInit() {
-    this._changeLanguageSubscription = this._ngxTranslateService.onLangChange.subscribe(
-      (event: LangChangeEvent) => {
-        document.cookie = `lang=${event.lang}; path=/`;
-        // Change the language in flask application. Mandatory to set the responseType
-        // as `text` to avoid an error in the response.
-        this._httpClient
-          .get(`/lang/${event.lang}`, { responseType: 'text' })
-          .subscribe();
-      }
-    );
+    this._changeLanguageSubscription =
+      this._ngxTranslateService.onLangChange.subscribe(
+        (event: LangChangeEvent) => {
+          // Change the language in flask application. Mandatory to set the responseType
+          // as `text` to avoid an error in the response.
+          this._httpClient
+            .get(`/lang/${event.lang}`, { responseType: 'text' })
+            .subscribe();
+        }
+      );
 
-    this._translateService.setLanguage(this._getPreferredLang());
+    this._translateService.setLanguage(document.documentElement.lang || 'en');
   }
 
   /**
@@ -67,18 +66,5 @@ export class AppComponent implements OnDestroy, OnInit {
    */
   ngOnDestroy() {
     this._changeLanguageSubscription.unsubscribe();
-  }
-
-  /**
-   * Return the preferred language for the user.
-   */
-  private _getPreferredLang(): string {
-    const cookies = cookie.parse(document.cookie);
-
-    if (cookies.lang) {
-      return cookies.lang;
-    }
-
-    return document.documentElement.lang || 'en';
   }
 }
