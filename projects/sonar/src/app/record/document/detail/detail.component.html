@@ -104,9 +104,11 @@
         <div class="my-3" *ngIf="record.subjects && record.subjects.length > 0">
           <ng-container *ngFor="let subject of record.subjects">
             <h5 class="d-inline mr-1" *ngFor="let value of subject.label.value">
-              <span class="badge badge-secondary text-light font-weight-light">
-                <i class="fa fa-tag mx-1"></i> {{ value }}
-              </span>
+              <a [routerLink]="['/', 'records', 'documents']" [queryParams]="{q: 'subjects.label.value:' + value}">
+                <span class="badge badge-secondary text-light font-weight-light">
+                  <i class="fa fa-tag mx-1"></i> {{ value }}
+                </span>
+              </a>
             </h5>
           </ng-container>
         </div>
@@ -194,8 +196,11 @@
           <ng-container *ngIf="UDCclassifiations">
             <dt class="col-lg-4" translate>Classification</dt>
             <dd class="col-lg-8">
-              <ng-container *ngFor="let classification of UDCclassifiations; let last = last;">{{ ('classification_' +
-                classification.classificationPortion) | translate }}<span *ngIf="!last">&nbsp;;&nbsp;</span>
+              <ng-container *ngFor="let classification of UDCclassifiations; let last = last;">
+                <a [routerLink]="['/', 'records', 'documents']"
+                  [queryParams]="{q: 'classification.classificationPortion:' + classification.classificationPortion}">{{
+                  ('classification_' + classification.classificationPortion) | translate }}</a><span
+                  *ngIf="!last">&nbsp;;&nbsp;</span>
               </ng-container>
             </dd>
           </ng-container>
