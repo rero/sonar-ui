@@ -34,6 +34,7 @@
       </div>
       <div class="col">
         <h1 class="text-primary">
+          <i class="fa fa-eye-slash mr-2 text-danger" *ngIf="record.masked" [tooltip]="'Masked in the public view' | translate"></i>
           <span [innerHTML]="record.title[0].mainTitle | languageValue | async | nl2br"></span>
           <ng-container *ngIf="record.title[0].subtitle">
             &nbsp;:&nbsp;{{ record.title[0].subtitle | languageValue | async }}</ng-container>
