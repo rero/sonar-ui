@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.2.0](https://github.com/rero/sonar-ui/tree/v1.2.0) (2021-07-14)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v1.1.0...v1.2.0)
+
+**Merged pull requests:**
+
+- translations: update catalog [\#246](https://github.com/rero/sonar-ui/pull/246) ([sebastiendeleze](https://github.com/sebastiendeleze))
+- documents: classification and subjects clickable [\#243](https://github.com/rero/sonar-ui/pull/243) ([sebastiendeleze](https://github.com/sebastiendeleze))
+- lang: fix language setting [\#242](https://github.com/rero/sonar-ui/pull/242) ([sebastiendeleze](https://github.com/sebastiendeleze))
+- documents: hide Dewey classification [\#241](https://github.com/rero/sonar-ui/pull/241) ([sebastiendeleze](https://github.com/sebastiendeleze))
+
 ## [v1.1.0](https://github.com/rero/sonar-ui/tree/v1.1.0) (2021-06-16)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.0.1...v1.1.0)
