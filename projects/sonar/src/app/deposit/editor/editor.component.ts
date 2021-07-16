@@ -435,6 +435,10 @@ export class EditorComponent implements OnInit {
             this.deposit.metadata.language = result.languages[0];
           }
 
+          if (result.documentDate) {
+            this.deposit.metadata.documentDate = result.documentDate;
+          }
+
           if (result.publication) {
             this.deposit.metadata.publication = result.publication;
           }
