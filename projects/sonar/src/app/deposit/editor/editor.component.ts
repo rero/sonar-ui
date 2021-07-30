@@ -15,12 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { FormlyJsonschema } from '@ngx-formly/core/json-schema';
-import { DialogService, TranslateService } from '@rero/ng-core';
+import { ApiService, DialogService, TranslateService } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { combineLatest, EMPTY, of } from 'rxjs';
@@ -69,8 +70,17 @@ export class EditorComponent implements OnInit {
   /** File key to preview */
   previewFileKey: string;
 
+  /** Swisscovery result */
+  scResult: any = null;
+
   /** Store files associated with deposit */
   private _files: Array<any> = [];
+
+  /** DOM element for swisscovery search type */
+  @ViewChild('scType') scType: ElementRef;
+
+  /** DOM element for swisscovery search query */
+  @ViewChild('scQuery') scQuery: ElementRef;
 
   /**
    * Constructor.
@@ -85,6 +95,8 @@ export class EditorComponent implements OnInit {
    * @param _userUservice User service.
    * @param _spinner Spinner service.
    * @param _datePipe Date pipe.
+   * @param _apiService API service.
+   * @param _httpClient HTTP Client.
    */
   constructor(
     private _toastrService: ToastrService,
@@ -96,7 +108,9 @@ export class EditorComponent implements OnInit {
     private _dialogService: DialogService,
     private _userUservice: UserService,
     private _spinner: NgxSpinnerService,
-    private _datePipe: DatePipe
+    private _datePipe: DatePipe,
+    private _apiService: ApiService,
+    private _httpClient: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -290,6 +304,15 @@ export class EditorComponent implements OnInit {
   }
 
   /**
+   * Check if a result exists for a swisscovery search.
+   *
+   * @returns True if a search is done and a result is found.
+   */
+  get hasSwisscoveryResult(): boolean {
+    return this.scResult && Object.keys(this.scResult).length > 0;
+  }
+
+  /**
    * Save current state on database with API call.
    */
   save() {
@@ -472,6 +495,57 @@ export class EditorComponent implements OnInit {
   }
 
   /**
+   * Search record in swisscovery
+   *
+   * @returns void
+   */
+  searchSwisscovery(): void {
+    if (!this.scQuery.nativeElement.value) {
+      return;
+    }
+
+    this._spinner.show();
+
+    const params = new HttpParams()
+      .set('type', this.scType.nativeElement.value)
+      .set('query', this.scQuery.nativeElement.value)
+      .set('format', 'deposit');
+
+    this._httpClient
+      .get(`${this._apiService.getEndpointByType('swisscovery', true)}/`, {
+        params,
+        observe: 'response',
+      })
+      .subscribe((response: HttpResponse<any>) => {
+        this.scResult = response.status === 200 ? response.body : null;
+        this._spinner.hide();
+      });
+  }
+
+  /**
+   * Map the swisscovery record to the deposit data.
+   *
+   * @returns void
+   */
+  mapSwisscoverRecord(): void {
+    if (this.hasSwisscoveryResult === false) {
+      return;
+    }
+
+    // Map data.
+    this.deposit.metadata = this.scResult.metadata;
+    if (this.scResult.contributors) {
+      this.deposit.contributors = this.scResult.contributors;
+    }
+
+    // Refresh the form.
+    this._depositService.getJsonSchema('deposits').subscribe((result) => {
+      this._createForm(result);
+      this.scResult = null;
+    });
+  }
+
+  /**
    * Create form by extracting section corresponding to current step from JSON schema.
    * @param schema JSON schema
    */
@@ -536,9 +610,8 @@ export class EditorComponent implements OnInit {
                 const msg = messages[key];
                 // add support of key with or without Message suffix (required == requiredMessage),
                 // this is usefull for backend translation extraction
-                fieldConfig.validation.messages[
-                  key.replace(/Message$/, '')
-                ] = msg;
+                fieldConfig.validation.messages[key.replace(/Message$/, '')] =
+                  msg;
               }
             }
           }
