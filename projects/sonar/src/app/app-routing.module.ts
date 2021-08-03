@@ -230,8 +230,7 @@ export class AppRoutingModule {
       {
         type: 'users',
         briefView: UserComponent,
-        detailView: UserDetailComponent,
-        aggregationsOrder: ['missing_organisation']
+        detailView: UserDetailComponent
       },
       {
         type: 'organisations',
