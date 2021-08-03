@@ -1,6 +1,6 @@
 {
   "name": "@rero/sonar-ui",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "User interface for SONAR.",
   "keywords": [
     "rero",
@@ -44,7 +44,7 @@
     "@ngx-formly/bootstrap": "^5.10.17",
     "@ngx-formly/core": "^5.10.17",
     "@ngx-translate/core": "^13.0.0",
-    "@rero/ng-core": "^1.10.0",
+    "@rero/ng-core": "^1.13.0",
     "acorn": ">=6.4.1",
     "bootstrap": "^4.6.0",
     "browserslist": ">=4.16.5",

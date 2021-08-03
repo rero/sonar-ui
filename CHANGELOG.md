@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.3.0](https://github.com/rero/sonar-ui/tree/v1.3.0) (2021-08-03)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v1.2.0...v1.3.0)
+
+**Merged pull requests:**
+
+- users: remove `missing\_organisations` aggregation [\#251](https://github.com/rero/sonar-ui/pull/251) ([sebastiendeleze](https://github.com/sebastiendeleze))
+- translations: update catalog [\#250](https://github.com/rero/sonar-ui/pull/250) ([sebastiendeleze](https://github.com/sebastiendeleze))
+- deposits: store document date extracted from PDF [\#247](https://github.com/rero/sonar-ui/pull/247) ([sebastiendeleze](https://github.com/sebastiendeleze))
+- documents: display `masked` property info [\#245](https://github.com/rero/sonar-ui/pull/245) ([sebastiendeleze](https://github.com/sebastiendeleze))
+
 ## [v1.2.0](https://github.com/rero/sonar-ui/tree/v1.2.0) (2021-07-14)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.1.0...v1.2.0)
@@ -277,10 +288,6 @@
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v0.1.2...v0.1.3)
 
-**Closed issues:**
-
-- Implement public search [\#19](https://github.com/rero/sonar-ui/issues/19)
-
 **Merged pull requests:**
 
 - project: configure GitHub actions [\#33](https://github.com/rero/sonar-ui/pull/33) ([sebastiendeleze](https://github.com/sebastiendeleze))
@@ -317,6 +324,7 @@
 
 **Closed issues:**
 
+- Implement public search [\#19](https://github.com/rero/sonar-ui/issues/19)
 - Review a deposit [\#12](https://github.com/rero/sonar-ui/issues/12)
 - Publish / submit a deposit [\#10](https://github.com/rero/sonar-ui/issues/10)
 - Import metadata from main PDF [\#7](https://github.com/rero/sonar-ui/issues/7)
