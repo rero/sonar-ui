@@ -20,9 +20,6 @@ import { Observable, Subscriber } from 'rxjs';
 export class AggregationFilter {
   static translateService: TranslateService;
 
-  // Default code for global search
-  static globalSearchViewCode: string;
-
   // Current view
   static view: string;
 

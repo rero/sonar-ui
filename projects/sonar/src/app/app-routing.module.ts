@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { ActivationStart, Router, RouterEvent, RouterModule, Routes, UrlSegment } from '@angular/router';
+import { ActivatedRoute, ActivationStart, Router, RouterEvent, RouterModule, Routes, UrlSegment } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ActionStatus, DetailComponent, EditorComponent, RecordSearchPageComponent } from '@rero/ng-core';
+import { ActionStatus, ApiService, DetailComponent, EditorComponent, RecordSearchPageComponent } from '@rero/ng-core';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { AppConfigService } from './app-config.service';
+import { map, switchMap } from 'rxjs/operators';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { BriefViewComponent } from './deposit/brief-view/brief-view.component';
 import { ConfirmationComponent } from './deposit/confirmation/confirmation.component';
@@ -95,16 +95,19 @@ export class AppRoutingModule {
    *
    * @param _translateService Translate service.
    * @param _router Router service.
+   * @param _route Activated route.
    * @param _userService User service.
-   * @param _appConfigService Config service.
+   * @param _httpClient HTTP client.
+   * @param _apiService API service.
    */
   constructor(
     private _translateService: TranslateService,
     private _router: Router,
+    private _route: ActivatedRoute,
     private _userService: UserService,
-    private _appConfigService: AppConfigService
+    private _httpClient: HttpClient,
+    private _apiService: ApiService,
   ) {
-    AggregationFilter.globalSearchViewCode = this._appConfigService.globalSearchViewCode;
     AggregationFilter.translateService = this._translateService;
 
     this._router.config.push({
@@ -124,20 +127,7 @@ export class AppRoutingModule {
             component: DocumentComponent,
             aggregations: AggregationFilter.filter,
             aggregationsExpand: ['document_type', 'controlled_affiliation', 'year'],
-            aggregationsOrder: [
-              'document_type',
-              'controlled_affiliation',
-              'year',
-              'collection',
-              'language',
-              'author',
-              'subject',
-              'organisation',
-              'subdivision',
-              'customField1',
-              'customField2',
-              'customField3'
-            ],
+            aggregationsOrder: this._documentAggregationsOrder(),
             aggregationsBucketSize: 10,
             searchFields: [
               {
@@ -194,20 +184,7 @@ export class AppRoutingModule {
         detailView: DocumentDetailComponent,
         aggregations: AggregationFilter.filter,
         aggregationsExpand: ['document_type', 'controlled_affiliation', 'year'],
-        aggregationsOrder: [
-          'document_type',
-          'controlled_affiliation',
-          'year',
-          'collection',
-          'language',
-          'author',
-          'subject',
-          'organisation',
-          'subdivision',
-          'customField1',
-          'customField2',
-          'customField3'
-        ],
+        aggregationsOrder: this._documentAggregationsOrder(),
         editorSettings: {
           longMode: true
         },
@@ -415,5 +392,34 @@ export class AppRoutingModule {
       consumed: segments,
       posParams: { type: new UrlSegment(url[1].path, {}) }
     };
+  }
+
+  /**
+   * Get the ordered list of aggregations.
+   *
+   * @returns An observable resolving the ordered list.
+   */
+  private _documentAggregationsOrder(): Observable<any> {
+    return of(null).pipe(
+      switchMap(() => {
+        const view = this._route.snapshot.children[0].params.view;
+
+        let params = new HttpParams();
+        if (view) {
+          params = params.set('view', view);
+        }
+        if (this._route.snapshot.children[0].queryParams.collection_view) {
+          params = params.set('collection', '1');
+        }
+
+        return this._httpClient.get(
+          `${this._apiService.getEndpointByType(
+            'documents',
+            true
+          )}/aggregations`,
+          { params }
+        );
+      })
+    );
   }
 }

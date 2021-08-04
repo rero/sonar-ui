@@ -22,9 +22,6 @@ import { environment } from '../environments/environment';
   providedIn: 'root',
 })
 export class AppConfigService extends CoreConfigService {
-  // View key for global search
-  globalSearchViewCode = 'global';
-
   // Languages map.
   languagesMap = [
     {
