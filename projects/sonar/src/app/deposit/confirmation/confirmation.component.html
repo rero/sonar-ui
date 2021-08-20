@@ -23,4 +23,12 @@
   <div class="alert alert-success" *ngIf="deposit.status === 'validated'">
     {{ 'This deposit will be published shortly.' | translate }}
   </div>
+  <ul *ngIf="isSubmitter">
+    <li>
+      <a [href]="publicInterfaceLink" translate>Back to public interface</a>
+    </li>
+    <li>
+      <a routerLink="/deposit/0/create" translate>Deposit another publication</a>
+    </li>
+  </ul>
 </ng-container>

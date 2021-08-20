@@ -119,4 +119,21 @@ export class UserService {
   checkUserPid(pid: string): boolean {
     return this._user.pid === pid;
   }
+
+  /**
+   * Return the link to public interface, depending on user's organisation.
+   *
+   * @returns Link to public interface.
+   */
+   getPublicInterfaceLink(): string {
+    if (
+      this._user &&
+      this._user.organisation &&
+      this._user.organisation.isDedicated
+    ) {
+      return `/${this._user.organisation.code}`;
+    }
+
+    return '/';
+  }
 }

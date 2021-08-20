@@ -63,15 +63,7 @@ export class AdminComponent implements OnInit, OnDestroy {
    * @returns Link to public interface.
    */
   get publicInterfaceLink(): string {
-    if (
-      this.user &&
-      this.user.organisation &&
-      this.user.organisation.isDedicated
-    ) {
-      return `/${this.user.organisation.code}`;
-    }
-
-    return '/';
+    return this._userService.getPublicInterfaceLink();
   }
 
   /**
