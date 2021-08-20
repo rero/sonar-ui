@@ -20,11 +20,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { UserService } from '../../user.service';
 import { DepositService } from '../deposit.service';
 
 @Component({
   selector: 'sonar-deposit-confirmation',
-  templateUrl: './confirmation.component.html'
+  templateUrl: './confirmation.component.html',
 })
 export class ConfirmationComponent implements OnInit {
   deposit$: Observable<any> = null;
@@ -37,14 +38,16 @@ export class ConfirmationComponent implements OnInit {
    * @param _depositService Deposit servce.
    * @param _router Router service.
    * @param _translateService Translate service.
+   * @param _userService User service
    */
   constructor(
     private _route: ActivatedRoute,
     private _toastr: ToastrService,
     private _depositService: DepositService,
     private _router: Router,
-    private _translateService: TranslateService
-  ) { }
+    private _translateService: TranslateService,
+    private _userService: UserService
+  ) {}
 
   /**
    * Component initialization
@@ -53,15 +56,31 @@ export class ConfirmationComponent implements OnInit {
    */
   ngOnInit() {
     this.deposit$ = this._route.params.pipe(
-      switchMap(params => {
+      switchMap((params) => {
         return this._depositService.get(params.id);
       }),
-      map(result => result.metadata),
+      map((result) => result.metadata),
       catchError(() => {
         this._toastr.error(this._translateService.instant('Deposit not found'));
         this._router.navigate(['deposit', '0', 'create']);
         return of(null);
       })
     );
+  }
+
+  /**
+   * Check if logged user is a submitter
+   */
+  get isSubmitter(): boolean {
+    return this._userService.hasRole('submitter');
+  }
+
+  /**
+   * Return the link to public interface, depending on user's organisation.
+   *
+   * @returns Link to public interface.
+   */
+   get publicInterfaceLink(): string {
+    return this._userService.getPublicInterfaceLink();
   }
 }
