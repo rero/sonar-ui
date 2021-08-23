@@ -151,6 +151,26 @@ export class AppRoutingModule {
                 filter: 'open_access',
                 value: 'true'
               }
+            ],
+            sortOptions: [
+              {
+                label: this._translateService.instant('Relevance'),
+                value: 'relevance',
+                defaultQuery: true
+              },
+              {
+                label: this._translateService.instant('Date descending'),
+                value: 'newest',
+                defaultNoQuery: true
+              },
+              {
+                label: this._translateService.instant('Date ascending'),
+                value: 'oldest',
+              },
+              {
+                label: this._translateService.instant('Title'),
+                value: 'title'
+              }
             ]
           }
         ]
@@ -227,6 +247,26 @@ export class AppRoutingModule {
             label: this._translateService.instant('Full-text'),
             path: 'fulltext'
           }
+        ],
+        sortOptions: [
+          {
+            label: this._translateService.instant('Relevance'),
+            value: 'relevance',
+            defaultQuery: true
+          },
+          {
+            label: this._translateService.instant('Date descending'),
+            value: 'newest',
+            defaultNoQuery: true
+          },
+          {
+            label: this._translateService.instant('Date ascending'),
+            value: 'oldest',
+          },
+          {
+            label: this._translateService.instant('Title'),
+            value: 'title'
+          }
         ]
       },
       {
@@ -236,7 +276,19 @@ export class AppRoutingModule {
         aggregationsOrder: ['subdivision'],
         editorSettings: {
           longMode: true
-        }
+        },
+        sortOptions: [
+          {
+            label: this._translateService.instant('Relevance'),
+            value: 'relevance',
+            defaultQuery: true
+          },
+          {
+            label: this._translateService.instant('Name'),
+            value: 'name',
+            defaultNoQuery: true
+          }
+        ]
       },
       {
         type: 'organisations',
@@ -247,14 +299,42 @@ export class AppRoutingModule {
         },
         editorSettings: {
           longMode: true
-        }
+        },
+        sortOptions: [
+          {
+            label: this._translateService.instant('Relevance'),
+            value: 'relevance',
+            defaultQuery: true
+          },
+          {
+            label: this._translateService.instant('Name'),
+            value: 'name',
+            defaultNoQuery: true
+          }
+        ]
       },
       {
         type: 'deposits',
         briefView: BriefViewComponent,
         aggregations: AggregationFilter.filter,
         aggregationsExpand: ['status', 'user', 'contributor'],
-        aggregationsOrder: ['status', 'user', 'contributor', 'subdivision']
+        aggregationsOrder: ['status', 'user', 'contributor', 'subdivision'],
+        sortOptions: [
+          {
+            label: this._translateService.instant('Relevance'),
+            value: 'relevance',
+            defaultQuery: true
+          },
+          {
+            label: this._translateService.instant('Date descending'),
+            value: 'newest',
+            defaultNoQuery: true
+          },
+          {
+            label: this._translateService.instant('Date ascending'),
+            value: 'oldest'
+          }
+        ]
       },
       {
         type: 'projects',
@@ -272,6 +352,26 @@ export class AppRoutingModule {
             label: 'CSV',
             format: 'text/csv'
           }
+        ],
+        sortOptions: [
+          {
+            label: this._translateService.instant('Relevance'),
+            value: 'relevance',
+            defaultQuery: true
+          },
+          {
+            label: this._translateService.instant('Name'),
+            value: 'name',
+            defaultNoQuery: true
+          },
+          {
+            label: this._translateService.instant('Date descending'),
+            value: 'newest'
+          },
+          {
+            label: this._translateService.instant('Date ascending'),
+            value: 'oldest'
+          }
         ]
       },
       {
@@ -284,7 +384,19 @@ export class AppRoutingModule {
         },
         editorSettings: {
           longMode: true
-        }
+        },
+        sortOptions: [
+          {
+            label: this._translateService.instant('Relevance'),
+            value: 'relevance',
+            defaultQuery: true
+          },
+          {
+            label: this._translateService.instant('Name'),
+            value: 'name',
+            defaultNoQuery: true
+          }
+        ]
       },
       {
         type: 'subdivisions',
@@ -293,7 +405,19 @@ export class AppRoutingModule {
         detailView: SubdivisionDetailComponent,
         editorSettings: {
           longMode: true
-        }
+        },
+        sortOptions: [
+          {
+            label: this._translateService.instant('Relevance'),
+            value: 'relevance',
+            defaultQuery: true
+          },
+          {
+            label: this._translateService.instant('Name'),
+            value: 'name',
+            defaultNoQuery: true
+          }
+        ]
       }
     ];
 
@@ -325,6 +449,7 @@ export class AppRoutingModule {
               searchFields: config.searchFields || null,
               recordResource: config.recordResource || null,
               exportFormats: config.exportFormats || null,
+              sortOptions: config.sortOptions || null,
               canAdd: () => this._can(config.type, 'add'),
               canUpdate: (record: any) => this._can(config.type, 'update', record),
               canDelete: (record: any) => this._can(config.type, 'delete', record),
