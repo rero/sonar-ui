@@ -42,3 +42,8 @@ _('step_metadata');
 _('step_contributors');
 _('step_projects');
 _('step_diffusion');
+
+// Masked values
+_('not_masked');
+_('masked_for_external_ips');
+_('masked_for_all');
