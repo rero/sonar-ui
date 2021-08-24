@@ -206,7 +206,8 @@ export class AppRoutingModule {
           'subdivision',
           'customField1',
           'customField2',
-          'customField3'
+          'customField3',
+          'masked'
         ],
         editorSettings: {
           longMode: true

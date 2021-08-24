@@ -34,7 +34,10 @@
       </div>
       <div class="col">
         <h1 class="text-primary">
-          <i class="fa fa-eye-slash mr-2 text-danger" *ngIf="record.masked" [tooltip]="'Masked in the public view' | translate"></i>
+          <i class="fa fa-eye-slash mr-2"
+            [class]="'text-' + (record.masked === 'masked_for_all' ? 'danger' : 'warning')"
+            *ngIf="record.masked && record.masked != 'not_masked'"
+            [tooltip]="record.masked === 'masked_for_all' ? ('Masked for all' | translate) : ('Masked for external IP addresses' | translate)"></i>
           <span [innerHTML]="record.title[0].mainTitle | languageValue | async | nl2br"></span>
           <ng-container *ngIf="record.title[0].subtitle">
             &nbsp;:&nbsp;{{ record.title[0].subtitle | languageValue | async }}</ng-container>
@@ -42,12 +45,14 @@
 
         <h4 class="m-0">
           <ng-container *ngIf="record.organisation">
-            <span class="badge badge-secondary text-light mr-1 font-weight-normal" *ngFor="let organisation of record.organisation">
+            <span class="badge badge-secondary text-light mr-1 font-weight-normal"
+              *ngFor="let organisation of record.organisation">
               {{ organisation.name }}
             </span>
           </ng-container>
           <ng-container *ngIf="record.subdivisions">
-            <span class="badge badge-secondary text-light mr-1 font-weight-normal" *ngFor="let subdivision of record.subdivisions">
+            <span class="badge badge-secondary text-light mr-1 font-weight-normal"
+              *ngFor="let subdivision of record.subdivisions">
               {{ subdivision.name | languageValue | async }}
             </span>
           </ng-container>
