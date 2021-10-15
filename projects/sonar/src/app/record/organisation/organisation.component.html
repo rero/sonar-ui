@@ -15,8 +15,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+
 <h4>
   <a href="#" routerLink="{{ detailUrl.link }}">{{ record.metadata.name }}</a>
 </h4>
 <p class="mb-0"><span class="badge badge-primary">{{ record.metadata.code }}</span></p>
-<p class="mt-2" *ngIf="record.metadata.description" [innerHtml]="record.metadata.description | markdown"></p>
+<p class="mt-2" *ngIf="record.metadata.description">
+  <ng-container *ngFor="let desc of record.metadata.description">
+    <span class="font-weight-bold">{{ 'lang_' + desc.language | translate | ucfirst }}</span>
+    <span [innerHtml]="desc.value | markdown"></span>
+  </ng-container>
+</p>
