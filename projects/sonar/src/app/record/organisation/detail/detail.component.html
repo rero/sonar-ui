@@ -33,6 +33,16 @@
       </dd>
     </ng-container>
 
+    <ng-container *ngIf="record.metadata.footer">
+      <dt class="col-sm-3" translate>Footer</dt>
+      <dd class="col-sm-9">
+        <ng-container *ngFor="let foot of record.metadata.footer">
+          <span class="font-weight-bold">{{ 'lang_' + foot.language | translate | ucfirst }}</span>
+          <span [innerHtml]="foot.value | markdown"></span>
+        </ng-container>
+      </dd>
+    </ng-container>
+
     <dt class="col-sm-3" translate>Is shared</dt>
     <dd class="col-sm-9">
       <i class="fa fa-{{ record.metadata.isShared ? 'check' : 'close' }}"></i>

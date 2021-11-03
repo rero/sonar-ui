@@ -44,7 +44,7 @@
     "@ngx-formly/bootstrap": "^5.10.17",
     "@ngx-formly/core": "^5.10.17",
     "@ngx-translate/core": "^13.0.0",
-    "@rero/ng-core": "^1.13.0",
+    "@rero/ng-core": "^1.14.2",
     "acorn": ">=6.4.1",
     "bootstrap": "^4.6.0",
     "browserslist": ">=4.16.5",
