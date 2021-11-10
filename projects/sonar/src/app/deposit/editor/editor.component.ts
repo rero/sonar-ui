@@ -351,7 +351,7 @@ export class EditorComponent implements OnInit {
       (this.deposit.status === 'in_progress' ||
         this.deposit.status === 'ask_for_changes') &&
       this.currentStep === 'diffusion' &&
-      this.deposit.diffusion
+      this.deposit.diffusion && this.deposit.diffusion.license
     );
   }
 
@@ -665,7 +665,7 @@ export class EditorComponent implements OnInit {
     this.form = new FormGroup({});
 
     if (this.deposit[this.currentStep]) {
-      this.model[this.currentStep] = this.deposit[this.currentStep];
+      this.model[this.currentStep] = {...this.deposit[this.currentStep]};
     }
     this.fields = this._getFormFields(
       depositFields.fieldGroup,
