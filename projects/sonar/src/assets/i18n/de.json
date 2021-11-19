@@ -171,7 +171,7 @@
   "language": "Sprache",
   "masked_for_all": "Ausgeblendet für alle",
   "masked_for_external_ips": "Ausgeblendet für externe IP-Adressen",
-  "mimetype": "MIME type",
+  "mimetype": "MIME-Typ",
   "missing_organisation": "Not affiliated to an organisation",
   "not_masked": "Nicht ausgeblendet",
   "order": "Order",
