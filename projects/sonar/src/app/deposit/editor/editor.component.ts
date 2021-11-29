@@ -665,7 +665,9 @@ export class EditorComponent implements OnInit {
     this.form = new FormGroup({});
 
     if (this.deposit[this.currentStep]) {
-      this.model[this.currentStep] = {...this.deposit[this.currentStep]};
+      this.model[this.currentStep] = this.deposit[this.currentStep] instanceof Array
+      ? [...this.deposit[this.currentStep]]
+      : {...this.deposit[this.currentStep]};
     }
     this.fields = this._getFormFields(
       depositFields.fieldGroup,
