@@ -23,7 +23,17 @@ export const userTestingService = jasmine.createSpyObj('UserService', [
   'loadLoggedUser',
 ]);
 userTestingService.loadLoggedUser.and.returnValue(of({}));
-userTestingService.user$ = of({});
+// userTestingService.user$ = of({});
+userTestingService.user$ = of({
+  organisation: {
+    documentsCustomField1: { includeInFacets: false, label: [
+      { language: 'fre', value: 'Custom fre 1' },
+      { language: 'eng', value: 'Custom eng 1' }
+    ]},
+    documentsCustomField2: { includeInFacets: false },
+    documentsCustomField3: { includeInFacets: false }
+  }
+});
 
 export const depositTestingService = jasmine.createSpyObj('DepositService', [
   'getJsonSchema',

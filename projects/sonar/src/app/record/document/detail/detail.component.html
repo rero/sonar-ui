@@ -226,13 +226,9 @@
 
           <ng-container *ngFor="let i of [1, 2, 3]">
             <ng-container *ngIf="record['customField' + i]">
-              <dt class="col-lg-4"
-                *ngIf="record.organisation && record.organisation[0]['documentsCustomField' + i] && record.organisation[0]['documentsCustomField' + i].label; else noLabel">
-                {{ record.organisation[0]['documentsCustomField' + i].label | languageValue | async }}
+              <dt class="col-lg-4">
+                {{ 'Custom field ' + i | translate }}
               </dt>
-              <ng-template #noLabel>
-                <dt class="col-lg-4">{{ 'Custom field' | translate }} {{ i }}</dt>
-              </ng-template>
               <dd class="col-lg-8">
                 {{ record['customField' + i].join(', ') }}
               </dd>

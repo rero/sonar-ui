@@ -1,18 +1,18 @@
 <!--
- SONAR User Interface
- Copyright (C) 2021 RERO
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, version 3 of the License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  SONAR User Interface
+  Copyright (C) 2021 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <ng-container *ngIf="deposit">
   <sonar-deposit-step [currentStep]="currentStep" [maxStep]="maxStep" [linkPrefix]="linkPrefix" [steps]="steps"
@@ -278,6 +278,18 @@
                 </ul>
               </dd>
             </ng-container>
+
+            <ng-container *ngFor="let i of [1, 2, 3]">
+              <ng-container *ngIf="deposit.metadata['customField' + i]">
+                <dt class="col-sm-3">
+                  {{ 'Custom field ' + i | translate }}
+                </dt>
+                <dd class="col-sm-9">
+                  {{ deposit.metadata['customField' + i].join(', ') }}
+                </dd>
+              </ng-container>
+            </ng-container>
+
           </dl>
         </ng-container>
       </div>
