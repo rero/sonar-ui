@@ -16,12 +16,13 @@
  */
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { FormlyJsonschema } from '@ngx-formly/core/json-schema';
-import { ApiService, DialogService, TranslateService } from '@rero/ng-core';
+import { TranslateService } from '@ngx-translate/core';
+import { ApiService, DialogService } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { combineLatest, EMPTY, of } from 'rxjs';
@@ -36,6 +37,9 @@ import { DepositService } from '../deposit.service';
 export class EditorComponent implements OnInit {
   /** Deposit object */
   deposit: any = null;
+
+  /** Current user */
+  user: any = null;
 
   /** Deposit creation date */
   createdAt: Date;
@@ -110,7 +114,8 @@ export class EditorComponent implements OnInit {
     private _spinner: NgxSpinnerService,
     private _datePipe: DatePipe,
     private _apiService: ApiService,
-    private _httpClient: HttpClient
+    private _httpClient: HttpClient,
+    private _cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -124,13 +129,16 @@ export class EditorComponent implements OnInit {
             this._depositService.getJsonSchema('deposits'),
             this._depositService.get(params.id),
             this._depositService.getFiles(params.id),
+            this._userUservice.user$
           ]);
         })
       )
       .subscribe(
         (result) => {
+          this.user = result[3];
           this.deposit = result[1].metadata;
 
+          this._translateCustomField();
           if (this._depositService.canAccessDeposit(this.deposit) === false) {
             this._router.navigate([
               'deposit',
@@ -147,11 +155,16 @@ export class EditorComponent implements OnInit {
         },
         () => {
           this._toastrService.error(
-            this._translateService.translate('Deposit not found')
+            this._translateService.instant('Deposit not found')
           );
           this._router.navigate(['deposit', '0', 'create']);
         }
       );
+  }
+
+  private _translateCustomField() {
+    this._translateService.set('customField1', 'toto');
+    this._cd.detectChanges();
   }
 
   /**
@@ -200,7 +213,7 @@ export class EditorComponent implements OnInit {
     if (this.deposit.metadata.publication.volume) {
       journal.push(
         [
-          this._translateService.translate('vol.'),
+          this._translateService.instant('vol.'),
           this.deposit.metadata.publication.volume,
         ].join(' ')
       );
@@ -209,7 +222,7 @@ export class EditorComponent implements OnInit {
     if (this.deposit.metadata.publication.number) {
       journal.push(
         [
-          this._translateService.translate('no.'),
+          this._translateService.instant('no.'),
           this.deposit.metadata.publication.number,
         ].join(' ')
       );
@@ -218,7 +231,7 @@ export class EditorComponent implements OnInit {
     if (this.deposit.metadata.publication.pages) {
       journal.push(
         [
-          this._translateService.translate('p.'),
+          this._translateService.instant('p.'),
           this.deposit.metadata.publication.pages,
         ].join(' ')
       );
@@ -265,7 +278,7 @@ export class EditorComponent implements OnInit {
 
     if (this.deposit.metadata.dissertation.jury_note) {
       dissertation.push(
-        ` (${this._translateService.translate('Jury note').toLowerCase()}: ${
+        ` (${this._translateService.instant('Jury note').toLowerCase()}: ${
           this.deposit.metadata.dissertation.jury_note
         })`
       );
@@ -320,7 +333,7 @@ export class EditorComponent implements OnInit {
 
     if (this.form.valid === false) {
       this._toastrService.error(
-        this._translateService.translate('The form contains errors')
+        this._translateService.instant('The form contains errors')
       );
       return;
     }
@@ -333,7 +346,7 @@ export class EditorComponent implements OnInit {
       .subscribe((result: any) => {
         if (result) {
           this._toastrService.success(
-            this._translateService.translate('Deposit saved')
+            this._translateService.instant('Deposit saved')
           );
 
           if (this.currentStep !== this.steps[this.steps.length - 1]) {
@@ -378,13 +391,13 @@ export class EditorComponent implements OnInit {
       .show({
         ignoreBackdropClick: true,
         initialState: {
-          title: this._translateService.translate('Confirmation'),
-          body: this._translateService.translate(
+          title: this._translateService.instant('Confirmation'),
+          body: this._translateService.instant(
             'Do you really want to publish this document ?'
           ),
           confirmButton: true,
-          confirmTitleButton: this._translateService.translate('OK'),
-          cancelTitleButton: this._translateService.translate('Cancel'),
+          confirmTitleButton: this._translateService.instant('OK'),
+          cancelTitleButton: this._translateService.instant('Cancel'),
         },
       })
       .pipe(
@@ -413,13 +426,13 @@ export class EditorComponent implements OnInit {
       .show({
         ignoreBackdropClick: true,
         initialState: {
-          title: this._translateService.translate('Confirmation'),
-          body: this._translateService.translate(
+          title: this._translateService.instant('Confirmation'),
+          body: this._translateService.instant(
             'Do you really want to extract metadata from PDF and overwrite current data ?'
           ),
           confirmButton: true,
-          confirmTitleButton: this._translateService.translate('OK'),
-          cancelTitleButton: this._translateService.translate('Cancel'),
+          confirmTitleButton: this._translateService.instant('OK'),
+          cancelTitleButton: this._translateService.instant('Cancel'),
         },
       })
       .pipe(
@@ -444,7 +457,7 @@ export class EditorComponent implements OnInit {
 
           const currentTitle =
             this.deposit.metadata.title ||
-            this._translateService.translate('Deposit #ID', {
+            this._translateService.instant('Deposit #ID', {
               id: this.deposit.pid,
             });
 
@@ -488,7 +501,7 @@ export class EditorComponent implements OnInit {
         if (result !== false) {
           this._createForm(result);
           this._toastrService.success(
-            this._translateService.translate('Data imported successfully')
+            this._translateService.instant('Data imported successfully')
           );
         }
       });
@@ -650,7 +663,7 @@ export class EditorComponent implements OnInit {
                 return true;
               },
               message: (error: any, field: FormlyFieldConfig) =>
-                this._translateService.translate(
+                this._translateService.instant(
                   'The format is not valid for this type of identifier.'
                 ),
             },

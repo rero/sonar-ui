@@ -22,7 +22,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
+import { CoreConfigService, RecordModule } from '@rero/ng-core';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -32,6 +32,7 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { ToastrModule } from 'ngx-toastr';
 import { AppConfigService } from './app-config.service';
 import { AppRoutingModule } from './app-routing.module';
+import { AppTranslateLoader } from './app-translate-loader';
 import { AppComponent } from './app.component';
 import { FileLinkPipe } from './core/file-link.pipe';
 import { FileSizePipe } from './core/filesize.pipe';
@@ -63,6 +64,7 @@ import { DetailComponent as SubdivisionDetailComponent } from './record/subdivis
 import { DetailComponent as UserDetailComponent } from './record/user/detail/detail.component';
 import { UserComponent } from './record/user/user.component';
 import { ValidationComponent } from './record/validation/validation.component';
+import { UserService } from './user.service';
 import { AdminComponent } from './_layout/admin/admin.component';
 
 export function minElementError(err: any, field: FormlyFieldConfig) {
@@ -115,8 +117,8 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     TranslateModule.forRoot({
       loader: {
         provide: BaseTranslateLoader,
-        useClass: TranslateLoader,
-        deps: [CoreConfigService, HttpClient]
+        useClass: AppTranslateLoader,
+        deps: [CoreConfigService, HttpClient, UserService]
       }
     }),
     ReactiveFormsModule,
