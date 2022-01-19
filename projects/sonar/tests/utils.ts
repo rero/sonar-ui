@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 import { AppModule } from '../src/app/app.module';
 import { DepositService } from '../src/app/deposit/deposit.service';
@@ -45,7 +46,7 @@ depositTestingService.getFiles.and.returnValue(of({}));
 depositTestingService.get.and.returnValue(of({}));
 
 export const mockedConfiguration = {
-  imports: [AppModule],
+  imports: [AppModule, HttpClientTestingModule],
   providers: [
     { provide: UserService, useValue: userTestingService },
     { provide: DepositService, useValue: depositTestingService },

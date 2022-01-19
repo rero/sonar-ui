@@ -14,57 +14,32 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  LangChangeEvent,
-  TranslateService as NgxTranslateService
-} from '@ngx-translate/core';
-import { TranslateService } from '@rero/ng-core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslateService as CoreTranslateService } from '@rero/ng-core';
 
 @Component({
   selector: 'sonar-root',
   templateUrl: './app.component.html',
 })
-export class AppComponent implements OnDestroy, OnInit {
-  // Change language subscription.
-  private _changeLanguageSubscription: Subscription;
+export class AppComponent implements OnInit {
 
   /**
    * Constructor.
-   *
-   * @param _translateService Translate service.
-   * @param _ngxTranslateService NgxTranslateService.
+   * @param _translateService TranslateService.
    */
   constructor(
     private _translateService: TranslateService,
-    private _ngxTranslateService: NgxTranslateService,
-    private _httpClient: HttpClient
+    private _coreTranslateService: CoreTranslateService
   ) {}
 
   /**
    * Component init hook.
    */
   ngOnInit() {
-    this._changeLanguageSubscription =
-      this._ngxTranslateService.onLangChange.subscribe(
-        (event: LangChangeEvent) => {
-          // Change the language in flask application. Mandatory to set the responseType
-          // as `text` to avoid an error in the response.
-          this._httpClient
-            .get(`/lang/${event.lang}`, { responseType: 'text' })
-            .subscribe();
-        }
-      );
-
-    this._translateService.setLanguage(document.documentElement.lang || 'en');
+    const lang = document.documentElement.lang || 'en';
+    this._translateService.use(lang);
+    this._coreTranslateService.setLanguage(lang);
   }
 
-  /**
-   * Component destruction hook.
-   */
-  ngOnDestroy() {
-    this._changeLanguageSubscription.unsubscribe();
-  }
 }
