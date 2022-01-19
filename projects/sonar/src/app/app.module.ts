@@ -119,7 +119,8 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
         provide: BaseTranslateLoader,
         useClass: AppTranslateLoader,
         deps: [CoreConfigService, HttpClient, UserService]
-      }
+      },
+      defaultLanguage: 'en'
     }),
     ReactiveFormsModule,
     BrowserAnimationsModule,

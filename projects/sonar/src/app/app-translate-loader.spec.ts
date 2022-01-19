@@ -104,11 +104,11 @@ describe('AppTranslateLoader', () => {
     });
   });
 
-  it('should return the unmodified german translation dictionary', () => {
+  it('should return the modified german translation dictionary with the first value in the custom array', () => {
     translateService.use('de');
     appTranslateLoader.getTranslation('de').subscribe((dict: any) => {
       const customF1Key = 'Custom field 1';
-      expect(dict[customF1Key]).toBe('Custom field 1');
+      expect(dict[customF1Key]).toBe('Custom fre 1');
     });
   });
 });

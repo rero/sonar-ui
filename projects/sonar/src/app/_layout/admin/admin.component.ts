@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -50,7 +51,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     private _spinner: NgxSpinnerService,
     private _userService: UserService,
     private _configService: AppConfigService,
-    private _translateService: TranslateService
+    private _translateService: TranslateService,
+    private _httpClient: HttpClient
   ) {}
 
   get currentLanguage(): string {
@@ -112,5 +114,17 @@ export class AdminComponent implements OnInit, OnDestroy {
    */
   changeLanguage(languageCode: string) {
     this._translateService.setLanguage(languageCode);
+    this._changeFlaskLanguage(languageCode);
+  }
+
+  /**
+   * Change language on frontend flask.
+   *
+   * @param languageCode 2 digit language code.
+   */
+  private _changeFlaskLanguage(languageCode: string): void {
+    this._httpClient
+      .get(`/lang/${languageCode}`, { responseType: 'text' })
+        .subscribe();
   }
 }
