@@ -59,11 +59,17 @@ export class AppTranslateLoader extends NgCoreTranslateLoader {
             (mapping: {code: string, bibCode: string}) => mapping.code === lang
           ).bibCode;
           [1, 2, 3].forEach((id: number) => {
-            const label = user.organisation['documentsCustomField' + id].label;
-            if (label) {
+            const key = `documentsCustomField${id}`;
+            if ((key in user.organisation) && ('label' in user.organisation[key])) {
+              const label = user.organisation[key].label;
               const entry = label.find((lab: any) => lab.language === bibLanguage);
+              const customKey = `Custom field ${id}`;
               if (entry) {
-                translation['Custom field ' + id] = entry.value;
+                translation[customKey] = entry.value;
+              } else {
+                // If we do not have a value for the selected language,
+                // we take the first value in the array.
+                translation[customKey] = label[0].value;
               }
             }
           });
