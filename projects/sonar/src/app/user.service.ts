@@ -31,23 +31,25 @@ export class UserService {
   private _user: any = null;
 
   /**
-   * Constructor.
-   *
+   * Constructor
    * @param _apiService API service.
    * @param _http HTTP client.
    */
-  constructor(private _apiService: ApiService, private _http: HttpClient) {
-    this.loadLoggedUser().subscribe();
-  }
+  constructor(private _apiService: ApiService, private _http: HttpClient) {}
 
+  /**
+   * Get user observable
+   * @return observable of user
+   */
   get user$(): Observable<any> {
     return this._userSubject.asObservable();
   }
 
   /**
    * Load logged user in backend
+   * @return Observable of user
    */
-  loadLoggedUser(resolve: boolean = true) {
+  loadLoggedUser(resolve: boolean = true): Observable<any> {
     return this._http
       .get<any>(`${this._apiService.baseUrl}/logged-user/${resolve ? '?resolve=1' : ''}`)
       .pipe(
@@ -60,6 +62,7 @@ export class UserService {
             this._user = user.metadata;
             this._userSubject.next(user.metadata);
           }
+          return user;
         })
       );
   }
@@ -100,9 +103,10 @@ export class UserService {
 
   /**
    * Check if user reference is corresonding to logged user id.
-   * @param reference User JSON endpoint reference
+   * @param reference User JSON endpoint reference.
+   * @return true if the reference is the same user.
    */
-  checkUserReference(reference: string) {
+  checkUserReference(reference: string): boolean {
     const result = /[0-9]+$/.exec(reference);
 
     if (result === null) {
@@ -114,23 +118,28 @@ export class UserService {
 
   /**
    * Check if given PID is the same as logged user.
-   * @param pid User PID to check against logged user
+   * @param pid User PID to check against logged user.
+   * @return true if logged user has the same PID.
    */
   checkUserPid(pid: string): boolean {
     return this._user.pid === pid;
   }
 
   /**
+   * Check if the current user is on dedicated organisation.
+   * @return true if the organisation is dedicated.
+   */
+  isDedecatedOrganisation(): boolean {
+    return 'isDedicated' in this._user.organisation
+      && this._user.organisation.isDedicated;
+  }
+
+  /**
    * Return the link to public interface, depending on user's organisation.
-   *
    * @returns Link to public interface.
    */
    getPublicInterfaceLink(): string {
-    if (
-      this._user &&
-      this._user.organisation &&
-      this._user.organisation.isDedicated
-    ) {
+    if (this.isDedecatedOrganisation()) {
       return `/${this._user.organisation.code}`;
     }
 
