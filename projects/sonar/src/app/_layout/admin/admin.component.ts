@@ -55,6 +55,25 @@ export class AdminComponent implements OnInit, OnDestroy {
     private _httpClient: HttpClient
   ) {}
 
+  /**
+   * Administration menu entries
+   *
+   * @returns List of available entries in the admin menu.
+   */
+  get administrationMenu(): string[] {
+    let sections = ['collections', 'organisations', 'subdivisions', 'users'];
+    /** Delete menu entries if the organization is shared */
+    if (!(this._userService.isDedecatedOrganisation())) {
+      sections = ['organisations', 'users'];
+    }
+    return sections;
+  }
+
+  /**
+   * Get current language
+   *
+   * @returns current language.
+   */
   get currentLanguage(): string {
     return this._translateService.currentLanguage;
   }

@@ -197,7 +197,7 @@ export class AppRoutingModule {
       return ProjectDetailComponent;
     }));
 
-    const recordsRoutesConfiguration = [
+    let recordsRoutesConfiguration = [
       {
         type: 'documents',
         briefView: DocumentComponent,
@@ -398,45 +398,55 @@ export class AppRoutingModule {
       }
     ];
 
-    recordsRoutesConfiguration.forEach((config: any) => {
-      const route = {
-        matcher: (url: any) => this._routeMatcher(url, config.type),
-        canActivate: [RoleGuard],
-        children: [
-          { path: '', component: RecordSearchPageComponent },
-          { path: 'detail/:pid', component: DetailComponent },
-          { path: 'edit/:pid', component: EditorComponent },
-          { path: 'new', component: EditorComponent, canActivate: [CanAddGuard] }
-        ],
-        data: {
-          role: 'submitter',
-          showSearchInput: true,
-          types: [
-            {
-              key: config.type,
-              label: config.label || config.type.charAt(0).toUpperCase() + config.type.slice(1),
-              component: config.briefView || null,
-              editorSettings: config.editorSettings || false,
-              detailComponent: config.detailView || null,
-              aggregations: config.aggregations || null,
-              aggregationsExpand: config.aggregationsExpand || [],
-              aggregationsOrder: config.aggregationsOrder || [],
-              aggregationsBucketSize: 10,
-              files: config.files || null,
-              searchFields: config.searchFields || null,
-              recordResource: config.recordResource || null,
-              exportFormats: config.exportFormats || null,
-              sortOptions: config.sortOptions || null,
-              canAdd: () => this._can(config.type, 'add'),
-              canUpdate: (record: any) => this._can(config.type, 'update', record),
-              canDelete: (record: any) => this._can(config.type, 'delete', record),
-              canRead: (record: any) => this._can(config.type, 'read', record)
-            }
-          ]
+    this._userService.user$.subscribe((user) => {
+      if (user) {
+        /** Removes collections and subdivisions routes on the organisation shared */
+        if (!('isDedicated' in user.organisation) || !(user.organisation.isDedicated)) {
+          recordsRoutesConfiguration =  recordsRoutesConfiguration
+          .filter(route => !(['collections', 'subdivisions'].includes(route.type)));
         }
-      };
 
-      this._router.config[0].children.push(route);
+        recordsRoutesConfiguration.forEach((config: any) => {
+          const route = {
+            matcher: (url: any) => this._routeMatcher(url, config.type),
+            canActivate: [RoleGuard],
+            children: [
+              { path: '', component: RecordSearchPageComponent },
+              { path: 'detail/:pid', component: DetailComponent },
+              { path: 'edit/:pid', component: EditorComponent },
+              { path: 'new', component: EditorComponent, canActivate: [CanAddGuard] }
+            ],
+            data: {
+              role: 'submitter',
+              showSearchInput: true,
+              types: [
+                {
+                  key: config.type,
+                  label: config.label || config.type.charAt(0).toUpperCase() + config.type.slice(1),
+                  component: config.briefView || null,
+                  editorSettings: config.editorSettings || false,
+                  detailComponent: config.detailView || null,
+                  aggregations: config.aggregations || null,
+                  aggregationsExpand: config.aggregationsExpand || [],
+                  aggregationsOrder: config.aggregationsOrder || [],
+                  aggregationsBucketSize: 10,
+                  files: config.files || null,
+                  searchFields: config.searchFields || null,
+                  recordResource: config.recordResource || null,
+                  exportFormats: config.exportFormats || null,
+                  sortOptions: config.sortOptions || null,
+                  canAdd: () => this._can(config.type, 'add'),
+                  canUpdate: (record: any) => this._can(config.type, 'update', record),
+                  canDelete: (record: any) => this._can(config.type, 'delete', record),
+                  canRead: (record: any) => this._can(config.type, 'read', record)
+                }
+              ]
+            }
+          };
+
+          this._router.config[0].children.push(route);
+        });
+      }
     });
   }
 

@@ -16,7 +16,7 @@
  */
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -31,6 +31,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { ToastrModule } from 'ngx-toastr';
 import { AppConfigService } from './app-config.service';
+import { AppInitializerService } from './app-initializer.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppTranslateLoader } from './app-translate-loader';
 import { AppComponent } from './app.component';
@@ -66,6 +67,10 @@ import { UserComponent } from './record/user/user.component';
 import { ValidationComponent } from './record/validation/validation.component';
 import { UserService } from './user.service';
 import { AdminComponent } from './_layout/admin/admin.component';
+
+export function appInitializerFactory(appInitializerService: AppInitializerService): () => Promise<any> {
+  return () => appInitializerService.initialize().toPromise();
+}
 
 export function minElementError(err: any, field: FormlyFieldConfig) {
   return `This field must contain at least ${field.templateOptions.minItems} element.`;
@@ -137,6 +142,15 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     {
       provide: CoreConfigService,
       useClass: AppConfigService
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializerFactory,
+      deps: [
+        AppInitializerService,
+        UserService
+      ],
+      multi: true
     },
     BsLocaleService,
     DatePipe
