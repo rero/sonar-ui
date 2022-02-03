@@ -1,5 +1,15 @@
 # Changelog
 
+## [v1.4.2](https://github.com/rero/sonar-ui/tree/v1.4.2) (2022-02-03)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v1.4.1...v1.4.2)
+
+**Merged pull requests:**
+
+- organisation: show personalized facets on detail view [\#281](https://github.com/rero/sonar-ui/pull/281) ([Garfield-fr](https://github.com/Garfield-fr))
+- interface: instability of the interface language [\#280](https://github.com/rero/sonar-ui/pull/280) ([Garfield-fr](https://github.com/Garfield-fr))
+- deposit: allow custom fields to be entered on submission [\#276](https://github.com/rero/sonar-ui/pull/276) ([Garfield-fr](https://github.com/Garfield-fr))
+
 ## [v1.4.1](https://github.com/rero/sonar-ui/tree/v1.4.1) (2021-12-02)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.4.0...v1.4.1)
