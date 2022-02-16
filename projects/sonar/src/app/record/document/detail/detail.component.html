@@ -1,18 +1,18 @@
 <!--
- SONAR User Interface
- Copyright (C) 2021 RERO
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, version 3 of the License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  SONAR User Interface
+  Copyright (C) 2021 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <ng-container *ngIf="record">
   <section class="mt-3">
@@ -64,10 +64,7 @@
             <ng-container *ngFor="let contributor of filteredContributors">
               <li>
                 {{ contributor.text }}
-                <sonar-record-identifier [type]="contributor.agent.identifiedBy.type"
-                  [value]="contributor.agent.identifiedBy.value" [source]="contributor.agent.identifiedBy.source"
-                  *ngIf="contributor.agent.identifiedBy">
-                </sonar-record-identifier>
+                <sonar-record-identifier *ngIf="contributor.agent.identifiedBy" type="agent" [data]="contributor.agent.identifiedBy"></sonar-record-identifier>
                 <ng-container *ngIf="contributor.affiliation">
                   <small class="ml-1" *ngIf="contributor.controlledAffiliation; else affiliation"
                     [tooltip]="contributor.controlledAffiliation | join:' ; '">
@@ -204,9 +201,7 @@
             </dt>
             <dd class="col-lg-6">
               <p class="m-0" *ngFor="let identifier of record.identifiedBy">
-                <sonar-record-identifier [type]="identifier.type" [value]="identifier.value"
-                  [source]="identifier.source">
-                </sonar-record-identifier>
+                <sonar-record-identifier type="identifiedBy" [data]="identifier"></sonar-record-identifier>
               </p>
             </dd>
           </ng-container>

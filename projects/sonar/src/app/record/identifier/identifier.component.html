@@ -1,29 +1,49 @@
 <!--
- SONAR User Interface
- Copyright (C) 2021 RERO
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, version 3 of the License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
+  SONAR User Interface
+  Copyright (C) 2021 RERO
 
-<ng-container *ngIf="isSourceOrcid === false; else orcid">
-  <span class="badge badge-secondary text-light mr-1">{{ badgeValue }}</span>
-  <ng-container *ngIf="type === 'bf:Doi'; else simpleValue">
-    <a href="https://doi.org/{{ value }}" target="_blank">{{ value }}</a>
-  </ng-container>
-  <ng-template #simpleValue>{{ value }}</ng-template>
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<ng-container *ngVar="identifier">
+  <container-element [ngSwitch]="identifier.field">
+    <!-- Type: identifiedBy -->
+    <some-element *ngSwitchCase="'identifiedBy'">
+      <span class="badge badge-secondary text-light mr-1">{{ (identifier.source ? identifier.source : identifier.type|translate)|uppercase }}</span>
+      <ng-container *ngIf="identifier.link; else noLink">
+        <a href="{{ identifier.link }}" title="{{ externalLinkText }}" target="_blank">{{ identifier.value }}</a>
+      </ng-container>
+      <ng-template #noLink>
+        <ng-container *ngIf="identifier.value.startsWith('http'); else valueOnly">
+          <a href="{{ identifier.value }}" title="{{ externalLinkText }}" target="_blank">{{ identifier.value }}</a>
+        </ng-container>
+        <ng-template #valueOnly>
+          {{ identifier.value }}
+        </ng-template>
+      </ng-template>
+    </some-element>
+
+    <!-- Type: agent -->
+    <some-element *ngSwitchCase="'agent'">
+      <ng-container *ngIf="identifier.link; else agentNoLink">
+        <a class="badge badge-secondary text-light mr-1" title="{{ externalLinkText }}" href="{{ identifier.link }}">{{ (identifier.source ? identifier.source : identifier.type|translate)|uppercase }}</a>
+      </ng-container>
+      <ng-template #agentNoLink>
+        <span class="badge badge-secondary text-light mr-1">{{ (identifier.source ? identifier.source : identifier.type|translate)|uppercase }}</span>
+      </ng-template>
+    </some-element>
+
+    <some-element *ngSwitchDefault>
+      {{ identifier.value }}
+    </some-element>
+  </container-element>
 </ng-container>
-<ng-template #orcid>
-  <a [href]="'https://orcid.org/' + value" target="_blank" class="badge badge-secondary text-light mx-1">
-    ORCID
-  </a>
-</ng-template>

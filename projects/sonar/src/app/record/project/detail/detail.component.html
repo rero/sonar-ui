@@ -1,18 +1,18 @@
 <!--
- SONAR User Interface
- Copyright (C) 2021 RERO
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, version 3 of the License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  SONAR User Interface
+  Copyright (C) 2021 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <ng-container *ngIf="record$ | async as record">
   <h1 class="mb-4">{{ record.metadata.name }}</h1>
@@ -34,8 +34,7 @@
     <ng-container *ngIf="record.metadata.identifiedBy">
       <dt class="col-sm-3" translate>Identifier</dt>
       <dd class="col-sm-9">
-        <sonar-record-identifier [type]="record.metadata.identifiedBy.type" [value]="record.metadata.identifiedBy.value"
-          [source]="record.metadata.identifiedBy.source"></sonar-record-identifier>
+        <sonar-record-identifier type="identifiedBy" [data]="record.metadata.identifiedBy"></sonar-record-identifier>
       </dd>
     </ng-container>
 
@@ -48,8 +47,7 @@
             *ngFor="let role of investigator.role; let last = last;">{{ role | translate }}<ng-container *ngIf="!last">
               ,&nbsp;</ng-container>
           </ng-container>)
-          <sonar-record-identifier [type]="investigator.identifiedBy.type" [value]="investigator.identifiedBy.value"
-            [source]="investigator.identifiedBy.source" *ngIf="investigator.identifiedBy">
+          <sonar-record-identifier type="identifiedBy" [data]="investigator.identifiedBy" *ngIf="investigator.identifiedBy">
           </sonar-record-identifier>
           <ng-container *ngIf="investigator.affiliation">
             <small class="ml-1" *ngIf="investigator.controlledAffiliation; else affiliation"
@@ -72,9 +70,8 @@
       <dd class="col-sm-9">
         <p class="m-0" *ngFor="let funding_organisation of record.metadata.funding_organisations">
           {{ funding_organisation.agent.preferred_name }}
-          <sonar-record-identifier [type]="funding_organisation.identifiedBy.type"
-            [value]="funding_organisation.identifiedBy.value" [source]="funding_organisation.identifiedBy.source"
-            *ngIf="funding_organisation.identifiedBy">
+          <sonar-record-identifier type="identifiedBy"
+            [data]="funding_organisation.identifiedBy" *ngIf="funding_organisation.identifiedBy">
           </sonar-record-identifier>
         </p>
       </dd>

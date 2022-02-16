@@ -48,6 +48,8 @@ export class AppConfigService extends CoreConfigService {
     },
   ];
 
+  settings: { document_identifier_link: any } | null;
+
   /**
    * Constructor.
    */

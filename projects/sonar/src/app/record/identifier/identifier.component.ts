@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, Input } from '@angular/core';
-import { TranslateService } from '@rero/ng-core';
+import { Component, Input, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { AppConfigService } from '../../app-config.service';
 
 /**
  * Component that display an identifier.
@@ -24,50 +25,67 @@ import { TranslateService } from '@rero/ng-core';
   selector: 'sonar-record-identifier',
   templateUrl: './identifier.component.html',
 })
-export class IdentifierComponent {
-  /** Type of identifier (local, DOI, ...) */
+export class IdentifierComponent implements OnInit {
+  /** Type of field (agent, identifiedBy) */
   @Input()
   type: string;
 
-  /** Identifier value */
+  /** Identifier values */
   @Input()
-  value: string;
+  data: { type: string, value: string, source?: string };
 
-  /** Identifier source */
-  @Input()
-  source: string;
+  /** Processed identifier */
+  private _identifier: Identifier;
+
+  /** Return processed identifier data */
+  get identifier(): Identifier {
+    return this._identifier;
+  }
+
+  /** Return the title link for external url */
+  get externalLinkText(): string {
+    return this._translateService.instant('External link to the source');
+  }
 
   /**
    * Constructor.
    *
-   * @param _translateService: Translate service.
+   * @param _appConfigService: AppConfigService
+   * @param _translateService: TranslateService
    */
-  constructor(private _translateService: TranslateService) {}
+  constructor(
+    private _appConfigService: AppConfigService,
+    private _translateService: TranslateService
+  ) {}
 
-  /**
-   * Return the value to display in the badge
-   *
-   * @returns String value displayed in the badge
-   */
-  get badgeValue(): string {
-    if (this.type == null) {
-      throw new Error('Type cannot not be empty');
-    }
-
-    return this.type === 'bf:Local'
-      ? this.source
-      : this._translateService.translate(this.type);
+  /** OnInit Hook */
+  ngOnInit(): void {
+    this._processData();
   }
 
-  /**
-   * Check if source is set to ORCID.
-   *
-   * @returns True if source is set to ORCID.
-   */
-  get isSourceOrcid(): boolean {
-    if (this.source == null) {
-      return false;
+  /** Process data */
+  private _processData(): void {
+    const settings = this._appConfigService.settings.document_identifier_link;
+    this._identifier = {
+      field: this.type,
+      type: this.data.type,
+      value: this.data.value
+    };
+    if (this.data.type in settings) {
+      const source = this.data.source ? this.data.source.toLowerCase() : 'default';
+      this._identifier.source = this.data.source;
+      if (source in settings[this.data.type]) {
+        this._identifier.link = settings[this.data.type][source]
+          .replace('_identifier_', this.data.value);
+      }
     }
-    return this.source.toLowerCase() === 'orcid';
   }
+}
+
+interface Identifier {
+  field: string;
+  type: string;
+  value: string;
+  source?: string;
+  link?: string;
 }

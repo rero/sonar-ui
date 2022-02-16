@@ -18,11 +18,21 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
+import { AppConfigService } from '../../app-config.service';
 import { IdentifierComponent } from './identifier.component';
 
 describe('IdentifierComponent', () => {
   let component: IdentifierComponent;
   let fixture: ComponentFixture<IdentifierComponent>;
+
+  const appConfigServiceSpy = jasmine.createSpyObj('AppConfigService', ['']);
+  appConfigServiceSpy.settings = {
+    document_identifier_link: {
+      'bf:Local': {
+        swisscovery: 'https://link_to_swisscovery'
+      }
+    }
+  };
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -37,6 +47,9 @@ describe('IdentifierComponent', () => {
         }),
         HttpClientModule,
         RecordModule
+      ],
+      providers: [
+        { provide: AppConfigService, useValue: appConfigServiceSpy }
       ]
     })
     .compileComponents();
@@ -45,7 +58,12 @@ describe('IdentifierComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(IdentifierComponent);
     component = fixture.componentInstance;
-    component.type = 'bf:Local';
+    component.type = 'identifiedBy';
+    component.data = {
+      type: 'bf:Local',
+      value: '0000-1111111',
+      source: 'swisscovery'
+    };
     fixture.detectChanges();
   });
 
