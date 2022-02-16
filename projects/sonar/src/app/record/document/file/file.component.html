@@ -50,8 +50,7 @@
         </ng-template>
       </ng-template>
     </ng-template>
-    <div class="my-1 small" *ngIf="showLabel">{{ file.label }}</div>
-    <div class="my-1">
+    <div class="my-2">
       <span class="badge badge-secondary text-light" *ngIf="file.restriction && file.restriction.restricted && file.restriction.date">
         {{ 'Public access from' | translate }}<br>{{ file.restriction.date }}
       </span>
