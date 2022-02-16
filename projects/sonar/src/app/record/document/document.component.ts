@@ -42,6 +42,13 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
   // Subscription to observables, used to unsubscribe to all at the same time.
   private _subscription: Subscription = new Subscription();
 
+  // is a global view
+  // Admin interface: view is null
+  get isGlobalView(): boolean {
+    return this._configService.view === null
+      || this._configService.view === this._configService.globalviewName;
+  }
+
   /**
    * Constructor.
    *
@@ -56,7 +63,7 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
   /**
    * Component initialization.
    */
-  ngOnInit() {
+  ngOnInit(): void {
     // Initialize and sort contributors
     if (!this.record.metadata.contribution) {
       this.record.metadata.contribution = [];
@@ -79,7 +86,7 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
    *
    * Unsubscribe from subscribers.
    */
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
 
@@ -99,7 +106,7 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
   /**
    * Sort contributors by given priorities array constant.
    */
-  private _sortContributors() {
+  private _sortContributors(): void {
     this.record.metadata.contribution = this.record.metadata.contribution.sort(
       (a: any, b: any) => {
         const aIndex = SORT_CONTRIBUTOR_PRIORITY.findIndex(
@@ -116,7 +123,7 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
     );
   }
 
-  private _storeAbstract() {
+  private _storeAbstract(): void {
     if (
       !this.record.metadata.abstracts ||
       this.record.metadata.abstracts.length === 0

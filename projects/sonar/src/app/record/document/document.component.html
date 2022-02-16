@@ -54,7 +54,7 @@
       </ng-template>
     </h4>
     <p class="mt-0 mb-1">
-      <ng-container *ngIf="record.metadata.organisation">
+      <ng-container *ngIf="isGlobalView && record.metadata.organisation">
         <span class="badge badge-secondary text-light mr-1" *ngFor="let organisation of record.metadata.organisation">
           {{ organisation.name }}
         </span>

@@ -62,13 +62,13 @@ export class DetailComponent implements OnDestroy, OnInit {
   /**
    * Constructor.
    *
-   * @param _configSservice Config service.
+   * @param _configService Config service.
    * @param _translateService Translate service.
    * @param _sanitizer DOM sanitizer.
    * @param _modalService Modal service.
    */
   constructor(
-    private _configSservice: AppConfigService,
+    private _configService: AppConfigService,
     private _translateService: TranslateService,
     private _sanitizer: DomSanitizer,
     private _modalService: BsModalService
@@ -285,11 +285,11 @@ export class DetailComponent implements OnDestroy, OnInit {
       return;
     }
 
-    const firstLanguage = this._configSservice.languagesMap.find(
+    const firstLanguage = this._configService.languagesMap.find(
       (item) => item.code === this._translateService.currentLang
     );
     const languagesPriorities = [firstLanguage].concat(
-      this._configSservice.languagesMap
+      this._configService.languagesMap
     );
 
     this.record.abstracts = this.record.abstracts.sort((a: any, b: any) => {

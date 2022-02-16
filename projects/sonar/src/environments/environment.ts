@@ -23,6 +23,7 @@ export const environment = {
   production: false,
   apiBaseUrl: '',
   $refPrefix: 'https://sonar.ch',
+  globalViewName: 'global',
   languages: ['fr', 'de', 'it', 'en'],
   translationsURLs: [
     '/assets/i18n/${lang}.json',

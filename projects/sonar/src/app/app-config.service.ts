@@ -22,6 +22,12 @@ import { environment } from '../environments/environment';
   providedIn: 'root',
 })
 export class AppConfigService extends CoreConfigService {
+
+  // Current view code
+  view: string | null;
+
+  globalviewName: string;
+
   // Languages map.
   languagesMap = [
     {
@@ -50,6 +56,7 @@ export class AppConfigService extends CoreConfigService {
     this.production = environment.production;
     this.apiBaseUrl = environment.apiBaseUrl;
     this.$refPrefix = environment.$refPrefix;
+    this.globalviewName = environment.globalViewName;
     this.languages = environment.languages;
     this.schemaFormEndpoint = '/schemas';
     this.translationsURLs = environment.translationsURLs;
