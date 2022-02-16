@@ -19,6 +19,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '@rero/ng-core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { AppConfigService } from './app-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +35,15 @@ export class UserService {
    * Constructor
    * @param _apiService API service.
    * @param _http HTTP client.
+   * @param _appConfigService App Config Service.
    */
-  constructor(private _apiService: ApiService, private _http: HttpClient) {}
+  constructor(
+    private _apiService: ApiService,
+    private _http: HttpClient,
+    private _appConfigService: AppConfigService)
+  {
+    this.loadLoggedUser().subscribe();
+  }
 
   /**
    * Get user observable
@@ -62,7 +70,9 @@ export class UserService {
             this._user = user.metadata;
             this._userSubject.next(user.metadata);
           }
-          return user;
+          if (user.settings) {
+            this._appConfigService.settings = user.settings;
+          }
         })
       );
   }
