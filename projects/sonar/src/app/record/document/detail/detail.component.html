@@ -109,7 +109,8 @@
 
         <!-- PART OF -->
         <div class="d-flex flex-row mb-3" *ngIf="record.partOf && record.partOf.length > 0">
-          <div class="mr-1"><strong>{{ 'Published in' | translate }}:</strong></div>
+          <!-- Type preprint (coar:c_816b): "Submitted to" other "Published in" -->
+          <div class="mr-1"><strong>{{ (record.documentType !== 'coar:c_816b' ? 'Published in' : 'Submitted to') | translate }}:</strong></div>
           <div class="">
             <ul class="list-unstyled mb-0">
               <li *ngFor="let partOf of record.partOf">

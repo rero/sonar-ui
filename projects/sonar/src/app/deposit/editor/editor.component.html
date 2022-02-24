@@ -133,7 +133,9 @@
             </ng-container>
 
             <ng-container *ngIf="deposit.metadata.publication && deposit.metadata.publication.publishedIn">
-              <dt class="col-sm-3" translate>Publication</dt>
+              <dt class="col-sm-3" translate>
+                {{ (deposit.metadata.documentType !== 'coar:c_816b' ? 'Published in' : 'Submitted to') | translate }}
+              </dt>
               <dd class="col-sm-9">
                 {{ publication }}
                 <dl class="row m-0 no-gutters"
