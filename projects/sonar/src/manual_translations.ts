@@ -47,3 +47,7 @@ _('step_diffusion');
 _('not_masked');
 _('masked_for_external_ips');
 _('masked_for_all');
+
+// Document and deposit
+_('Submitted to');
+_('Published in');
