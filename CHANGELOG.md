@@ -1,5 +1,18 @@
 # Changelog
 
+## [v1.4.3](https://github.com/rero/sonar-ui/tree/v1.4.3) (2022-03-10)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v1.4.2...v1.4.3)
+
+**Merged pull requests:**
+
+- documentation: improve changelog generation [\#299](https://github.com/rero/sonar-ui/pull/299) ([PascalRepond](https://github.com/PascalRepond))
+- document and preprint: label change for preprint [\#296](https://github.com/rero/sonar-ui/pull/296) ([Garfield-fr](https://github.com/Garfield-fr))
+- documents: add a configuration for links on identifiers [\#294](https://github.com/rero/sonar-ui/pull/294) ([Garfield-fr](https://github.com/Garfield-fr))
+- documents: hide label file in the detailed view [\#293](https://github.com/rero/sonar-ui/pull/293) ([Garfield-fr](https://github.com/Garfield-fr))
+- documents: remove organisation tag [\#292](https://github.com/rero/sonar-ui/pull/292) ([Garfield-fr](https://github.com/Garfield-fr))
+- menu: remove entries on administration menu [\#286](https://github.com/rero/sonar-ui/pull/286) ([Garfield-fr](https://github.com/Garfield-fr))
+
 ## [v1.4.2](https://github.com/rero/sonar-ui/tree/v1.4.2) (2022-02-03)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.4.1...v1.4.2)
