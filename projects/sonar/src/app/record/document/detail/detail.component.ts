@@ -28,8 +28,6 @@ import { Observable, Subscription } from 'rxjs';
 import { AppConfigService } from '../../../app-config.service';
 import { DocumentFile } from '../document.interface';
 
-const SORT_CONTRIBUTOR_PRIORITY = ['cre', 'ctb', 'dgs', 'edt', 'prt'];
-
 @Component({
   templateUrl: './detail.component.html',
 })
@@ -93,11 +91,6 @@ export class DetailComponent implements OnDestroy, OnInit {
         element.full = false;
         return element;
       });
-
-      if (!this.record.contribution) {
-        this.record.contribution = [];
-      }
-      this.sortContributors();
     });
 
     // When language change, abstracts are sorted and first one is displayed.
@@ -118,20 +111,6 @@ export class DetailComponent implements OnDestroy, OnInit {
    */
   ngOnDestroy() {
     this._subscription.unsubscribe();
-  }
-
-  /**
-   * Returns the list of contributions filtered by creator.
-   *
-   * @returns List of contributors limited.
-   */
-  get filteredContributors(): Array<any> {
-    const contributors = this.record.contribution.slice(
-      0,
-      this.contributorsLength
-    );
-
-    return contributors;
   }
 
   /**
@@ -171,19 +150,6 @@ export class DetailComponent implements OnDestroy, OnInit {
     return this.record.classification.filter((item: any) => {
       return item.type === 'bf:ClassificationUdc';
     });
-  }
-
-  /**
-   * Show all contributors when clicking on the show more link.
-   *
-   * @param event DOM event triggered.
-   */
-  showMoreContributors(event: any) {
-    event.preventDefault();
-    event.srcElement.parentNode.removeChild(event.srcElement);
-    this.contributorsLength = this.record.contribution
-      ? this.record.contribution.length
-      : 0;
   }
 
   /**
@@ -254,26 +220,6 @@ export class DetailComponent implements OnDestroy, OnInit {
       'supported by {{ organisations }}',
       { organisations: text.join(', ') }
     )})`;
-  }
-
-  /**
-   * Sort contributors by given priorities array constant.
-   */
-  private sortContributors() {
-    this.record.contribution = this.record.contribution.sort(
-      (a: any, b: any) => {
-        const aIndex = SORT_CONTRIBUTOR_PRIORITY.findIndex(
-          (role) => a.role[0] === role
-        );
-        const bIndex = SORT_CONTRIBUTOR_PRIORITY.findIndex(
-          (role) => b.role[0] === role
-        );
-        if (aIndex === bIndex) {
-          return 0;
-        }
-        return aIndex < bIndex ? -1 : 1;
-      }
-    );
   }
 
   /**
