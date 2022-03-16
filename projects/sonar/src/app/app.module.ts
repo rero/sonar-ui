@@ -67,6 +67,9 @@ import { UserComponent } from './record/user/user.component';
 import { ValidationComponent } from './record/validation/validation.component';
 import { UserService } from './user.service';
 import { AdminComponent } from './_layout/admin/admin.component';
+import { ContributorsPipe } from './pipe/contributors.pipe';
+import { ContributionsComponent } from './record/document/detail/contributions/contributions.component';
+import { ContributionComponent } from './record/document/detail/contribution/contribution.component';
 
 export function appInitializerFactory(appInitializerService: AppInitializerService): () => Promise<any> {
   return () => appInitializerService.initialize().toPromise();
@@ -108,7 +111,10 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     CollectionBriefViewComponent,
     CollectionDetailComponent,
     SubdivisionBriefViewComponent,
-    SubdivisionDetailComponent
+    SubdivisionDetailComponent,
+    ContributorsPipe,
+    ContributionsComponent,
+    ContributionComponent
   ],
   imports: [
     BrowserModule,

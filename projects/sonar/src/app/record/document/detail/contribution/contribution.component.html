@@ -1,0 +1,29 @@
+<!--
+  SONAR User Interface
+  Copyright (C) 2022 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+{{ contributor.text }}
+<sonar-record-identifier *ngIf="contributor.agent.identifiedBy" type="agent" [data]="contributor.agent.identifiedBy"></sonar-record-identifier>
+<ng-container *ngIf="contributor.affiliation">
+  <small class="ml-1" *ngIf="contributor.controlledAffiliation; else affiliation"
+    [tooltip]="contributor.controlledAffiliation | join:' ; '">
+    <i class="text-muted">{{ contributor.affiliation }}</i>
+  </small>
+  <ng-template #affiliation>
+    <small class="ml-1">
+      <i class="text-muted">{{ contributor.affiliation }}</i>
+    </small>
+  </ng-template>
+</ng-container>
