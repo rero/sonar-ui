@@ -285,6 +285,18 @@ export class DetailComponent implements OnDestroy, OnInit {
       return;
     }
 
+    const abstractsLanguage = [];
+    const abstractsCode = [];
+    this.record.abstracts.forEach((abstract: any) => {
+      if (this._configService.languagesMap.find(
+        (map: { code: string; bibCode: string }) => map.bibCode === abstract.language)
+      ) {
+        abstractsLanguage.push(abstract);
+      } else {
+        abstractsCode.push(abstract);
+      }
+    });
+
     const firstLanguage = this._configService.languagesMap.find(
       (item) => item.code === this._translateService.currentLang
     );
@@ -292,18 +304,19 @@ export class DetailComponent implements OnDestroy, OnInit {
       this._configService.languagesMap
     );
 
-    this.record.abstracts = this.record.abstracts.sort((a: any, b: any) => {
+    this.record.abstracts = abstractsLanguage.sort((a: any, b: any) => {
       const aIndex = languagesPriorities.findIndex(
         (lang) => a.language === lang.bibCode
       );
       const bIndex = languagesPriorities.findIndex(
         (lang) => b.language === lang.bibCode
       );
-
       if (aIndex === bIndex) {
         return 0;
       }
       return aIndex < bIndex ? -1 : 1;
-    });
+    }).concat(
+      abstractsCode.sort((a: any, b: any) => a.language.localeCompare(b.language))
+    );
   }
 }
