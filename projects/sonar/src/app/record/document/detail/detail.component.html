@@ -233,9 +233,24 @@
             </dt>
             <dd class="col-lg-8">
               <p class="m-0" *ngFor="let otherEdition of record.otherEdition">
-                {{ otherEdition.publicNote }} :
                 <a [href]="otherEdition.document.electronicLocator" target="_blank">
-                  {{ otherEdition.document.electronicLocator }}
+                  <i class="fa fa-external-link mx-1"></i>
+                  {{ otherEdition.publicNote }}
+                </a>
+              </p>
+            </dd>
+          </ng-container>
+
+          <!-- RELATED TO -->
+          <ng-container *ngIf="record.relatedTo">
+            <dt class="col-lg-4" translate>
+              Related to
+            </dt>
+            <dd class="col-lg-8">
+              <p class="m-0" *ngFor="let relatedTo of record.relatedTo">
+                <a [href]="relatedTo.document.electronicLocator" target="_blank">
+                  <i class="fa fa-external-link mx-1"></i>
+                  {{ relatedTo.publicNote }}
                 </a>
               </p>
             </dd>
