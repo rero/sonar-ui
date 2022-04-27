@@ -1,5 +1,18 @@
 # Changelog
 
+## [v1.5.0](https://github.com/rero/sonar-ui/tree/v1.5.0) (2022-05-05)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v1.4.3...v1.5.0)
+
+**Implemented enhancements:**
+
+- documents: add and improve fields on detailed view [\#303](https://github.com/rero/sonar-ui/pull/303) ([Garfield-fr](https://github.com/Garfield-fr))
+
+**Fixed bugs:**
+
+- documents: fix tooltip on contributions [\#311](https://github.com/rero/sonar-ui/pull/311) ([Garfield-fr](https://github.com/Garfield-fr))
+- documents: fix abstracts sort [\#304](https://github.com/rero/sonar-ui/pull/304) ([Garfield-fr](https://github.com/Garfield-fr))
+
 ## [v1.4.3](https://github.com/rero/sonar-ui/tree/v1.4.3) (2022-03-10)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.4.2...v1.4.3)
