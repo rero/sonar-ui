@@ -29,7 +29,7 @@ import { AppConfigService } from '../../../app-config.service';
 import { DocumentFile } from '../document.interface';
 
 @Component({
-  templateUrl: './detail.component.html',
+  templateUrl: './detail.component.html'
 })
 export class DetailComponent implements OnDestroy, OnInit {
   /** Observable resolving record data */
