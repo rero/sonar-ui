@@ -50,7 +50,7 @@ export class ContributionsComponent implements OnInit {
    *
    * @param event DOM event triggered.
    */
-  showMoreContributors(event: any) {
+  showMoreContributors(event: any): void {
     event.preventDefault();
     this.showMore = false;
     this.contributorsLength = this.contributions

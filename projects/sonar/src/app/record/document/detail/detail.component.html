@@ -59,7 +59,7 @@
         </h4>
 
         <!-- CONTRIBUTORS Not bf:Meeting -->
-        <sonar-contributions class="col-lg-12 px-0" [contributions]="record.contribution"></sonar-contributions>
+        <sonar-contributions [contributions]="record.contribution"></sonar-contributions>
 
         <!-- PUBLICATION STATEMENT -->
         <ul class="list-unstyled my-2" *ngIf="record.provisionActivity && record.provisionActivity.length > 0">
@@ -76,9 +76,9 @@
         </ul>
 
         <!-- EXTENT AND FORMAT -->
-        <p class="my-2" *ngIf="record.extent or record.formats">
+        <p class="my-2" *ngIf="record.extent || record.formats">
           <ng-container *ngIf="record.extent">{{ record.extent }}</ng-container>
-          <ng-container *ngIf="record.extent and record.formats"> ; </ng-container>
+          <ng-container *ngIf="record.extent && record.formats"> ; </ng-container>
           <ng-container *ngIf="record.formats">{{ record.formats|join:', ' }}</ng-container>
         </p>
 
