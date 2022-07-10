@@ -66,6 +66,17 @@
       <a href="{{ file.links.download }}?download" *ngIf="showDownload && file.links.download">
         <i class="fa fa-download mx-1"></i>
       </a>
+      <a href="" *ngIf="statistics && showStatistics"
+      (click)="goToElement($event, 'stats')"
+      [tooltip]="templateStats">
+        <i class="fa fa-bar-chart mx-1"></i>
+      </a>
+      <ng-template #templateStats>
+        <div  *ngIf="statistics[file.key]; else noDownloads">{{ 'Downloads' | translate }}: {{ statistics[file.key] }}</div>
+        <ng-template #noDownloads>
+          <div>{{ 'Downloads' | translate }}: 0</div>
+        </ng-template>
+      </ng-template>
     </div>
   </ng-container>
   <ng-template #noFile>

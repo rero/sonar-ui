@@ -21,6 +21,8 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
+import { ApiService } from '@rero/ng-core';
+import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -60,13 +62,17 @@ export class DetailComponent implements OnDestroy, OnInit {
   /**
    * Constructor.
    *
+   * @param _apiService API service.
+   * @param _httpClient HTTP client.
    * @param _configService Config service.
    * @param _translateService Translate service.
    * @param _sanitizer DOM sanitizer.
    * @param _modalService Modal service.
    */
   constructor(
+    private _apiService: ApiService,
     private _configService: AppConfigService,
+    private _httpClient: HttpClient,
     private _translateService: TranslateService,
     private _sanitizer: DomSanitizer,
     private _modalService: BsModalService
@@ -91,6 +97,7 @@ export class DetailComponent implements OnDestroy, OnInit {
         element.full = false;
         return element;
       });
+      this.getStats();
     });
 
     // When language change, abstracts are sorted and first one is displayed.
@@ -149,6 +156,40 @@ export class DetailComponent implements OnDestroy, OnInit {
 
     return this.record.classification.filter((item: any) => {
       return item.type === 'bf:ClassificationUdc';
+    });
+  }
+
+  /**
+   * Get the stats corresponding to given record.
+   */
+   private getStats() {
+    const data = {
+      'record-view': {
+        stat: 'record-view',
+        params: {
+          pid_value: this.record.pid,
+          pid_type: 'doc'
+        }
+      },
+      'file-download': {
+        stat: 'file-download',
+        params: {
+          bucket_id: this.record._bucket
+        }
+      }
+    };
+
+    this._httpClient.post(`${this._apiService.getEndpointByType('stats', true)}`, data)
+    .subscribe(results => {
+      const statistics = {};
+      const fileDownload = 'file-download';
+      const buckets = 'buckets';
+      results[fileDownload][buckets].map(res => {
+          statistics[res.key] = res.unique_count;
+        }
+      );
+      statistics['record-view'] = results['record-view'].unique_count;
+      this.record.statistics = statistics;
     });
   }
 

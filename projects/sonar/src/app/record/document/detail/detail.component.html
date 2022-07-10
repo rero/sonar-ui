@@ -19,7 +19,8 @@
     <div class="row">
       <div class="col-lg-3 text-center">
         <div class="mb-4">
-          <sonar-document-file [file]="mainFile" (previewClicked)="showPreview($event)"></sonar-document-file>
+          <sonar-document-file [file]="mainFile" [statistics]="record.statistics"
+            (previewClicked)="showPreview($event)"></sonar-document-file>
         </div>
 
         <!-- DOCUMENT TYPE -->
@@ -352,9 +353,32 @@
     <div class="row">
       <ng-container *ngFor="let file of filteredFiles; let first = first">
         <div class="col-lg-2 mb-5" *ngIf="!first">
-          <sonar-document-file [file]="file" (previewClicked)="showPreview($event)"></sonar-document-file>
+          <sonar-document-file [file]="file" [statistics]="record.statistics"
+           (previewClicked)="showPreview($event)"></sonar-document-file>
         </div>
       </ng-container>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="record.statistics">
+    <h5 id="stats" class="mt-5" translate>Statistics</h5>
+    <hr class="mb-4 mt-0">
+    <div class="container pb-5 pl-0">
+        <div>
+            <label class="font-weight-bold">{{ 'Document views' | translate }}:</label>
+            <span class="ml-1">{{ record.statistics['record-view'] }}</span>
+        </div>
+        <div *ngIf="filteredFiles.length > 0">
+            <label class="font-weight-bold">{{ 'File downloads' | translate }}:</label>
+            <ul class="mb-0">
+                <li *ngFor="let file of filteredFiles">
+                  <ng-container *ngIf="record.statistics[file.key]; else noDownloads">
+                    {{ file.key }}: {{ record.statistics[file.key] }}
+                  </ng-container>
+                  <ng-template #noDownloads>{{ file.key }}: 0</ng-template>
+                </li>
+            </ul>
+        </div>
     </div>
   </ng-container>
 
