@@ -47,9 +47,12 @@ import { EditorComponent } from './deposit/editor/editor.component';
 import { ReviewComponent } from './deposit/review/review.component';
 import { UploadComponent } from './deposit/upload/upload.component';
 import { HttpInterceptor } from './interceptor/http.interceptor';
+import { ContributorsPipe } from './pipe/contributors.pipe';
 import { LanguageValuePipe } from './pipe/language-value.pipe';
 import { BriefViewComponent as CollectionBriefViewComponent } from './record/collection/brief-view/brief-view.component';
 import { DetailComponent as CollectionDetailComponent } from './record/collection/detail/detail.component';
+import { ContributionComponent } from './record/document/contribution/contribution.component';
+import { ContributionsComponent } from './record/document/detail/contributions/contributions.component';
 import { DetailComponent as DocumentDetailComponent } from './record/document/detail/detail.component';
 import { DocumentComponent } from './record/document/document.component';
 import { FileComponent } from './record/document/file/file.component';
@@ -67,9 +70,6 @@ import { UserComponent } from './record/user/user.component';
 import { ValidationComponent } from './record/validation/validation.component';
 import { UserService } from './user.service';
 import { AdminComponent } from './_layout/admin/admin.component';
-import { ContributorsPipe } from './pipe/contributors.pipe';
-import { ContributionsComponent } from './record/document/detail/contributions/contributions.component';
-import { ContributionComponent } from './record/document/detail/contribution/contribution.component';
 
 export function appInitializerFactory(appInitializerService: AppInitializerService): () => Promise<any> {
   return () => appInitializerService.initialize().toPromise();

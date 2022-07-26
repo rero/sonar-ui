@@ -49,6 +49,11 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
       || this._configService.view === this._configService.globalviewName;
   }
 
+  // Get Current view (for public interface)
+  get view(): string | null {
+    return this._configService.view;
+  }
+
   /**
    * Constructor.
    *

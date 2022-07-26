@@ -1,18 +1,18 @@
 <!--
- SONAR User Interface
- Copyright (C) 2021 RERO
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, version 3 of the License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  SONAR User Interface
+  Copyright (C) 2021 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <div class="row">
   <div class="col-2 d-none d-lg-block text-center">
@@ -66,9 +66,9 @@
       </ng-container>
     </p>
     <p class="mb-0">
-      <ng-container *ngFor="let contributor of record.metadata.contribution; let first = first;">
+      <ng-container *ngFor="let contributor of record.metadata.contribution|contributors; let first = first;">
         <ng-container *ngIf="!first">&nbsp;;&nbsp;</ng-container>
-        {{ contributor.text }}
+        <sonar-contribution [view]="view" [contributor]="contributor"></sonar-contribution>
       </ng-container>
     </p>
     <p class="my-0 d-none d-lg-block" *ngIf="record.metadata.partOf && record.metadata.partOf.length > 0">
