@@ -20,7 +20,7 @@
       <ul class="list-unstyled m-0">
         <ng-container *ngFor="let contributor of contributors|slice:0:contributorsLength">
           <li>
-            <sonar-contribution [contributor]="contributor"></sonar-contribution>
+            <sonar-contribution [contributor]="contributor" viewType="detail"></sonar-contribution>
           </li>
         </ng-container>
       </ul>
@@ -34,7 +34,7 @@
         <dd class="col-lg-8">
           <ul class="list-unstyled mb-0">
             <li class="p-0" *ngFor="let contributor of contributors|slice:0:contributorsLength">
-              <sonar-contribution [contributor]="contributor"></sonar-contribution>
+              <sonar-contribution [contributor]="contributor" viewType="detail"></sonar-contribution>
             </li>
           </ul>
         </dd>
