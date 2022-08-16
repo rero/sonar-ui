@@ -18,11 +18,12 @@
   <div class="col-2 d-none d-lg-block text-center">
     <ng-container *ngIf="detailUrl; else imageWithoutLink">
       <sonar-document-file [file]="mainFile" [showLabel]="false" [showPreview]="false" [showDownload]="false"
-        [showExternalLink]="false" [link]="detailUrl.link" [inRouter]="!detailUrl.external"></sonar-document-file>
+        [showStatistics]="false" [showExternalLink]="false" [link]="detailUrl.link"
+        [inRouter]="!detailUrl.external"></sonar-document-file>
     </ng-container>
     <ng-template #imageWithoutLink>
       <sonar-document-file [file]="mainFile" [showLabel]="false" [showPreview]="false" [showDownload]="false"
-        [showExternalLink]="false"></sonar-document-file>
+        [showStatistics]="false" [showExternalLink]="false"></sonar-document-file>
     </ng-template>
     <p class="my-2" *ngIf="record.metadata.documentType">
       <small>{{ ('document_type_' + record.metadata.documentType) | translate }}</small>
