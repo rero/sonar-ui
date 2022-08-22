@@ -301,22 +301,6 @@ export class EditorComponent implements OnInit {
   }
 
   /**
-   * Check if the preview container must be displayed.
-   * @return true if the preview must be displayed.
-   */
-  get showPreview(): boolean {
-    if (this.view === 'json') {
-      return false;
-    }
-
-    if (this.currentStep !== 'diffusion' && this.view !== 'preview') {
-      return false;
-    }
-
-    return true;
-  }
-
-  /**
    * Check if a result exists for a swisscovery search.
    *
    * @returns True if a search is done and a result is found.
