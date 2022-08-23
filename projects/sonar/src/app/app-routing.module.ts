@@ -274,9 +274,6 @@ export class AppRoutingModule {
         files: {
           enabled: true
         },
-        editorSettings: {
-          longMode: true
-        },
         sortOptions: [
           {
             label: this._translateService.instant('Relevance'),
