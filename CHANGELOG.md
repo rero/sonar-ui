@@ -1,5 +1,20 @@
 # Changelog
 
+## [v1.6.0](https://github.com/rero/sonar-ui/tree/v1.6.0) (2022-08-25)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v1.5.0...v1.6.0)
+
+**Implemented enhancements:**
+
+* documents: add search link on the author's name [\#318](https://github.com/rero/sonar-ui/pull/318) (by @Garfield-fr)
+* record: add record statistics section in admin view [\#316](https://github.com/rero/sonar-ui/pull/316) (by @vgranata)
+* document: add related to field on the detailed view [\#307](https://github.com/rero/sonar-ui/pull/307) (by @Garfield-fr)
+
+**Fixed bugs:**
+
+* editors: fix ng-core compatibility [\#320](https://github.com/rero/sonar-ui/pull/320) (by @PascalRepond)
+* deposit editor: remove preview display [\#319](https://github.com/rero/sonar-ui/pull/319) (by @PascalRepond)
+
 ## [v1.5.0](https://github.com/rero/sonar-ui/tree/v1.5.0) (2022-05-05)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.4.3...v1.5.0)
