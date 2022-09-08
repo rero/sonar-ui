@@ -70,6 +70,7 @@ import { UserComponent } from './record/user/user.component';
 import { ValidationComponent } from './record/validation/validation.component';
 import { UserService } from './user.service';
 import { AdminComponent } from './_layout/admin/admin.component';
+import { UnicodeNormalizerPipe } from './pipe/unicode-normalizer';
 
 export function appInitializerFactory(appInitializerService: AppInitializerService): () => Promise<any> {
   return () => appInitializerService.initialize().toPromise();
@@ -114,7 +115,8 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     SubdivisionDetailComponent,
     ContributorsPipe,
     ContributionsComponent,
-    ContributionComponent
+    ContributionComponent,
+    UnicodeNormalizerPipe
   ],
   imports: [
     BrowserModule,

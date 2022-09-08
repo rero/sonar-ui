@@ -80,4 +80,5 @@ export class FileComponent {
   preview(file: DocumentFile): void {
     this.previewClicked.emit(file);
   }
+
 }

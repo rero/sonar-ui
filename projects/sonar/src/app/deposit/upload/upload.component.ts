@@ -190,7 +190,7 @@ export class UploadComponent implements OnInit, AfterContentChecked, OnDestroy {
             concatMap((file: File) => {
               return this._depositService.uploadFile(
                 this.deposit.pid,
-                file.name,
+                encodeURIComponent(file.name),
                 type,
                 file
               );
