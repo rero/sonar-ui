@@ -23,8 +23,8 @@ import {
 } from '@angular/core';
 import {
   AbstractControl,
-  FormArray,
-  FormBuilder,
+  UntypedFormArray,
+  UntypedFormBuilder,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -65,7 +65,7 @@ export class UploadComponent implements OnInit, AfterContentChecked, OnDestroy {
   deposit: any = null;
 
   /** Form for handling files metdata */
-  filesForm: FormArray = null;
+  filesForm: UntypedFormArray = null;
 
   /** Flag activated when component is destroyed. Is used to unsubscribe to observables with takeWhile operator. */
   destroyed = false;
@@ -78,7 +78,7 @@ export class UploadComponent implements OnInit, AfterContentChecked, OnDestroy {
     private _dialogService: DialogService,
     private _spinner: NgxSpinnerService,
     private _translateService: TranslateService,
-    private _fb: FormBuilder,
+    private _fb: UntypedFormBuilder,
     private _cd: ChangeDetectorRef
   ) {}
 

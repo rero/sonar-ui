@@ -24,11 +24,12 @@ $primary: #205078 !default;
 $secondary: rgb(246, 130, 17) !default;
 
 @import url("https://fonts.googleapis.com/css?family=Roboto:300,700|Roboto+Condensed:300,700");
-@import "~font-awesome/scss/font-awesome.scss";
-@import "~bootstrap/scss/bootstrap.scss";
-@import "~ngx-toastr/toastr-bs4-alert";
-@import "~ngx-bootstrap/datepicker/bs-datepicker";
-@import "~simplemde/dist/simplemde.min.css";
+@import "font-awesome/scss/font-awesome";
+@import "bootstrap/scss/bootstrap";
+@import "ngx-toastr/toastr-bs4-alert";
+// TODO: remove `node_modules` when this will be fixed in ngx-bootstrap
+@import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+@import "easymde/dist/easymde.min";
 
 pre {
   white-space: pre-wrap;
