@@ -6,6 +6,9 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/api": "https://localhost:5000/api"
+    },
+    "headers": {
+      "Connection": "keep-alive"
     }
   },
   "/schemas/*": {
@@ -15,6 +18,9 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/schemas": "https://localhost:5000/schemas"
+    },
+    "headers": {
+      "Connection": "keep-alive"
     }
   },
   "/logged-user/": {
@@ -24,6 +30,9 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/api": "https://localhost:5000/logged-user/"
+    },
+    "headers": {
+      "Connection": "keep-alive"
     }
   },
   "/deposits/*": {
@@ -33,6 +42,9 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/deposits/": "https://localhost:5000/deposits/"
+    },
+    "headers": {
+      "Connection": "keep-alive"
     }
   },
   "/documents/*": {
@@ -42,6 +54,9 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/documents/": "https://localhost:5000/documents/"
+    },
+    "headers": {
+      "Connection": "keep-alive"
     }
   },
   "/static/*": {
@@ -51,6 +66,9 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/static/": "https://localhost:5000/static/"
+    },
+    "headers": {
+      "Connection": "keep-alive"
     }
   },
   "/lang/*": {
@@ -60,6 +78,9 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/lang": "https://localhost:5000/lang"
+    },
+    "headers": {
+      "Connection": "keep-alive"
     }
   }
 }

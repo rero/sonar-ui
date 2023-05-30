@@ -20,8 +20,35 @@
     <dt class="col-sm-3" translate>Code</dt>
     <dd class="col-sm-9">{{ record.metadata.code }}</dd>
 
-    <dt class="col-sm-3" translate>Name</dt>
-    <dd class="col-sm-9">{{ record.metadata.name }}</dd>
+    <dt class="col-sm-3" translate>Is shared</dt>
+    <dd class="col-sm-9">
+      <i class="fa fa-{{ record.metadata.isShared ? 'check' : 'close' }}"></i>
+    </dd>
+
+    <dt class="col-sm-3" translate>Is dedicated</dt>
+    <dd class="col-sm-9">
+      <i class="fa fa-{{ record.metadata.isDedicated ? 'check' : 'close' }}"></i>
+    </dd>
+
+    <ng-container *ngIf="record.metadata.serverName">
+      <dt class="col-sm-3" translate>Server name (without http)</dt>
+      <dd class="col-sm-9">{{ record.metadata.serverName }}</dd>
+    </ng-container>
+
+    <ng-container *ngIf="record.metadata.platformName">
+      <dt class="col-sm-3" translate>Platform name</dt>
+      <dd class="col-sm-9"><span [innerHtml]="record.metadata.platformName | markdown"></span></dd>
+    </ng-container>
+
+    <ng-container *ngIf="record.metadata.arkNAAN">
+      <dt class="col-sm-3" translate>Ark Name Assigning Authority Number (NAAN)</dt>
+      <dd class="col-sm-9">{{ record.metadata.arkNAAN }}</dd>
+    </ng-container>
+
+    <ng-container *ngIf="record.metadata.allowedIps">
+      <dt class="col-sm-3" translate>Allowed IP addresses</dt>
+      <dd class="col-sm-9"><span [innerHtml]="record.metadata.allowedIps | nl2br"></span></dd>
+    </ng-container>
 
     <ng-container *ngIf="record.metadata.description">
       <dt class="col-sm-3" translate>Description</dt>
@@ -43,15 +70,6 @@
       </dd>
     </ng-container>
 
-    <dt class="col-sm-3" translate>Is shared</dt>
-    <dd class="col-sm-9">
-      <i class="fa fa-{{ record.metadata.isShared ? 'check' : 'close' }}"></i>
-    </dd>
-
-    <dt class="col-sm-3" translate>Is dedicated</dt>
-    <dd class="col-sm-9">
-      <i class="fa fa-{{ record.metadata.isDedicated ? 'check' : 'close' }}"></i>
-    </dd>
 
     <ng-container *ngFor="let i of [1, 2, 3]">
       <ng-container *ngIf="record.metadata['documentsCustomField' + i]">
