@@ -18,19 +18,21 @@
             "main": "projects/sonar/src/main.ts",
             "polyfills": "projects/sonar/src/polyfills.ts",
             "tsConfig": "projects/sonar/tsconfig.app.json",
-            "aot": true,
             "assets": [
               "projects/sonar/src/favicon.ico",
               "projects/sonar/src/assets"
             ],
             "styles": [
-              "projects/sonar/src/styles.scss",
-              "node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css"
+              "projects/sonar/src/styles.scss"
             ],
-            "scripts": [
-              "node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"
-            ],
-            "preserveSymlinks": true
+            "scripts": [],
+            "preserveSymlinks": true,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "proxy": {},
@@ -60,7 +62,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -100,19 +103,6 @@
             "scripts": []
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/sonar/tsconfig.app.json",
-              "projects/sonar/tsconfig.spec.json",
-              "projects/sonar/e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
@@ -124,9 +114,22 @@
               "devServerTarget": "sonar:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/sonar/**/*.ts",
+              "projects/sonar/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "sonar"
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
+  }
 }

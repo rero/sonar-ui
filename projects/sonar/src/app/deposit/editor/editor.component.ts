@@ -17,7 +17,7 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { FormlyJsonschema } from '@ngx-formly/core/json-schema';
@@ -60,7 +60,7 @@ export class EditorComponent implements OnInit {
   ];
 
   /** Form for current type */
-  form: FormGroup = new FormGroup({});
+  form: UntypedFormGroup = new UntypedFormGroup({});
 
   /** Model representing data for current type */
   model: any;
@@ -659,7 +659,7 @@ export class EditorComponent implements OnInit {
     });
 
     this.model = {};
-    this.form = new FormGroup({});
+    this.form = new UntypedFormGroup({});
 
     if (this.deposit[this.currentStep]) {
       this.model[this.currentStep] = this.deposit[this.currentStep] instanceof Array
