@@ -182,10 +182,11 @@ export class DetailComponent implements OnDestroy, OnInit {
     this._httpClient.post(`${this._apiService.getEndpointByType('stats', true)}`, data)
     .subscribe(results => {
       const statistics = {};
-      results['file-download'].buckets.map(res => {
-          statistics[res.key] = res.unique_count;
-        }
-      );
+      if (results['file-download'] != null) {
+        results['file-download'].buckets.map(
+          res => statistics[res.key] = res.unique_count
+        );
+      }
       statistics['record-view'] = results['record-view'].unique_count;
       this.record.statistics = statistics;
     });

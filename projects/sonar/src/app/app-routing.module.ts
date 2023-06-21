@@ -206,35 +206,81 @@ export class AppRoutingModule {
         aggregationsExpand: ['document_type', 'controlled_affiliation', 'year'],
         aggregationsOrder: this._documentAggregationsOrder(),
         editorSettings: {
-          longMode: true
+          longMode: true,
         },
         files: {
           enabled: true,
           filterList: (item: any) => {
-            return item.metadata && item.metadata.type && item.metadata.type === 'file';
+            return (
+              item.metadata &&
+              item.metadata.type &&
+              item.metadata.type === 'file'
+            );
           },
           orderList: (a: any, b: any) => {
             return a.metadata.order - b.metadata.order;
           },
-          infoExcludedFields: ['restriction', 'type', 'links', 'thumbnail'],
-          canUpdateMetadata: () => of({ can: true, message: '' })
+          infoExcludedFields: [
+            'restriction',
+            'type',
+            'links',
+            'thumbnail',
+            'permissions',
+          ],
+          canAdd: () => of({ can: true, message: '' }),
+          canRead: (record: any, file: any) => {
+            if (file && file?.metadata?.permissions?.read) {
+              return of({
+                can: file.metadata.permissions.read,
+                message: '',
+              });
+            }
+            return of({ can: false, message: '' });
+          },
+          canUpdateMetadata: (record: any, file: any) => {
+            if (file && file?.metadata?.permissions?.update) {
+              return of({
+                can: file.metadata.permissions.update,
+                message: '',
+              });
+            }
+            return of({ can: false, message: '' });
+          },
+          canUpdate: (record: any, file: any) => {
+            if (file && file?.metadata?.permissions?.update) {
+              return of({
+                can: file.metadata.permissions.update,
+                message: '',
+              });
+            }
+            return of({ can: false, message: '' });
+          },
+          canDelete: (record: any, file: any) => {
+            if (file && file?.metadata?.permissions?.delete) {
+              return of({
+                can: file.metadata.permissions.delete,
+                message: '',
+              });
+            }
+            return of({ can: false, message: '' });
+          },
         },
         searchFields: [
           {
             label: this._translateService.instant('Full-text'),
-            path: 'fulltext'
-          }
+            path: 'fulltext',
+          },
         ],
         sortOptions: [
           {
             label: this._translateService.instant('Relevance'),
             value: 'relevance',
-            defaultQuery: true
+            defaultQuery: true,
           },
           {
             label: this._translateService.instant('Date descending'),
             value: 'newest',
-            defaultNoQuery: true
+            defaultNoQuery: true,
           },
           {
             label: this._translateService.instant('Date ascending'),
@@ -242,9 +288,9 @@ export class AppRoutingModule {
           },
           {
             label: this._translateService.instant('Title'),
-            value: 'title'
-          }
-        ]
+            value: 'title',
+          },
+        ],
       },
       {
         type: 'users',
@@ -252,40 +298,40 @@ export class AppRoutingModule {
         detailView: UserDetailComponent,
         aggregationsOrder: ['subdivision'],
         editorSettings: {
-          longMode: true
+          longMode: true,
         },
         sortOptions: [
           {
             label: this._translateService.instant('Relevance'),
             value: 'relevance',
-            defaultQuery: true
+            defaultQuery: true,
           },
           {
             label: this._translateService.instant('Name'),
             value: 'name',
-            defaultNoQuery: true
-          }
-        ]
+            defaultNoQuery: true,
+          },
+        ],
       },
       {
         type: 'organisations',
         briefView: OrganisationComponent,
         detailView: OrganisationDetailComponent,
         files: {
-          enabled: true
+          enabled: true,
         },
         sortOptions: [
           {
             label: this._translateService.instant('Relevance'),
             value: 'relevance',
-            defaultQuery: true
+            defaultQuery: true,
           },
           {
             label: this._translateService.instant('Name'),
             value: 'name',
-            defaultNoQuery: true
-          }
-        ]
+            defaultNoQuery: true,
+          },
+        ],
       },
       {
         type: 'deposits',
@@ -297,18 +343,18 @@ export class AppRoutingModule {
           {
             label: this._translateService.instant('Relevance'),
             value: 'relevance',
-            defaultQuery: true
+            defaultQuery: true,
           },
           {
             label: this._translateService.instant('Date descending'),
             value: 'newest',
-            defaultNoQuery: true
+            defaultNoQuery: true,
           },
           {
             label: this._translateService.instant('Date ascending'),
-            value: 'oldest'
-          }
-        ]
+            value: 'oldest',
+          },
+        ],
       },
       {
         type: 'projects',
@@ -316,7 +362,7 @@ export class AppRoutingModule {
         briefView: ProjectBriefViewComponent,
         detailView: projectDetail$,
         editorSettings: {
-          longMode: true
+          longMode: true,
         },
         recordResource: true,
         aggregationsExpand: ['organisation', 'user'],
@@ -324,29 +370,29 @@ export class AppRoutingModule {
         exportFormats: [
           {
             label: 'CSV',
-            format: 'text/csv'
-          }
+            format: 'text/csv',
+          },
         ],
         sortOptions: [
           {
             label: this._translateService.instant('Relevance'),
             value: 'relevance',
-            defaultQuery: true
+            defaultQuery: true,
           },
           {
             label: this._translateService.instant('Name'),
             value: 'name',
-            defaultNoQuery: true
+            defaultNoQuery: true,
           },
           {
             label: this._translateService.instant('Date descending'),
-            value: 'newest'
+            value: 'newest',
           },
           {
             label: this._translateService.instant('Date ascending'),
-            value: 'oldest'
-          }
-        ]
+            value: 'oldest',
+          },
+        ],
       },
       {
         type: 'collections',
@@ -354,23 +400,23 @@ export class AppRoutingModule {
         briefView: CollectionBriefViewComponent,
         detailView: CollectionDetailComponent,
         files: {
-          enabled: true
+          enabled: true,
         },
         editorSettings: {
-          longMode: true
+          longMode: true,
         },
         sortOptions: [
           {
             label: this._translateService.instant('Relevance'),
             value: 'relevance',
-            defaultQuery: true
+            defaultQuery: true,
           },
           {
             label: this._translateService.instant('Name'),
             value: 'name',
-            defaultNoQuery: true
-          }
-        ]
+            defaultNoQuery: true,
+          },
+        ],
       },
       {
         type: 'subdivisions',
@@ -378,21 +424,21 @@ export class AppRoutingModule {
         briefView: SubdivisionBriefViewComponent,
         detailView: SubdivisionDetailComponent,
         editorSettings: {
-          longMode: true
+          longMode: true,
         },
         sortOptions: [
           {
             label: this._translateService.instant('Relevance'),
             value: 'relevance',
-            defaultQuery: true
+            defaultQuery: true,
           },
           {
             label: this._translateService.instant('Name'),
             value: 'name',
-            defaultNoQuery: true
-          }
-        ]
-      }
+            defaultNoQuery: true,
+          },
+        ],
+      },
     ];
 
     this._userService.user$.subscribe((user) => {
