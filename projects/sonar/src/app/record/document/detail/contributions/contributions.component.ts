@@ -41,7 +41,7 @@ export class ContributionsComponent implements OnInit {
   /** OnInit Hook */
   ngOnInit(): void {
     if (this.meeting) {
-      this.contributorsLength = this.contributions.length;
+      this.contributorsLength = this.contributions?.length || 0;
     }
   }
 
