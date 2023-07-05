@@ -148,7 +148,7 @@
   "The form contains errors": "Le formulaire contient des erreurs",
   "The format is not valid for this type of identifier.": "Le format n'est pas valide pour ce type d'identifiant.",
   "The record has been rejected after a review from a moderator.": "La ressource a été rejetée après une révision par un modérateur.",
-  "The record is currently in status \"{{ status }}\". It is not visible in public views.": "La ressource est actuellement en statut \"{{statut }}\". Elle n'est pas visible dans les vues publiques.",
+  "The record is currently in status \"{{ status }}\". It is not visible in public views.": "La ressource est actuellement en statut \"{{status }}\". Elle n'est pas visible dans les vues publiques.",
   "The record is currently published. It is visible in public views.": "La ressource est actuellement publiée. Elle est visible dans les vues publiques.",
   "The record is in validation. It will be reviewed by a moderator before publishing.": "La ressource est en cours de validation. Elle sera examinée par un modérateur avant d'être publiée.",
   "This deposit will be published shortly.": "Ce dépôt sera publié prochainement.",
