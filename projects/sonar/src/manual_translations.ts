@@ -35,6 +35,7 @@ _('label');
 _('mimetype');
 _('order');
 _('restricted_outside_organisation');
+_('full-text');
 
 // Deposit steps
 _('step_create');
