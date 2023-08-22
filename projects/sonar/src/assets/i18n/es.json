@@ -177,6 +177,7 @@
   "document_type": "tipo de documento",
   "embargo_date": "embargo_date",
   "external_url": "external_url",
+  "full-text": "full-text",
   "label": "label",
   "language": "language",
   "masked_for_all": "masked_for_all",
