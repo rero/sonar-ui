@@ -1,5 +1,19 @@
 # Changelog
 
+## [v14.0.0](https://github.com/rero/sonar-ui/tree/v14.0.0) (2023-08-22)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v1.6.0...v14.0.0)
+
+**Enhancements:**
+* documents: add files permissions [\#340](https://github.com/rero/sonar-ui/pull/340) (by @jma)
+
+**Fixes:**
+* translations: add missing manual translation [\#343](https://github.com/rero/sonar-ui/pull/343) (by @PascalRepond)
+* organisation: add missing fields to the detailed view [\#338](https://github.com/rero/sonar-ui/pull/338) (by @jma)
+
+**Other changes:**
+* dependencies: move to angular 14 [\#339](https://github.com/rero/sonar-ui/pull/339) (by @jma)
+
 ## [v1.6.0](https://github.com/rero/sonar-ui/tree/v1.6.0) (2022-08-25)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.5.0...v1.6.0)
