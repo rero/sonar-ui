@@ -131,7 +131,7 @@ export class AppRoutingModule {
             aggregationsBucketSize: 10,
             searchFields: [
               {
-                label: this._translateService.instant('Full-text'),
+                label: this._translateService.instant('full-text'),
                 path: 'fulltext'
               }
             ],
@@ -267,7 +267,7 @@ export class AppRoutingModule {
         },
         searchFields: [
           {
-            label: this._translateService.instant('Full-text'),
+            label: this._translateService.instant('full-text'),
             path: 'fulltext',
           },
         ],
