@@ -1,5 +1,16 @@
 # Changelog
 
+## [v14.0.1](https://github.com/rero/sonar-ui/tree/v14.0.1) (2023-12-20)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v14.0.0...v14.0.1)
+
+**Enahnacements:**
+* files: add files permissions to organisations and collections [\#357](https://github.com/rero/sonar-ui/pull/357) (by @jma)
+
+**Fixes:**
+* fix: search components translations [\#355](https://github.com/rero/sonar-ui/pull/355) (by @PascalRepond)
+* chore: update github templates [\#350](https://github.com/rero/sonar-ui/pull/350) (by @PascalRepond)
+
 ## [v14.0.0](https://github.com/rero/sonar-ui/tree/v14.0.0) (2023-08-22)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.6.0...v14.0.0)
