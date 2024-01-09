@@ -24,6 +24,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { BriefViewComponent } from './deposit/brief-view/brief-view.component';
 import { ConfirmationComponent } from './deposit/confirmation/confirmation.component';
+import { marker as _ } from '@biesbjerg/ngx-translate-extract-marker';
 import { EditorComponent as DepositEditorComponent } from './deposit/editor/editor.component';
 import { UploadComponent } from './deposit/upload/upload.component';
 import { CanAddGuard } from './guard/can-add.guard';
@@ -131,34 +132,34 @@ export class AppRoutingModule {
             aggregationsBucketSize: 10,
             searchFields: [
               {
-                label: this._translateService.instant('full-text'),
+                label: _('full-text'),
                 path: 'fulltext'
               }
             ],
             searchFilters: [
               {
-                label: this._translateService.instant('Open access'),
+                label: _('Open access'),
                 filter: 'open_access',
                 value: 'true'
               }
             ],
             sortOptions: [
               {
-                label: this._translateService.instant('Relevance'),
+                label: _('Relevance'),
                 value: 'relevance',
                 defaultQuery: true
               },
               {
-                label: this._translateService.instant('Date descending'),
+                label: _('Date descending'),
                 value: 'newest',
                 defaultNoQuery: true
               },
               {
-                label: this._translateService.instant('Date ascending'),
+                label: _('Date ascending'),
                 value: 'oldest',
               },
               {
-                label: this._translateService.instant('Title'),
+                label: _('Title'),
                 value: 'title'
               }
             ]
@@ -267,27 +268,27 @@ export class AppRoutingModule {
         },
         searchFields: [
           {
-            label: this._translateService.instant('full-text'),
+            label: _('full-text'),
             path: 'fulltext',
           },
         ],
         sortOptions: [
           {
-            label: this._translateService.instant('Relevance'),
+            label: _('Relevance'),
             value: 'relevance',
             defaultQuery: true,
           },
           {
-            label: this._translateService.instant('Date descending'),
+            label: _('Date descending'),
             value: 'newest',
             defaultNoQuery: true,
           },
           {
-            label: this._translateService.instant('Date ascending'),
+            label: _('Date ascending'),
             value: 'oldest',
           },
           {
-            label: this._translateService.instant('Title'),
+            label: _('Title'),
             value: 'title',
           },
         ],
@@ -302,12 +303,12 @@ export class AppRoutingModule {
         },
         sortOptions: [
           {
-            label: this._translateService.instant('Relevance'),
+            label: _('Relevance'),
             value: 'relevance',
             defaultQuery: true,
           },
           {
-            label: this._translateService.instant('Name'),
+            label: _('Name'),
             value: 'name',
             defaultNoQuery: true,
           },
@@ -322,12 +323,12 @@ export class AppRoutingModule {
         },
         sortOptions: [
           {
-            label: this._translateService.instant('Relevance'),
+            label: _('Relevance'),
             value: 'relevance',
             defaultQuery: true,
           },
           {
-            label: this._translateService.instant('Name'),
+            label: _('Name'),
             value: 'name',
             defaultNoQuery: true,
           },
@@ -341,17 +342,17 @@ export class AppRoutingModule {
         aggregationsOrder: ['status', 'user', 'contributor', 'subdivision'],
         sortOptions: [
           {
-            label: this._translateService.instant('Relevance'),
+            label: _('Relevance'),
             value: 'relevance',
             defaultQuery: true,
           },
           {
-            label: this._translateService.instant('Date descending'),
+            label: _('Date descending'),
             value: 'newest',
             defaultNoQuery: true,
           },
           {
-            label: this._translateService.instant('Date ascending'),
+            label: _('Date ascending'),
             value: 'oldest',
           },
         ],
@@ -375,21 +376,21 @@ export class AppRoutingModule {
         ],
         sortOptions: [
           {
-            label: this._translateService.instant('Relevance'),
+            label: _('Relevance'),
             value: 'relevance',
             defaultQuery: true,
           },
           {
-            label: this._translateService.instant('Name'),
+            label: _('Name'),
             value: 'name',
             defaultNoQuery: true,
           },
           {
-            label: this._translateService.instant('Date descending'),
+            label: _('Date descending'),
             value: 'newest',
           },
           {
-            label: this._translateService.instant('Date ascending'),
+            label: _('Date ascending'),
             value: 'oldest',
           },
         ],
@@ -407,12 +408,12 @@ export class AppRoutingModule {
         },
         sortOptions: [
           {
-            label: this._translateService.instant('Relevance'),
+            label: _('Relevance'),
             value: 'relevance',
             defaultQuery: true,
           },
           {
-            label: this._translateService.instant('Name'),
+            label: _('Name'),
             value: 'name',
             defaultNoQuery: true,
           },
@@ -428,12 +429,12 @@ export class AppRoutingModule {
         },
         sortOptions: [
           {
-            label: this._translateService.instant('Relevance'),
+            label: _('Relevance'),
             value: 'relevance',
             defaultQuery: true,
           },
           {
-            label: this._translateService.instant('Name'),
+            label: _('Name'),
             value: 'name',
             defaultNoQuery: true,
           },
