@@ -83,6 +83,56 @@ const routes: Routes = [
     ]
   }
 ];
+const fileConfig = {
+  enabled: true,
+  orderList: (a: any, b: any) => {
+    return a.metadata.order - b.metadata.order;
+  },
+  infoExcludedFields: [
+    'restriction',
+    'type',
+    'links',
+    'thumbnail',
+    'permissions',
+  ],
+  canAdd: () => of({ can: true, message: '' }),
+  canRead: (record: any, file: any) => {
+    if (file && file?.metadata?.permissions?.read) {
+      return of({
+        can: file.metadata.permissions.read,
+        message: '',
+      });
+    }
+    return of({ can: false, message: '' });
+  },
+  canUpdateMetadata: (record: any, file: any) => {
+    if (file && file?.metadata?.permissions?.update) {
+      return of({
+        can: file.metadata.permissions.update,
+        message: '',
+      });
+    }
+    return of({ can: false, message: '' });
+  },
+  canUpdate: (record: any, file: any) => {
+    if (file && file?.metadata?.permissions?.update) {
+      return of({
+        can: file.metadata.permissions.update,
+        message: '',
+      });
+    }
+    return of({ can: false, message: '' });
+  },
+  canDelete: (record: any, file: any) => {
+    if (file && file?.metadata?.permissions?.delete) {
+      return of({
+        can: file.metadata.permissions.delete,
+        message: '',
+      });
+    }
+    return of({ can: false, message: '' });
+  },
+}
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
@@ -209,62 +259,14 @@ export class AppRoutingModule {
         editorSettings: {
           longMode: true,
         },
-        files: {
-          enabled: true,
+        files: {...fileConfig,
           filterList: (item: any) => {
             return (
               item.metadata &&
               item.metadata.type &&
               item.metadata.type === 'file'
             );
-          },
-          orderList: (a: any, b: any) => {
-            return a.metadata.order - b.metadata.order;
-          },
-          infoExcludedFields: [
-            'restriction',
-            'type',
-            'links',
-            'thumbnail',
-            'permissions',
-          ],
-          canAdd: () => of({ can: true, message: '' }),
-          canRead: (record: any, file: any) => {
-            if (file && file?.metadata?.permissions?.read) {
-              return of({
-                can: file.metadata.permissions.read,
-                message: '',
-              });
-            }
-            return of({ can: false, message: '' });
-          },
-          canUpdateMetadata: (record: any, file: any) => {
-            if (file && file?.metadata?.permissions?.update) {
-              return of({
-                can: file.metadata.permissions.update,
-                message: '',
-              });
-            }
-            return of({ can: false, message: '' });
-          },
-          canUpdate: (record: any, file: any) => {
-            if (file && file?.metadata?.permissions?.update) {
-              return of({
-                can: file.metadata.permissions.update,
-                message: '',
-              });
-            }
-            return of({ can: false, message: '' });
-          },
-          canDelete: (record: any, file: any) => {
-            if (file && file?.metadata?.permissions?.delete) {
-              return of({
-                can: file.metadata.permissions.delete,
-                message: '',
-              });
-            }
-            return of({ can: false, message: '' });
-          },
+          }
         },
         searchFields: [
           {
@@ -318,9 +320,7 @@ export class AppRoutingModule {
         type: 'organisations',
         briefView: OrganisationComponent,
         detailView: OrganisationDetailComponent,
-        files: {
-          enabled: true,
-        },
+        files: fileConfig,
         sortOptions: [
           {
             label: _('Relevance'),
@@ -400,9 +400,7 @@ export class AppRoutingModule {
         label: 'Collections',
         briefView: CollectionBriefViewComponent,
         detailView: CollectionDetailComponent,
-        files: {
-          enabled: true,
-        },
+        files: fileConfig,
         editorSettings: {
           longMode: true,
         },
