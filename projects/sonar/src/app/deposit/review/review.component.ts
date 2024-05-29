@@ -14,24 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { DialogService } from '@rero/ng-core';
-import { ToastrService } from 'ngx-toastr';
-import { EMPTY, Subscription } from 'rxjs';
-import { delay, first, switchMap } from 'rxjs/operators';
+import { CONFIG } from '@rero/ng-core';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../user.service';
 import { DepositService } from '../deposit.service';
 
 @Component({
-  selector: 'sonar-deposit-review',
-  templateUrl: './review.component.html'
+    selector: 'sonar-deposit-review',
+    templateUrl: './review.component.html',
+    standalone: false
 })
 export class ReviewComponent implements OnInit, OnDestroy {
+
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private userService: UserService = inject(UserService);
+  private translateService: TranslateService = inject(TranslateService);
+  private depositService: DepositService = inject(DepositService);
+  private messageService: MessageService = inject(MessageService);
+  private router: Router = inject(Router);
+
   /** Deposit record */
-  @Input()
-  deposit: any = null;
+  @Input() deposit: any = null;
 
   // Logged user
   user: any;
@@ -40,31 +47,14 @@ export class ReviewComponent implements OnInit, OnDestroy {
   private _userSubscription: Subscription;
 
   /** Used to retrieve value for the comment */
-  @ViewChild('comment')
-  comment: ElementRef;
+  @ViewChild('comment') comment: ElementRef;
 
-  constructor(
-    private _userService: UserService,
-    private _dialogService: DialogService,
-    private _translateService: TranslateService,
-    private _depositService: DepositService,
-    private _toastr: ToastrService,
-    private _router: Router
-  ) { }
-
-  /**
-   * Component initialisation.
-   *
-   */
   ngOnInit() {
-    this._userSubscription = this._userService.user$.subscribe((user) => {
+    this._userSubscription = this.userService.user$.subscribe((user) => {
       this.user = user;
     });
   }
 
-  /**
-   * Component destruction
-   */
   ngOnDestroy() {
     this._userSubscription.unsubscribe();
   }
@@ -73,37 +63,25 @@ export class ReviewComponent implements OnInit, OnDestroy {
    * Approve the deposit.
    */
   review(action: string) {
-    this._dialogService
-      .show({
-        ignoreBackdropClick: true,
-        initialState: {
-          title: this._translateService.instant('deposit_log_action_' + action),
-          body: this._translateService.instant('Do you really want to do this action?'),
-          confirmButton: true,
-          confirmTitleButton: this._translateService.instant('OK'),
-          cancelTitleButton: this._translateService.instant('Cancel')
-        }
-      })
-      .pipe(
-        first(),
-        switchMap(result => {
-          if (result === false) {
-            return EMPTY;
-          }
-
-          return this._depositService.reviewDeposit(
+      this.confirmationService.confirm({
+        header: this.translateService.instant('deposit_log_action_' + action),
+        message: this.translateService.instant('Do you really want to do this action?'),
+        accept: () => {
+          this.depositService.reviewDeposit(
             this.deposit,
             action,
             this.comment.nativeElement.value
-          );
-        }),
-        delay(1000)
-      )
-      .subscribe((deposit: any) => {
-        this._toastr.success(this._translateService.instant('Review has been done successfully!'));
-        this._router.navigate(['records', 'deposits'], {
-          queryParams: { q: `pid:${deposit.pid}` }
-        });
-      });
+          ).subscribe((deposit: any) => {
+            this.messageService.add({
+              severity: 'success',
+              detail: this.translateService.instant('Review has been done successfully!'),
+              life: CONFIG.MESSAGE_LIFE,
+            });
+            this.router.navigate(['records', 'deposits'], {
+              queryParams: { q: `pid:${deposit.pid}` }
+            });
+          });
+        }
+    });
   }
 }

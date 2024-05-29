@@ -14,40 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ToastrService } from 'ngx-toastr';
+import { CONFIG } from '@rero/ng-core';
+import { MessageService } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { UserService } from '../../user.service';
 import { DepositService } from '../deposit.service';
 
 @Component({
-  selector: 'sonar-deposit-confirmation',
-  templateUrl: './confirmation.component.html',
+    selector: 'sonar-deposit-confirmation',
+    templateUrl: './confirmation.component.html',
+    standalone: false
 })
 export class ConfirmationComponent implements OnInit {
-  deposit$: Observable<any> = null;
 
-  /**
-   * Constructor.
-   *
-   * @param _route Route.
-   * @param _toastr Toastr service.
-   * @param _depositService Deposit servce.
-   * @param _router Router service.
-   * @param _translateService Translate service.
-   * @param _userService User service
-   */
-  constructor(
-    private _route: ActivatedRoute,
-    private _toastr: ToastrService,
-    private _depositService: DepositService,
-    private _router: Router,
-    private _translateService: TranslateService,
-    private _userService: UserService
-  ) {}
+  private messageService: MessageService = inject(MessageService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private depositService: DepositService = inject(DepositService);
+  private router: Router = inject(Router);
+  private translateService: TranslateService = inject(TranslateService);
+  private userService: UserService = inject(UserService);
+
+  deposit$: Observable<any> = null;
 
   /**
    * Component initialization
@@ -55,14 +46,18 @@ export class ConfirmationComponent implements OnInit {
    * Gets the deposit data.
    */
   ngOnInit() {
-    this.deposit$ = this._route.params.pipe(
+    this.deposit$ = this.route.params.pipe(
       switchMap((params) => {
-        return this._depositService.get(params.id);
+        return this.depositService.get(params.id);
       }),
       map((result) => result.metadata),
       catchError(() => {
-        this._toastr.error(this._translateService.instant('Deposit not found'));
-        this._router.navigate(['deposit', '0', 'create']);
+        this.messageService.add({
+          severity: 'success',
+          detail: this.translateService.instant('Deposit not found'),
+          life: CONFIG.MESSAGE_LIFE,
+        });
+        this.router.navigate(['records', 'deposits']);
         return of(null);
       })
     );
@@ -72,7 +67,7 @@ export class ConfirmationComponent implements OnInit {
    * Check if logged user is a submitter
    */
   get isSubmitter(): boolean {
-    return this._userService.hasRole('submitter');
+    return this.userService.hasRole('submitter');
   }
 
   /**
@@ -81,6 +76,6 @@ export class ConfirmationComponent implements OnInit {
    * @returns Link to public interface.
    */
    get publicInterfaceLink(): string {
-    return this._userService.getPublicInterfaceLink();
+    return this.userService.getPublicInterfaceLink();
   }
 }

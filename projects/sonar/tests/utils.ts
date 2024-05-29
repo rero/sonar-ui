@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 import { AppModule } from '../src/app/app.module';
 import { DepositService } from '../src/app/deposit/deposit.service';
@@ -22,8 +23,12 @@ import { UserService } from '../src/app/user.service';
 
 export const userTestingService = jasmine.createSpyObj('UserService', [
   'loadLoggedUser',
+  'isDedicatedOrganisation',
+  'getPublicInterfaceLink'
 ]);
 userTestingService.loadLoggedUser.and.returnValue(of({}));
+userTestingService.isDedicatedOrganisation.and.returnValue(false);
+userTestingService.getPublicInterfaceLink.and.returnValue('http://foo.com');
 // userTestingService.user$ = of({});
 userTestingService.user$ = of({
   organisation: {
@@ -46,8 +51,10 @@ depositTestingService.getFiles.and.returnValue(of({}));
 depositTestingService.get.and.returnValue(of({}));
 
 export const mockedConfiguration = {
-  imports: [AppModule, HttpClientTestingModule],
+  imports: [AppModule],
   providers: [
+    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClientTesting(),
     { provide: UserService, useValue: userTestingService },
     { provide: DepositService, useValue: depositTestingService },
   ],

@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
 import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
@@ -30,24 +31,25 @@ describe('ReviewComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ReviewComponent],
-      imports: [
-        HttpClientModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: BaseTranslateLoader,
-            useClass: TranslateLoader,
-            deps: [CoreConfigService, HttpClient]
-          }
-        }),
-        RecordModule,
-        RouterTestingModule
-      ],
-      providers: [
+    declarations: [ReviewComponent],
+    imports: [
+      TranslateModule.forRoot({
+        loader: {
+          provide: BaseTranslateLoader,
+          useClass: TranslateLoader,
+          deps: [CoreConfigService, HttpClient]
+        }
+      }),
+      RecordModule,
+      RouterModule.forRoot([])
+    ],
+    providers: [
         { provide: UserService, useValue: userTestingService },
-        { provide: DepositService, useValue: depositTestingService }
-      ]
-    }).compileComponents();
+        { provide: DepositService, useValue: depositTestingService },
+        provideHttpClientTesting(),
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+}).compileComponents();
   }));
 
   beforeEach(() => {

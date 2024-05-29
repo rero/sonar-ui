@@ -1,0 +1,489 @@
+/*
+ * SONAR User Interface
+ * Copyright (C) 2024 RERO
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, version 3 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import { HttpClient } from '@angular/common/http';
+import { Component, ViewChild, effect, inject, input, output } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { TranslateService } from '@ngx-translate/core';
+import { CONFIG, RecordService } from '@rero/ng-core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { FileUpload } from 'primeng/fileupload';
+import { OrderList } from 'primeng/orderlist';
+import { Observable, catchError, combineLatest, concatMap, from, map, of, switchMap, tap, toArray } from 'rxjs';
+import { AppConfigService } from '../../../app-config.service';
+
+@Component({
+  selector: 'sonar-upload-files',
+  templateUrl: './upload-files.component.html',
+  standalone: false,
+})
+export class UploadFilesComponent {
+
+  private httpClient: HttpClient = inject(HttpClient);
+  private recordService: RecordService = inject(RecordService);
+  private translateService: TranslateService = inject(TranslateService);
+  private messageService: MessageService = inject(MessageService);
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private spinner: NgxSpinnerService = inject(NgxSpinnerService);
+  private appConfigService: AppConfigService = inject(AppConfigService);
+
+  // number of uploaded files
+  nUploadedFiles = 0;
+
+  // resource pid
+  pid = input.required<string>();
+
+  // record type such as documents
+  recordType = input.required<string>();
+
+  filesChanged = output<any>();
+
+  // initial record from pid and recordType
+  initialRecord = toSignal(
+    combineLatest(toObservable(this.pid), toObservable(this.recordType)).pipe(
+      switchMap(([pid, recordType]) =>
+        pid && recordType
+          ? this.httpClient
+              .get(`/api/${recordType}/${pid}`)
+              .pipe(map((rec: any) => (rec = rec.metadata)))
+          : of(null)
+      )
+    )
+  );
+  // current record
+  record: any = {};
+
+  // initial files form record
+  initialFiles = toSignal(
+    toObservable(this.initialRecord).pipe(
+      switchMap((record) => (record ? this.getFiles(record) : of([])))
+    )
+  );
+
+  // current list of files
+  files: any = [];
+
+  // record JSONSchema for the editor
+  fileSchema = toSignal(
+    toObservable(this.recordType).pipe(
+      switchMap((recordType) =>
+        recordType
+          ? this.recordService
+              .getSchemaForm(recordType)
+              .pipe(map((res) => res.schema.properties._files.items))
+          : of([])
+      )
+    )
+  );
+
+  // the maximum number of files by file record
+  maxFiles = 500;
+
+  // the primeng file upload component
+  @ViewChild('fileUpload') fileUpload: FileUpload;
+
+  // maximum upload file size
+  maxFileSize: number;
+
+  // primeng order list for search query reset
+  @ViewChild('orderList') orderList: OrderList;
+
+  /**
+   * constructor
+   */
+  constructor() {
+    this.maxFileSize = this.appConfigService.maxFileSize;
+    // update the current record and files when the inputs change
+    effect(() => {
+      this.record = this.initialRecord();
+      this.files = this.initialFiles();
+    });
+  }
+
+  /**
+   * Update the file metadata.
+   *
+   * @param file the file object to update the label.
+   * @param metadata the new metadata.
+   */
+  update(file, metadata) {
+    // remove useless spaces
+    if(!metadata.label) {
+      metadata.label = file.key;
+    }
+    metadata.label = metadata.label.trim();
+
+    let indexToUpdate = this.record._files.findIndex(
+      (item) => item.key === file.key
+    );
+    if (indexToUpdate >= 0) {
+      this.httpClient
+        .put(`/api/${this.recordType()}/${this.pid()}`, this.record)
+        .subscribe((record: any) => {
+          // update the current record
+          this.record = record.metadata;
+          file.metadata = this._getFileInRecord(file.key);
+          file.label = file.metadata.label;
+          this.messageService.add({
+            severity: 'success',
+            detail: this.translateService.instant('Metadata have been saved successfully.'),
+            life: CONFIG.MESSAGE_LIFE,
+          });
+          this.filesChanged.emit(this.files);
+        });
+    }
+  }
+
+  // True if the maximum number of files is reached.
+  get reachMaxFileLimit(): boolean {
+    return this.files.length >= this.maxFiles;
+  }
+
+  /**
+   * Upload a new file.
+   *
+   * @param event the standard event.
+   * @param _ unused.
+   */
+  uploadHandler(event, _) {
+    if (event.files.length > 0) {
+      this.spinner.show('file-upload');
+      let obs: Observable<any> = this.generateCreateRequests(event);
+      obs
+        .pipe(
+          catchError((e: any) => {
+            let msg = this.translateService.instant('Server error');
+            if (e?.error?.message) {
+              msg = `${msg}: ${e.error.message}`;
+            }
+            this.messageService.add({
+              severity: 'error',
+              detail: this.translateService.instant(msg),
+              sticky: true,
+              closable: true,
+            });
+            return of([]);
+          }),
+          switchMap(() => this.getRecord()),
+          switchMap(() => {
+            return this._reorder();
+          }),
+          tap(() => {
+            this.resetFilter();
+            this.fileUpload.clear();
+            this.messageService.add({
+              severity: 'success',
+              detail: this.translateService.instant('File uploaded successfully.'),
+              life: CONFIG.MESSAGE_LIFE,
+            });
+            this.nUploadedFiles = 0;
+            this.filesChanged.emit(this.files);
+          })
+        )
+        .subscribe(() => this.spinner.hide('file-upload'));
+    }
+  }
+
+  /**
+   * Upload a new version of a given file.
+   * @param event - dict with the file and the fileUpload stream.
+   */
+  uploadNewVersion(event) {
+    let { file } = event;
+    let fileUpload: File = event.fileUpload;
+    this.spinner.show('file-upload');
+    this.httpClient
+      .put(
+        `/api/${this.recordType()}/${this.pid()}/files/${file.key}`,
+        fileUpload
+      )
+      .pipe(
+        catchError((e: any) => {
+          let msg = this.translateService.instant('Server error');
+          if (e.error.message) {
+            msg = `${msg}: ${e.error.message}`;
+          }
+          this.messageService.add({
+            severity: 'error',
+            detail: this.translateService.instant(msg),
+            sticky: true,
+            closable: true,
+          });
+          return of(null);
+        }),
+        switchMap((file: any) =>
+          // update the record and the files
+          this.getRecord()
+        ),
+        tap(() => {
+          this.filesChanged.emit(this.files);
+          this.resetFilter();
+          this.messageService.add({
+            severity: 'success',
+            detail: this.translateService.instant('File uploaded successfully.'),
+            life: CONFIG.MESSAGE_LIFE,
+          });
+        })
+      )
+      .subscribe(() => this.spinner.hide('file-upload'));
+  }
+
+  /**
+   * Get the record and the files from the backend.
+   */
+  getRecord() {
+    return this.httpClient.get(`/api/${this.recordType()}/${this.pid()}`).pipe(
+      map((rec: any) => (rec = rec.metadata)),
+      tap((record) => (this.record = record)),
+      switchMap((record) => this.getFiles(record)),
+      tap((files) => (this.files = files))
+    );
+  }
+
+  /**
+   * Generate the sequential http requests.
+   *
+   * @param event the standard event.
+   * @returns an observable of sequential http requests
+   */
+  private generateCreateRequests(event): Observable<any> {
+    return from(event.files).pipe(
+      concatMap((f: any) =>
+        this.httpClient.put(
+          `/api/${this.recordType()}/${this.pid()}/files/${f.name}`,
+          f
+        )
+      ),
+      map((file: any) => {
+        this.nUploadedFiles += 1;
+        this.files = this.processFiles([
+          {
+            label: file.key,
+            metadata: { order: this.files.length + 1 },
+            ...file,
+          },
+          ...this.files,
+        ]);
+      }),
+      // like a forkJoin
+      toArray()
+    );
+  }
+
+  /**
+   * Filter the uploaded files.
+   *
+   * @param event the standard event.
+   * @param _ unused.
+   */
+  onSelect(event, _) {
+    const existingFileNames = [];
+    for (let i = 0; i < event.files.length; i++) {
+      const fileName = event.files[i].name;
+      if (this.files.some((v) => v.key == fileName)) {
+        existingFileNames.push(fileName);
+      } else {
+        event.files[i].label = fileName;
+      }
+    }
+    if (existingFileNames.length > 0) {
+      this.fileUpload.msgs.push({
+        severity: 'error',
+        summary: 'This filename already exists.',
+        detail: `${existingFileNames.join(', ')}`
+      });
+      this.fileUpload.files = this.fileUpload.files.filter(
+        (v) => !existingFileNames.some((n) => n == v.name)
+      );
+    }
+    const numberOfMaxUploadedFiles = this.maxFiles - this.files.length;
+    if (numberOfMaxUploadedFiles < this.fileUpload.files.length) {
+      this.fileUpload.files = this.fileUpload.files.slice(
+        0,
+        numberOfMaxUploadedFiles
+      );
+    }
+  }
+
+  /**
+   * Removes a given file.
+   *
+   * @param file - the file to delete.
+   */
+  deleteFile(file: any) {
+    this.confirmationService.confirm({
+      header: this.translateService.instant('Confirmation'),
+      message: this.translateService.instant(
+        'Do you really want to remove this file and all versions?'
+      ),
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        this.httpClient
+          .delete(`/api/${this.recordType()}/${this.pid()}/files/${file.key}`)
+          .pipe(
+            tap(() => {
+              this.files = this.files.filter((f) => f.key !== file.key);
+              this.record._files = this.record._files.filter(
+                (item: any) => file.key !== item.key
+              );
+            }),
+            switchMap(() => this._reorder()),
+            tap(() => {
+              this.resetFilter();
+              this.messageService.add({
+                severity: 'success',
+                detail: this.translateService.instant('File removed successfully.'),
+                life: CONFIG.MESSAGE_LIFE,
+              });
+              this.filesChanged.emit(this.files);
+            })
+          )
+          .subscribe();
+      },
+    });
+  }
+
+  /**
+   * Reset the query to filter the file list.
+   */
+  resetFilter() {
+    this.orderList.resetFilter();
+  }
+
+  /**
+   * Observable for loading record and files.
+   *
+   * @returns Observable emitting files
+   */
+  private getFiles(record): Observable<any> {
+    return this.httpClient
+      .get(`/api/${this.recordType()}/${record.pid}/files?versions`)
+      .pipe(
+        map((record: any) => {
+          if (record?.contents) {
+            return record.contents;
+          }
+          return of([]);
+        }),
+        map((files) => {
+          return files.map((item: any) => {
+            item.metadata = this._getFileInRecord(item.key);
+            if (item?.label == null) {
+              item.label = item?.metadata?.label
+                ? item.metadata.label
+                : item.key;
+            }
+            return item;
+          });
+        }),
+        map((files) => {
+          return this.processFiles(files);
+        }),
+        catchError(() => {
+          return of([]);
+        })
+      );
+  }
+
+  /**
+   * Process the list of files from the backend.
+   * @param files the files to process
+   * @returns the processed files
+   */
+  private processFiles(files) {
+    // get old versions
+    let versions = {};
+    files.map((file) => {
+      if (file?.metadata?.type && file.metadata.type !== 'file') {
+        return;
+      }
+      if (file.is_head === false) {
+        if (!(file.key in versions)) versions[file.key] = [];
+        versions[file.key].push(file);
+      }
+    });
+    // get head files only
+    let headFiles = [];
+    files.map((file) => {
+      if (file?.metadata?.type && file.metadata.type !== 'file') {
+        return;
+      }
+      if (file.is_head) {
+        // add versions if exists
+        if (versions[file.key]) {
+          let fileVersions = versions[file.key];
+          fileVersions.sort((a, b) => a.metadata.created - b.metadata.created);
+          file.versions = fileVersions;
+        }
+        // TODO: remove when the primeng issue will be solved
+        //       https://github.com/primefaces/primeng/issues/18442
+        file.name = file.label;
+        headFiles.push(file);
+      }
+    });
+    headFiles.sort((a, b) => a.metadata.order - b.metadata.order);
+    return headFiles;
+  }
+
+  /**
+   * Reorder the files.
+   */
+  reorder() {
+    this._reorder().subscribe((record: any) => {
+      this.filesChanged.emit(this.files);
+    });
+  }
+
+  _reorder() {
+    this.files.map((file, index) => {
+      let recordFile = this._getFileInRecord(file.key);
+      recordFile.order = index + 1;
+    });
+    return this.httpClient
+      .put(`/api/${this.recordType()}/${this.pid()}`, this.record)
+      .pipe(
+        tap((record: any) => {
+          this.record = record.metadata;
+          this.files.map((file) => {
+            file.metadata = this._getFileInRecord(file.key);
+          });
+        })
+      );
+  }
+
+  /**
+   * Get files metadata corresponding to file key, stored in record.
+   *
+   * @param fileKey File key.
+   * @returns Metadata object for the file.
+   */
+  private _getFileInRecord(fileKey: string): any {
+    if (!this.record._files) {
+      return null;
+    }
+
+    // Get metadata stored in record.
+    const metadata = this.record._files.filter(
+      (item: any) => fileKey === item.key
+    );
+
+    return metadata.length > 0 ? metadata[0] : null;
+  }
+}

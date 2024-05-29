@@ -14,26 +14,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
-import { ApiService } from '@rero/ng-core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Observable, Subscription } from 'rxjs';
+import { RecordService } from '@rero/ng-core';
+import { Observable, Subscription, map } from 'rxjs';
 import { AppConfigService } from '../../../app-config.service';
 import { DocumentFile } from '../document.interface';
 
 @Component({
-  templateUrl: './detail.component.html'
+  templateUrl: './detail.component.html',
+  standalone: false,
 })
 export class DetailComponent implements OnDestroy, OnInit {
+
+  private configService: AppConfigService = inject(AppConfigService);
+  private translateService: TranslateService = inject(TranslateService);
+  private sanitizer: DomSanitizer = inject(DomSanitizer);
+
   /** Observable resolving record data */
   record$: Observable<any>;
 
@@ -43,46 +41,18 @@ export class DetailComponent implements OnDestroy, OnInit {
     url: SafeUrl;
   };
 
+  isShowPreview = false;
   // Show only three contributors on startup.
   contributorsLength = 3;
 
   // Record retrieved from observable.
   record: any = null;
 
-  // Form modal reference.
-  previewModalRef: BsModalRef;
+  recordService = inject(RecordService);
 
   // Subscription to observables, used to unsubscribe to all at the same time.
-  private _subscription: Subscription = new Subscription();
+  private subscription: Subscription = new Subscription();
 
-  // Reference to preview modal in template.
-  @ViewChild('previewModal')
-  previewModalTemplate: TemplateRef<any>;
-
-  /**
-   * Constructor.
-   *
-   * @param _apiService API service.
-   * @param _httpClient HTTP client.
-   * @param _configService Config service.
-   * @param _translateService Translate service.
-   * @param _sanitizer DOM sanitizer.
-   * @param _modalService Modal service.
-   */
-  constructor(
-    private _apiService: ApiService,
-    private _configService: AppConfigService,
-    private _httpClient: HttpClient,
-    private _translateService: TranslateService,
-    private _sanitizer: DomSanitizer,
-    private _modalService: BsModalService
-  ) {}
-
-  /**
-   * Component initialisation.
-   *
-   * Retrieve record from observable.
-   */
   ngOnInit() {
     this.record$.subscribe((record: any) => {
       this.record = record.metadata;
@@ -97,27 +67,32 @@ export class DetailComponent implements OnDestroy, OnInit {
         element.full = false;
         return element;
       });
-      this.getStats();
     });
 
     // When language change, abstracts are sorted and first one is displayed.
-    this._subscription.add(
-      this._translateService.onLangChange.subscribe(() => {
+    this.subscription.add(
+      this.translateService.onLangChange.subscribe(() => {
         this.sortAbstracts();
-        if (this.record && this.record.abstracts.length > 0) {
-          this.changeAbstract(this.record.abstracts[0]);
-        }
       })
     );
   }
+  updateFiles(files) {
+    this.recordService
+      .getRecord('documents', this.record.pid, 1)
+      .pipe(map((doc) => (this.record._files = doc.metadata._files)))
+      .subscribe();
+  }
 
+  get filteredKeys() {
+    return this.filteredFiles.map((file) => file.key);
+  }
   /**
    * Component destruction.
    *
    * Unsubscribe from subscribers.
    */
   ngOnDestroy() {
-    this._subscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -149,7 +124,7 @@ export class DetailComponent implements OnDestroy, OnInit {
    *
    * @returns List of UDC classifications.
    */
-  get UDCclassifiations(): Array<any> {
+  get UDCclassifications(): Array<any> {
     if (!this.record.classification) {
       return [];
     }
@@ -157,62 +132,6 @@ export class DetailComponent implements OnDestroy, OnInit {
     return this.record.classification.filter((item: any) => {
       return item.type === 'bf:ClassificationUdc';
     });
-  }
-
-  /**
-   * Get the stats corresponding to given record.
-   */
-   private getStats() {
-    const data = {
-      'record-view': {
-        stat: 'record-view',
-        params: {
-          pid_value: this.record.pid,
-          pid_type: 'doc'
-        }
-      },
-      'file-download': {
-        stat: 'file-download',
-        params: {
-          bucket_id: this.record._bucket
-        }
-      }
-    };
-
-    this._httpClient.post(`${this._apiService.getEndpointByType('stats', true)}`, data)
-    .subscribe(results => {
-      const statistics = {};
-      if (results['file-download'] != null) {
-        results['file-download'].buckets.map(
-          res => statistics[res.key] = res.unique_count
-        );
-      }
-      statistics['record-view'] = results['record-view'].unique_count;
-      this.record.statistics = statistics;
-    });
-  }
-
-  /**
-   * Show abstract's full text when clicking on the show more link.
-   *
-   * @param event DOM event triggered.
-   * @param abstract Object containing abstract's data.
-   */
-  showMoreAbstract(event: any, abstract: any) {
-    event.preventDefault();
-    abstract.full = true;
-  }
-
-  /**
-   * Show abstract corresponding to the clicked language.
-   *
-   * @param abstract Object containing abstract's data.
-   */
-  changeAbstract(abstract: any) {
-    this.record.abstracts.forEach((element: any) => {
-      element.show = false;
-    });
-    abstract.show = true;
   }
 
   /**
@@ -232,13 +151,11 @@ export class DetailComponent implements OnDestroy, OnInit {
    * @param file Document file object.
    */
   showPreview(file: DocumentFile): void {
-    this.previewModalRef = this._modalService.show(this.previewModalTemplate, {
-      class: 'modal-lg',
-    });
     this.previewFile = {
       label: file.label,
-      url: this._sanitizer.bypassSecurityTrustResourceUrl(file.links.preview),
+      url: this.sanitizer.bypassSecurityTrustResourceUrl(file.links.preview),
     };
+    this.isShowPreview = true;
   }
 
   /**
@@ -247,7 +164,7 @@ export class DetailComponent implements OnDestroy, OnInit {
    * @param project Project record.
    * @returns String representing the funding organisations.
    */
-  get_funding_organisations(project: any): string {
+  getFundingOrganisations(project: any): string {
     if (!project.funding_organisations) {
       return '';
     }
@@ -256,7 +173,7 @@ export class DetailComponent implements OnDestroy, OnInit {
       return item.agent.preferred_name;
     });
 
-    return `(${this._translateService.instant(
+    return `(${this.translateService.instant(
       'supported by {{ organisations }}',
       { organisations: text.join(', ') }
     )})`;
@@ -274,8 +191,11 @@ export class DetailComponent implements OnDestroy, OnInit {
     const abstractsLanguage = [];
     const abstractsCode = [];
     this.record.abstracts.forEach((abstract: any) => {
-      if (this._configService.languagesMap.find(
-        (map: { code: string; bibCode: string }) => map.bibCode === abstract.language)
+      if (
+        this.configService.languagesMap.find(
+          (map: { code: string; bibCode: string }) =>
+            map.bibCode === abstract.language
+        )
       ) {
         abstractsLanguage.push(abstract);
       } else {
@@ -283,26 +203,30 @@ export class DetailComponent implements OnDestroy, OnInit {
       }
     });
 
-    const firstLanguage = this._configService.languagesMap.find(
-      (item) => item.code === this._translateService.currentLang
+    const firstLanguage = this.configService.languagesMap.find(
+      (item) => item.code === this.translateService.currentLang
     );
     const languagesPriorities = [firstLanguage].concat(
-      this._configService.languagesMap
+      this.configService.languagesMap
     );
 
-    this.record.abstracts = abstractsLanguage.sort((a: any, b: any) => {
-      const aIndex = languagesPriorities.findIndex(
-        (lang) => a.language === lang.bibCode
+    this.record.abstracts = abstractsLanguage
+      .sort((a: any, b: any) => {
+        const aIndex = languagesPriorities.findIndex(
+          (lang) => a.language === lang.bibCode
+        );
+        const bIndex = languagesPriorities.findIndex(
+          (lang) => b.language === lang.bibCode
+        );
+        if (aIndex === bIndex) {
+          return 0;
+        }
+        return aIndex < bIndex ? -1 : 1;
+      })
+      .concat(
+        abstractsCode.sort((a: any, b: any) =>
+          a.language.localeCompare(b.language)
+        )
       );
-      const bIndex = languagesPriorities.findIndex(
-        (lang) => b.language === lang.bibCode
-      );
-      if (aIndex === bIndex) {
-        return 0;
-      }
-      return aIndex < bIndex ? -1 : 1;
-    }).concat(
-      abstractsCode.sort((a: any, b: any) => a.language.localeCompare(b.language))
-    );
   }
 }

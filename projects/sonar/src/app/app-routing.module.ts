@@ -15,17 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { NgModule } from '@angular/core';
-import { ActivatedRoute, ActivationStart, Router, RouterEvent, RouterModule, Routes, UrlSegment } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { inject, NgModule } from '@angular/core';
+import { ActivatedRoute, ActivationStart, Router, RouterModule, Routes, UrlSegment, mapToCanActivate } from '@angular/router';
+import { TranslateService, _ } from "@ngx-translate/core";
 import { ActionStatus, ApiService, DetailComponent, EditorComponent, RecordSearchPageComponent } from '@rero/ng-core';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { AdminComponent } from './_layout/admin/admin.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { BriefViewComponent } from './deposit/brief-view/brief-view.component';
 import { ConfirmationComponent } from './deposit/confirmation/confirmation.component';
-import { marker as _ } from '@biesbjerg/ngx-translate-extract-marker';
-import { EditorComponent as DepositEditorComponent } from './deposit/editor/editor.component';
+import { MetadataComponent } from './deposit/metadata/metadata.component';
 import { UploadComponent } from './deposit/upload/upload.component';
 import { CanAddGuard } from './guard/can-add.guard';
 import { RoleGuard } from './guard/role.guard';
@@ -40,11 +40,8 @@ import { OrganisationComponent } from './record/organisation/organisation.compon
 import { BriefViewComponent as ProjectBriefViewComponent } from './record/project/brief-view/brief-view.component';
 import { DetailComponent as ProjectDetailComponent } from './record/project/detail/detail.component';
 import { BriefViewComponent as SubdivisionBriefViewComponent } from './record/subdivision/brief-view/brief-view.component';
-import { DetailComponent as SubdivisionDetailComponent } from './record/subdivision/detail/detail.component';
-import { DetailComponent as UserDetailComponent } from './record/user/detail/detail.component';
 import { UserComponent } from './record/user/user.component';
 import { UserService } from './user.service';
-import { AdminComponent } from './_layout/admin/admin.component';
 
 const adminModeDisabled = (): Observable<ActionStatus> => {
   return of({
@@ -60,14 +57,19 @@ const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent },
       {
+        path: 'deposit/create',
+        canActivate: mapToCanActivate([RoleGuard]),
+        component: UploadComponent,
+      },
+      {
         path: 'deposit/:id',
-        canActivate: [RoleGuard],
+        canActivate: mapToCanActivate([RoleGuard]),
         data: {
           role: 'submitter'
         },
         children: [
           {
-            path: 'create',
+            path: 'files',
             component: UploadComponent
           },
           {
@@ -76,7 +78,7 @@ const routes: Routes = [
           },
           {
             path: ':step',
-            component: DepositEditorComponent
+            component: MetadataComponent
           }
         ]
       }
@@ -135,33 +137,22 @@ const fileConfig = {
 }
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+  imports: [RouterModule.forRoot(routes, {})],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
-  /**
-   * Constructor.
-   *
-   * Adds routes for resources
-   *
-   * @param _translateService Translate service.
-   * @param _router Router service.
-   * @param _route Activated route.
-   * @param _userService User service.
-   * @param _httpClient HTTP client.
-   * @param _apiService API service.
-   */
-  constructor(
-    private _translateService: TranslateService,
-    private _router: Router,
-    private _route: ActivatedRoute,
-    private _userService: UserService,
-    private _httpClient: HttpClient,
-    private _apiService: ApiService,
-  ) {
-    AggregationFilter.translateService = this._translateService;
 
-    this._router.config.push({
+  private translateService: TranslateService = inject(TranslateService);
+  private router: Router= inject(Router);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private userService: UserService = inject(UserService);
+  private httpClient: HttpClient = inject(HttpClient);
+  private apiService: ApiService = inject(ApiService);
+
+  constructor() {
+    AggregationFilter.translateService = this.translateService;
+
+    this.router.config.push({
       path: ':view/search',
       children: [
         { path: ':type', component: RecordSearchPageComponent },
@@ -197,19 +188,23 @@ export class AppRoutingModule {
               {
                 label: _('Relevance'),
                 value: 'relevance',
+                icon: 'fa fa-sort-amount-desc',
                 defaultQuery: true
               },
               {
                 label: _('Date descending'),
                 value: 'newest',
+                icon: 'fa fa-sort-amount-desc',
                 defaultNoQuery: true
               },
               {
                 label: _('Date ascending'),
+                icon: 'fa fa-sort-amount-asc',
                 value: 'oldest',
               },
               {
                 label: _('Title'),
+                icon: 'fa fa-sort-alpha-asc',
                 value: 'title'
               }
             ]
@@ -219,10 +214,10 @@ export class AppRoutingModule {
     });
 
     // Page for editing user profile.
-    this._router.config.push({
+    this.router.config.push({
       path: ':type/profile/:pid',
       component: EditorComponent,
-      canActivate: [RoleGuard],
+      canActivate: mapToCanActivate([RoleGuard]),
       data: {
         types: [
           {
@@ -236,12 +231,12 @@ export class AppRoutingModule {
     });
 
     // Fallback page
-    this._router.config.push({ path: '**', redirectTo: '' });
+    this.router.config.push({ path: '**', redirectTo: '' });
 
     this._updateSearchRouteData();
 
     // Observable to resolve projects detail component
-    const projectDetail$ = this._userService.user$.pipe(map((user) => {
+    const projectDetail$ = this.userService.user$.pipe(map((user) => {
       if (user.organisation?.code === 'hepvs') {
         return HepvsProjectDetailComponent;
       }
@@ -278,19 +273,23 @@ export class AppRoutingModule {
           {
             label: _('Relevance'),
             value: 'relevance',
+            icon: 'fa fa-sort-amount-desc',
             defaultQuery: true,
           },
           {
             label: _('Date descending'),
             value: 'newest',
+            icon: 'fa fa-sort-amount-desc',
             defaultNoQuery: true,
           },
           {
             label: _('Date ascending'),
+            icon: 'fa fa-sort-amount-asc',
             value: 'oldest',
           },
           {
             label: _('Title'),
+            icon: 'fa fa-sort-alpha-asc',
             value: 'title',
           },
         ],
@@ -298,20 +297,19 @@ export class AppRoutingModule {
       {
         type: 'users',
         briefView: UserComponent,
-        detailView: UserDetailComponent,
         aggregationsOrder: ['subdivision'],
-        editorSettings: {
-          longMode: true,
-        },
+        redirectUrl: (record: any) => of(`/records/users?q=pid:${record.metadata.pid}`),
         sortOptions: [
           {
             label: _('Relevance'),
             value: 'relevance',
+            icon: 'fa fa-sort-amount-desc',
             defaultQuery: true,
           },
           {
             label: _('Name'),
             value: 'name',
+            icon: 'fa fa-sort-alpha-asc',
             defaultNoQuery: true,
           },
         ],
@@ -324,12 +322,14 @@ export class AppRoutingModule {
         sortOptions: [
           {
             label: _('Relevance'),
+            icon: 'fa fa-sort-amount-desc',
             value: 'relevance',
             defaultQuery: true,
           },
           {
             label: _('Name'),
             value: 'name',
+            icon: 'fa fa-sort-alpha-asc',
             defaultNoQuery: true,
           },
         ],
@@ -344,16 +344,19 @@ export class AppRoutingModule {
           {
             label: _('Relevance'),
             value: 'relevance',
+            icon: 'fa fa-sort-amount-desc',
             defaultQuery: true,
           },
           {
             label: _('Date descending'),
             value: 'newest',
+            icon: 'fa fa-sort-amount-desc',
             defaultNoQuery: true,
           },
           {
             label: _('Date ascending'),
             value: 'oldest',
+            icon: 'fa fa-sort-amount-asc',
           },
         ],
       },
@@ -362,12 +365,12 @@ export class AppRoutingModule {
         label: 'Research projects',
         briefView: ProjectBriefViewComponent,
         detailView: projectDetail$,
-        editorSettings: {
-          longMode: true,
-        },
         recordResource: true,
         aggregationsExpand: ['organisation', 'user'],
         aggregationsOrder: ['organisation', 'user', 'status'],
+        editorSettings: {
+          longMode: true,
+        },
         exportFormats: [
           {
             label: 'CSV',
@@ -378,19 +381,23 @@ export class AppRoutingModule {
           {
             label: _('Relevance'),
             value: 'relevance',
+            icon: 'fa fa-sort-amount-desc',
             defaultQuery: true,
           },
           {
             label: _('Name'),
             value: 'name',
+            icon: 'fa fa-sort-alpha-asc',
             defaultNoQuery: true,
           },
           {
             label: _('Date descending'),
+            icon: 'fa fa-sort-amount-desc',
             value: 'newest',
           },
           {
             label: _('Date ascending'),
+            icon: 'fa fa-sort-amount-asc',
             value: 'oldest',
           },
         ],
@@ -401,18 +408,17 @@ export class AppRoutingModule {
         briefView: CollectionBriefViewComponent,
         detailView: CollectionDetailComponent,
         files: fileConfig,
-        editorSettings: {
-          longMode: true,
-        },
         sortOptions: [
           {
             label: _('Relevance'),
             value: 'relevance',
+            icon: 'fa fa-sort-amount-desc',
             defaultQuery: true,
           },
           {
             label: _('Name'),
             value: 'name',
+            icon: 'fa fa-sort-alpha-asc',
             defaultNoQuery: true,
           },
         ],
@@ -421,26 +427,25 @@ export class AppRoutingModule {
         type: 'subdivisions',
         label: 'Subdivisions',
         briefView: SubdivisionBriefViewComponent,
-        detailView: SubdivisionDetailComponent,
-        editorSettings: {
-          longMode: true,
-        },
+        redirectUrl: (record: any) => of(`/records/subdivisions?q=pid:${record.metadata.pid}`),
         sortOptions: [
           {
             label: _('Relevance'),
             value: 'relevance',
+            icon: 'fa fa-sort-amount-desc',
             defaultQuery: true,
           },
           {
             label: _('Name'),
             value: 'name',
+            icon: 'fa fa-sort-alpha-asc',
             defaultNoQuery: true,
           },
         ],
       },
     ];
 
-    this._userService.user$.subscribe((user) => {
+    this.userService.user$.subscribe((user) => {
       if (user) {
         /** Removes collections and subdivisions routes on the organisation shared */
         if (!('isDedicated' in user.organisation) || !(user.organisation.isDedicated)) {
@@ -449,14 +454,13 @@ export class AppRoutingModule {
         }
 
         recordsRoutesConfiguration.forEach((config: any) => {
-          const route = {
-            matcher: (url: any) => this._routeMatcher(url, config.type),
-            canActivate: [RoleGuard],
+          const route: any = {
+            matcher: (url: any) => this.routeMatcher(url, config.type),
+            canActivate: mapToCanActivate([RoleGuard]),
             children: [
               { path: '', component: RecordSearchPageComponent },
-              { path: 'detail/:pid', component: DetailComponent },
               { path: 'edit/:pid', component: EditorComponent },
-              { path: 'new', component: EditorComponent, canActivate: [CanAddGuard] }
+              { path: 'new', component: EditorComponent, canActivate: mapToCanActivate([CanAddGuard]) }
             ],
             data: {
               role: 'submitter',
@@ -466,7 +470,8 @@ export class AppRoutingModule {
                   key: config.type,
                   label: config.label || config.type.charAt(0).toUpperCase() + config.type.slice(1),
                   component: config.briefView || null,
-                  editorSettings: config.editorSettings || false,
+                  editorSettings: config.editorSettings || {},
+                  redirectUrl: config.redirectUrl || null,
                   detailComponent: config.detailView || null,
                   aggregations: config.aggregations || null,
                   aggregationsExpand: config.aggregationsExpand || [],
@@ -485,8 +490,10 @@ export class AppRoutingModule {
               ]
             }
           };
-
-          this._router.config[0].children.push(route);
+          if (config.detailView) {
+            route.children.push({ path: 'detail/:pid', component: DetailComponent });
+          }
+          this.router.config[0].children.push(route);
         });
       }
     });
@@ -496,7 +503,7 @@ export class AppRoutingModule {
    * Updates route data properties which are depending to the view parameter.
    */
   private _updateSearchRouteData() {
-    this._router.events.subscribe((e: RouterEvent) => {
+    this.router.events.subscribe(e => {
       if (e instanceof ActivationStart &&
         e.snapshot.parent.routeConfig &&
         e.snapshot.parent.routeConfig.path === ':view/search'
@@ -533,7 +540,7 @@ export class AppRoutingModule {
       return of({ can: record.metadata.permissions[action], message: '' });
     }
 
-    return this._userService.user$.pipe(
+    return this.userService.user$.pipe(
       map((user: any) => {
         return { can: user.permissions[resource][action], message: '' };
       })
@@ -547,7 +554,7 @@ export class AppRoutingModule {
    * @param type Resource type.
    * @returns The matched URL if found or null.
    */
-  private _routeMatcher(url: any, type: string) {
+  private routeMatcher(url: any, type: string) {
     if (url[0].path === 'records' && url[1].path === type) {
       return this._matchedUrl(url);
     }
@@ -579,18 +586,18 @@ export class AppRoutingModule {
   private _documentAggregationsOrder(): Observable<any> {
     return of(null).pipe(
       switchMap(() => {
-        const view = this._route.snapshot.children[0].params.view;
+        const view = this.route.snapshot.children[0].params.view;
 
         let params = new HttpParams();
         if (view) {
           params = params.set('view', view);
         }
-        if (this._route.snapshot.children[0].queryParams.collection_view) {
+        if (this.route.snapshot.children[0].queryParams.collection_view) {
           params = params.set('collection', '1');
         }
 
-        return this._httpClient.get(
-          `${this._apiService.getEndpointByType(
+        return this.httpClient.get(
+          `${this.apiService.getEndpointByType(
             'documents',
             true
           )}/aggregations`,

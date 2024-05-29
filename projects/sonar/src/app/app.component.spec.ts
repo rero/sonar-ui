@@ -14,22 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { CollapseModule } from 'ngx-bootstrap/collapse';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      declarations: [AppComponent],
       imports: [
-        RouterTestingModule,
-        HttpClientModule,
-        CollapseModule.forRoot(),
+        RouterModule.forRoot([]),
         RecordModule,
         TranslateModule.forRoot({
           loader: {
@@ -39,8 +36,9 @@ describe('AppComponent', () => {
           }
         })
       ],
-      declarations: [AppComponent],
-      providers: [BsLocaleService]
+      providers: [
+        provideHttpClient(withInterceptorsFromDi())
+      ]
     }).compileComponents();
   }));
 

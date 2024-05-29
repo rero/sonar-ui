@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
+import { StepsModule } from 'primeng/steps';
 import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
 import { DepositService } from '../../deposit/deposit.service';
 import { UserService } from '../../user.service';
@@ -30,24 +32,26 @@ describe('StepComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [StepComponent],
-      imports: [
-        RouterTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: BaseTranslateLoader,
-            useClass: TranslateLoader,
-            deps: [CoreConfigService, HttpClient]
-          }
-        }),
-        RecordModule,
-        HttpClientModule
-      ],
-      providers: [
-        { provide: UserService, useValue: userTestingService },
-        { provide: DepositService, useValue: depositTestingService }
-      ]
-    }).compileComponents();
+    declarations: [StepComponent],
+    imports: [
+      RouterModule.forRoot([]),
+      TranslateModule.forRoot({
+        loader: {
+          provide: BaseTranslateLoader,
+          useClass: TranslateLoader,
+          deps: [CoreConfigService, HttpClient]
+        }
+      }),
+      RecordModule,
+      StepsModule
+    ],
+    providers: [
+      { provide: UserService, useValue: userTestingService },
+      { provide: DepositService, useValue: depositTestingService },
+      provideHttpClientTesting(),
+      provideHttpClient(withInterceptorsFromDi())
+    ]
+}).compileComponents();
   }));
 
   beforeEach(() => {

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ResultItem } from '@rero/ng-core';
 import { Subscription } from 'rxjs';
@@ -24,9 +24,14 @@ import { DocumentFile } from './document.interface';
 const SORT_CONTRIBUTOR_PRIORITY = ['cre', 'ctb', 'dgs', 'edt', 'prt'];
 
 @Component({
-  templateUrl: './document.component.html',
+    templateUrl: './document.component.html',
+    standalone: false
 })
 export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
+
+  private configService: AppConfigService = inject(AppConfigService);
+  private translateService: TranslateService = inject(TranslateService);
+
   // Record object
   record: any;
 
@@ -45,29 +50,15 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
   // is a global view
   // Admin interface: view is null
   get isGlobalView(): boolean {
-    return this._configService.view === null
-      || this._configService.view === this._configService.globalviewName;
+    return this.configService.view === null
+      || this.configService.view === this.configService.globalviewName;
   }
 
   // Get Current view (for public interface)
   get view(): string | null {
-    return this._configService.view;
+    return this.configService.view;
   }
 
-  /**
-   * Constructor.
-   *
-   * @param _configService Config service
-   * @param _translateService Translate service
-   */
-  constructor(
-    private _configService: AppConfigService,
-    private _translateService: TranslateService
-  ) {}
-
-  /**
-   * Component initialization.
-   */
   ngOnInit(): void {
     // Initialize and sort contributors
     if (!this.record.metadata.contribution) {
@@ -80,17 +71,12 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
 
     // When language change, abstracts are sorted and first one is displayed.
     this._subscription.add(
-      this._translateService.onLangChange.subscribe(() => {
+      this.translateService.onLangChange.subscribe(() => {
         this._storeAbstract();
       })
     );
   }
 
-  /**
-   * Component destruction.
-   *
-   * Unsubscribe from subscribers.
-   */
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
@@ -136,8 +122,8 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
       return null;
     }
 
-    const currentLang = this._configService.languagesMap.find(
-      (item) => item.code === this._translateService.currentLang
+    const currentLang = this.configService.languagesMap.find(
+      (item) => item.code === this.translateService.currentLang
     );
 
     const abstract = this.record.metadata.abstracts.find(

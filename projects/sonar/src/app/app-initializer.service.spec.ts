@@ -44,7 +44,7 @@ describe('AppInitializerService', () => {
   });
 
   it('Should return an object on initialization', () => {
-    service.initialize().subscribe((user) => {
+    service.load().subscribe((user) => {
       expect(user).toEqual(result);
     });
   });

@@ -1,0 +1,128 @@
+<!--
+  SONAR User Interface
+  Copyright (C) 2024 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+@if (loading) {
+  <i class="fa fa-spinner fa-spin"></i>
+} @else {
+@if (files()?.length > 0) {
+  @if(files().length > 0) {
+    <div class="ui:flex ui:flex-col ui:gap-2">
+      <p-inputgroup>
+        <input
+          id="filter"
+          type="text"
+          pInputText
+          [placeholder]="'filter' | translate"
+          [(ngModel)]="filterText"
+          (keyup)="onTextChange($event)"
+        />
+        <p-inputgroup-addon>
+          <i class="fa fa-filter"></i>
+        </p-inputgroup-addon>
+      </p-inputgroup>
+      <small>
+        {{ getResultsText() | async }}
+      </small>
+    </div>
+  }
+
+  @if (filteredFiles.length > 0) {
+    <div class="ui:border ui:border-surface ui:rounded-border ui:text-center ui:py-4 ui:px-1 ui:mt-2">
+      <p-carousel
+        [showIndicators]="false"
+        [showNavigators]="false"
+        [value]="filteredFiles"
+        [numVisible]="numVisible"
+        [page]="page"
+        [numScroll]="numVisible"
+        [circular]="false"
+      >
+        <ng-template let-file #item>
+          <div class="ui:px-1 ui:flex ui:flex-col">
+            @if (file.thumbnail) {
+              <div class="ui:flex ui:justify-center">
+                <img
+                  (click)="preview(file); $event.preventDefault()"
+                  [src]="file.thumbnail"
+                  [alt]="file.label"
+                  class="ui:shadow-sm ui:border-surface-300 ui:dark:border-surface-500 ui:border ui:mb-1 ui:max-w-20 ui:cursor-zoom-in"
+                  loading="lazy"
+                />
+              </div>
+            } @else {
+              <div>
+                <i class="fa fa-4x" [ngClass]="file.mimetype | faIconClass: 'file'"></i>
+              </div>
+            }
+            <div class="ui:flex ui:items-center ui:justify-center">
+              @if (file.preview) {
+                <a
+                  pButton
+                  [text]="true"
+                  icon="fa fa-eye"
+                  [href]="file.label"
+                  (onClick)="preview(file)"
+                >
+                </a>
+              } @if (file.download) {
+                <a
+                  pButton
+                  [text]="true"
+                  icon="fa fa-download"
+                  [href]="file.download"
+                download>
+                </a>
+              }
+            </div>
+            <small>{{ file.label }}</small>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
+    @if(files().length > numVisible) {
+      <p-paginator
+        (onPageChange)="onPageChange($event)"
+        [first]="1"
+        [rows]="numVisible"
+        [totalRecords]="filteredFiles.length"
+        [showJumpToPageInput]="false"
+        [pageLinkSize]="3"
+      />
+    }
+  }
+}
+
+@if(previewFile) {
+  <p-dialog
+    [modal]="true"
+    [(visible)]="isShowPreview"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+    [style]="{ width: '50vw' }"
+    styleClass="ui:transform-none"
+    >
+    <ng-template #header>
+      <h4>
+        {{ previewFile?.label? previewFile.label : "Preview"|translate }}
+      </h4>
+    </ng-template>
+    <iframe
+      id="preview-iframe"
+      [style]="{ width: '100%', height: '800px', border: 'none' }"
+      [src]="previewFile.url"
+    ></iframe>
+  </p-dialog>
+  }
+}

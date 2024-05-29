@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigService } from '../../app-config.service';
 
@@ -24,15 +24,18 @@ import { AppConfigService } from '../../app-config.service';
 @Component({
   selector: 'sonar-record-identifier',
   templateUrl: './identifier.component.html',
+  standalone: false
 })
 export class IdentifierComponent implements OnInit {
+
+  private appConfigService: AppConfigService = inject(AppConfigService);
+  private translateService: TranslateService = inject(TranslateService);
+
   /** Type of field (agent, identifiedBy) */
-  @Input()
-  type: string;
+  @Input() type: string;
 
   /** Identifier values */
-  @Input()
-  data: { type: string, value: string, source?: string };
+  @Input() data: { type: string, value: string, source?: string };
 
   /** Processed identifier */
   private _identifier: Identifier;
@@ -44,19 +47,8 @@ export class IdentifierComponent implements OnInit {
 
   /** Return the title link for external url */
   get externalLinkText(): string {
-    return this._translateService.instant('External link to the source');
+    return this.translateService.instant('External link to the source');
   }
-
-  /**
-   * Constructor.
-   *
-   * @param _appConfigService: AppConfigService
-   * @param _translateService: TranslateService
-   */
-  constructor(
-    private _appConfigService: AppConfigService,
-    private _translateService: TranslateService
-  ) {}
 
   /** OnInit Hook */
   ngOnInit(): void {
@@ -65,7 +57,7 @@ export class IdentifierComponent implements OnInit {
 
   /** Process data */
   private _processData(): void {
-    const settings = this._appConfigService.settings.document_identifier_link;
+    const settings = this.appConfigService.settings.document_identifier_link;
     this._identifier = {
       field: this.type,
       type: this.data.type,

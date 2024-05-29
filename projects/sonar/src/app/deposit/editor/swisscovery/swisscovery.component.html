@@ -1,0 +1,65 @@
+<!--
+  SONAR User Interface
+  Copyright (C) 2021 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<div class="ui:flex ui:flex-col ui:gap-2">
+  <p-select
+    styleClass="ui:w-full"
+    [options]="types"
+    [(ngModel)]="scType"
+    optionLabel="name"
+    [placeholder]="'Search in ...' | translate"
+  />
+  <p-inputgroup>
+    <input
+      type="text"
+      pAutoFocus
+      [autofocus]="true"
+      [(ngModel)]="searchTerms"
+      (keyup.enter)="searchSwisscovery()"
+      pInputText
+      placeholder="Keyword"
+    />
+    <button
+      pButton
+      (onClick)="searchSwisscovery()"
+      icon="fa fa-search"
+      severity="secondary"
+      variant="text"
+      outlined
+    ></button>
+  </p-inputgroup>
+
+  @if(scResult) {
+    @if(hasSwisscoveryResult){
+      <dl class="metadata">
+        <dt translate>Title</dt>
+        <dd>{{ scResult?.metadata?.title ? scResult.metadata.title : ('no title' | translate) }}</dd>
+        @if(scResult?.contributors) {
+        <dt translate>Contributors</dt>
+        <dd>{{ scResult.contributors }}</dd>
+        }
+      </dl>
+      <p-button (onClick)="save()" [label]="'Import' | translate" />
+    }
+    @else {
+      <p-messages
+        [value]="[{ severity: 'warn', detail: 'No result found' | translate }]"
+        [enableService]="false"
+        [closable]="false"
+      />
+    }
+  }
+</div>

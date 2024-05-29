@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserService } from './user.service';
 
@@ -23,10 +23,10 @@ import { UserService } from './user.service';
 })
 export class AppInitializerService {
 
-  constructor(private _userService: UserService) { }
+  private userService: UserService = inject(UserService);
 
   /** Function called when launching the application */
-  initialize(): Observable<any> {
-    return this._userService.loadLoggedUser();
+  load(): Observable<any> {
+    return this.userService.loadLoggedUser();
   }
 }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -23,15 +23,12 @@ import { map, startWith } from 'rxjs/operators';
  * Return the value of source array, corresponding of given language.
  */
 @Pipe({
-  name: 'languageValue',
+    name: 'languageValue',
+    standalone: false
 })
 export class LanguageValuePipe implements PipeTransform {
-  /**
-   * Constructor.
-   *
-   * @param _translateService Translate service.
-   */
-  constructor(private _translateService: TranslateService) {}
+
+  private translateService: TranslateService = inject(TranslateService);
 
   transform(value: any[], ...args: any[]): Observable<string> {
     if (!value || value.length === 0) {
@@ -53,8 +50,8 @@ export class LanguageValuePipe implements PipeTransform {
       it: 'ita',
     };
 
-    return this._translateService.onLangChange.pipe(
-      startWith({ lang: this._translateService.currentLang }),
+    return this.translateService.onLangChange.pipe(
+      startWith({ lang: this.translateService.currentLang }),
       map((event: LangChangeEvent) => {
         if (!languageMap[event.lang]) {
           return value[0][args[0]];
