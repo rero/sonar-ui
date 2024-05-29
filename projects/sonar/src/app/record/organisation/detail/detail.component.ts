@@ -14,15 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RecordService } from '@rero/ng-core';
 import { combineLatest, Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 @Component({
-  templateUrl: './detail.component.html',
+    templateUrl: './detail.component.html',
+    standalone: false
 })
 export class DetailComponent implements OnInit {
+
+  private recordService: RecordService = inject(RecordService);
+
   /** Observable resolving record data */
   record$: Observable<any>;
 
@@ -36,13 +40,6 @@ export class DetailComponent implements OnInit {
   collections: Array<any> = [];
 
   /**
-   * Constructor.
-   *
-   * @param _recordService: Record service.
-   */
-  constructor(private _recordService: RecordService) {}
-
-  /**
    * Component init.
    *
    * Load the collections and subdivisions for the organisation.
@@ -52,21 +49,21 @@ export class DetailComponent implements OnInit {
       .pipe(
         switchMap((record: any) => {
           this.record = record;
-          return combineLatest([
-            this._recordService.getRecords(
+          return combineLatest(
+            this.recordService.getRecords(
               'subdivisions',
               `organisation.pid:${record.id}`
             ),
-            this._recordService.getRecords(
+            this.recordService.getRecords(
               'collections',
-              `organisation.pid:${record.id}`
+              // `organisation.pid:${record.id}`
             ),
-          ]);
+          );
         })
       )
-      .subscribe((result: any) => {
-        this.subdivisions = result[0].hits.hits;
-        this.collections = result[1].hits.hits;
+      .subscribe(([subdivisions, collections]: any) => {
+        this.subdivisions = subdivisions.hits.hits;
+        this.collections = collections.hits.hits;
       });
   }
 }

@@ -14,22 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 /**
  * Generate a file link.
  */
 @Pipe({
-  name: 'fileLink'
+    name: 'fileLink',
+    standalone: false
 })
 export class FileLinkPipe implements PipeTransform {
-  /**
-   * Constructor.
-   *
-   * @param sanitizer DOM Sanitizer.
-   */
-  constructor(public sanitizer: DomSanitizer) { }
+
+  public sanitizer: DomSanitizer = inject(DomSanitizer);
 
   /**
    * Generate the link for a file

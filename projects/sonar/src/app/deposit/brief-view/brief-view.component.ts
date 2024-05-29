@@ -14,15 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { UserService } from '../../user.service';
 
 @Component({
-  selector: 'sonar-deposit-brief-view',
-  templateUrl: './brief-view.component.html'
+    selector: 'sonar-deposit-brief-view',
+    templateUrl: './brief-view.component.html',
+    standalone: false
 })
 export class BriefViewComponent implements OnInit, OnDestroy {
+
+  private _userService: UserService = inject(UserService);
+
   /** Record data */
   record: any;
 
@@ -30,30 +34,16 @@ export class BriefViewComponent implements OnInit, OnDestroy {
   user: any;
 
   // User subscription
-  private _userSubscription: Subscription;
+  private userSubscription: Subscription;
 
-  /**
-   * Constructor.
-   *
-   * @param _userService User service.
-   */
-  constructor(private _userService: UserService) { }
-
-  /**
-   * Component initialisation.
-   *
-   */
   ngOnInit() {
-    this._userSubscription = this._userService.user$.subscribe((user) => {
+    this.userSubscription = this._userService.user$.subscribe((user) => {
       this.user = user;
     });
   }
 
-  /**
-   * Component destruction
-   */
   ngOnDestroy() {
-    this._userSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
 
   /**

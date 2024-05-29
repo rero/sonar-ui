@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2019-2024 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
 
-@Component({
-  templateUrl: './detail.component.html'
-})
-export class DetailComponent {
-  /** Observable resolving record data */
-  record$: Observable<any>;
-}
+import { FaIconClassPipe } from './fa-icon-class.pipe';
+
+describe('FaIconClassPipe', () => {
+  it('create an instance', () => {
+    const pipe = new FaIconClassPipe();
+    expect(pipe).toBeTruthy();
+  });
+});

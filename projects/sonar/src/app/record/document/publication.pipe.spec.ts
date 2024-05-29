@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,38 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { TranslateService } from '@rero/ng-core';
-import { mockedConfiguration } from '../../../../tests/utils';
+import { TranslateLoader as BaseTranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CoreConfigService, TranslateLoader } from '@rero/ng-core';
 import { PublicationPipe } from './publication.pipe';
 
 let pipe: PublicationPipe;
 
 describe('PublicationPipe', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule(mockedConfiguration);
+    TestBed.configureTestingModule({
+      declarations: [PublicationPipe],
+      providers: [
+        PublicationPipe,
+        TranslateService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+      ],
+      imports: [
+        TranslateModule.forRoot({
+          loader: {
+            provide: BaseTranslateLoader,
+            useClass: TranslateLoader,
+            deps: [CoreConfigService, HttpClient]
+          },
+          isolate: false
+        })
+      ]
+    });
 
-    pipe = new PublicationPipe(TestBed.inject(TranslateService));
+    pipe = TestBed.inject(PublicationPipe);
   });
 
   it('create an instance', () => {

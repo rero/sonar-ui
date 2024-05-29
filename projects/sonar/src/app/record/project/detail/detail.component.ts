@@ -14,14 +14,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserService } from '../../../user.service';
 
 @Component({
-  templateUrl: './detail.component.html'
+    templateUrl: './detail.component.html',
+    standalone: false
 })
-export class DetailComponent {
+export class DetailComponent implements OnInit {
+
+  private userService: UserService = inject(UserService);
+
   /** Observable resolving record data */
   record$: Observable<any>;
 
@@ -31,12 +35,7 @@ export class DetailComponent {
   /** Type of resource. */
   type: string;
 
-  /**
-   * Constructor.
-   *
-   * @param _userService User service.
-   */
-  constructor(private _userService: UserService) {
-    this.user$ = this._userService.user$;
+  ngOnInit(): void {
+      this.user$ = this.userService.user$;
   }
 }

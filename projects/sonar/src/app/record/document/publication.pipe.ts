@@ -14,22 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Pipe, PipeTransform } from '@angular/core';
-import { TranslateService } from '@rero/ng-core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Pipe for displaying publication for a document
  */
 @Pipe({
-  name: 'publication',
+    name: 'publication',
+    standalone: false
 })
 export class PublicationPipe implements PipeTransform {
-  /**
-   * Constructor.
-   *
-   * @param _translateService TranslateService
-   */
-  constructor(private _translateService: TranslateService) {}
+
+  private translateService: TranslateService = inject(TranslateService);
 
   /**
    * Transform `partOf` object in text.
@@ -50,19 +47,19 @@ export class PublicationPipe implements PipeTransform {
 
     if (value.numberingVolume) {
       journal.push(
-        this._translateService.translate('vol.') + ' ' + value.numberingVolume
+        this.translateService.instant('vol.') + ' ' + value.numberingVolume
       );
     }
 
     if (value.numberingIssue) {
       journal.push(
-        this._translateService.translate('no.') + ' ' + value.numberingIssue
+        this.translateService.instant('no.') + ' ' + value.numberingIssue
       );
     }
 
     if (value.numberingPages) {
       journal.push(
-        this._translateService.translate('p.') + ' ' + value.numberingPages
+        this.translateService.instant('p.') + ' ' + value.numberingPages
       );
     }
 

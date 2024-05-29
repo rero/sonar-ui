@@ -1,6 +1,6 @@
 /*
  * SONAR UI
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,23 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { SecurityContext } from '@angular/core';
-import { inject } from '@angular/core/testing';
-import { DomSanitizer, ɵDomSanitizerImpl } from '@angular/platform-browser';
+import { TestBed } from '@angular/core/testing';
+import { DomSanitizer } from '@angular/platform-browser';
 import { HighlightJsonPipe } from './highlight-json.pipe';
 
 describe('HighlightJsonPipe', () => {
-  const sanitizer: DomSanitizer = new ɵDomSanitizerImpl(null);
+  let pipe: HighlightJsonPipe;
 
-  it('highlight json by injecting customs css classes', inject(
-    [DomSanitizer],
-    (domSanitizer: DomSanitizer) => {
-      const pipe = new HighlightJsonPipe(domSanitizer);
-      expect(pipe).toBeTruthy();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [HighlightJsonPipe],
+      providers: [
+        HighlightJsonPipe,
+        {
+          provide: DomSanitizer,
+          useValue: {
+            bypassSecurityTrustHtml: (val: string) => val
+          }
+        }
+      ]
+    });
+    pipe = TestBed.inject(HighlightJsonPipe);
+  });
 
-      const highlightedText = pipe.transform('{ title: "Title of document" }');
-      const sanitizedValue = sanitizer.sanitize(SecurityContext.HTML, highlightedText);
-      expect(sanitizedValue).toBe('{ title: <span class="string">"Title of document"</span> }');
-    }
-  ));
+  it('highlight json by injecting customs css classes', () => {
+    const highlightedText = pipe.transform('{ title: "Title of document" }');
+    expect(highlightedText).toBe('{ title: <span class="text-success">"Title of document"</span> }');
+  })
 });

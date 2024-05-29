@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { UserService } from '../user.service';
@@ -23,14 +23,9 @@ import { UserService } from '../user.service';
 @Injectable({
   providedIn: 'root'
 })
-export class CanAddGuard implements CanActivate {
-  /**
-   * Constructor.
-   * @param _userService User service.
-   */
-  constructor(
-    private _userService: UserService
-  ) { }
+export class CanAddGuard  {
+
+  private userService: UserService = inject(UserService);
 
   /**
    * Check if the current logged user can add records for resource.
@@ -42,7 +37,7 @@ export class CanAddGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> {
-    return this._userService.user$.pipe(
+    return this.userService.user$.pipe(
       filter(user => user !== null), // Because we don't take care of first null value for taking the decision.
       map((user: any) => {
         return user.permissions[next.params.type].add;

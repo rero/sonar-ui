@@ -1,31 +1,38 @@
 <!--
- SONAR User Interface
- Copyright (C) 2021 RERO
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, version 3 of the License.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU Affero General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  SONAR User Interface
+  Copyright (C) 2021 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<h4>
-  <a routerLink="{{ detailUrl.link }}">{{ record.metadata.name }}</a>
-</h4>
-<p class="mb-2">
-  <span class="badge badge-primary">{{ record.metadata.organisation.name }}</span>
-  <span class="badge badge-warning ml-1"
-    *ngIf="record.metadata.validation && record.metadata.validation.status !== validationStatus.VALIDATED" translate>
-    This record is not published
+<div class="ui:flex ui:flex-col ui:gap-2">
+  <h5>
+    <a [routerLink]="detailUrl.link">{{ record.metadata.name }}</a>
+  </h5>
+  <div class="ui:flex ui:gap-1">
+    <p-tag [value]="record.metadata.organisation.name" />
+    @if(record.metadata?.validation?.status !== validationStatus.VALIDATED) {
+      <p-tag severity="warn" [value]="'This record is not published' | translate" />
+    }
+  </div>
+  <span>
+    <i class="fa fa-calendar"></i>&nbsp;
+    {{ record.metadata.startDate | dateTranslate: 'mediumDate' }} -
+    @if(record.metadata?.endDate) {
+      {{ record.metadata.endDate | dateTranslate: 'mediumDate' }}
+    }
+    @else {
+      ?
+    }
   </span>
-</p>
-<p class="mb-0">
-  {{ record.metadata.startDate | dateTranslate: 'd/M/yyyy' }} -
-  {{ record.metadata.endDate | dateTranslate: 'd/M/yyyy' }}
-</p>
+</div>

@@ -1,0 +1,110 @@
+<!--
+  SONAR User Interface
+  Copyright (C) 2024 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<ngx-spinner
+  name="file-upload"
+  color="#fff"
+  size="medium"
+  type="ball-zig-zag"
+  [fullScreen]="true"
+>
+  <p class="ui:text-white">
+    {{ 'Loading...' | translate }}
+    @if (fileUpload?.files?.length > 0) {
+      ({{ nUploadedFiles }} / {{ fileUpload.files.length }})
+    }
+  </p>
+</ngx-spinner>
+
+@if (files != null) {
+  <div class="ui:flex ui:flex-col ui:gap-2">
+    <h5 translate>Upload Files</h5>
+    <p-fileUpload
+      [disabled]="reachMaxFileLimit"
+      styleClass="ui:[&>.p-fileupload-header]:flex-col ui:[&>.p-fileupload-header]:items-start"
+      #fileUpload
+      [auto]="true"
+      [multiple]="true"
+      name="uploadFiles"
+      [chooseLabel]="'Add file' | translate"
+      [customUpload]="true"
+      (uploadHandler)="uploadHandler($event, '')"
+      mode="advanced"
+      [maxFileSize]="maxFileSize"
+      (onSelect)="onSelect($event, '')"
+    >
+      <ng-template #toolbar>
+          <p class="text-warning ui:w-full" translate>
+          By uploading a file, I declare that I am aware of the terms and
+          conditions of the copyright transfer agreement governing the
+          publication of the respective document, and that the deposit of its
+          full-text content in the current platform is compatible with those.
+          </p>
+      </ng-template>
+
+      <ng-template #file let-file />
+
+      <ng-template #content let-file>
+        @if (reachMaxFileLimit) {
+          <p-message
+            [text]="'The maximum number of files is reached. No additional upload is allowed.' | translate"
+            severity="error"
+            showTransitionOptions="0ms"
+          />
+        }
+      </ng-template>
+      <ng-template #empty>
+        @if (!reachMaxFileLimit) {
+          <div class="ui:flex ui:items-center ui:justify-center ui:flex-col ui:p-2">
+              <i class="fa fa-cloud-upload ui:!border-2 ui:!rounded-full ui:!p-8 ui:!text-4xl ui:!text-muted-color"></i>
+              <p class="ui:mt-6 ui:mb-0" translate>Drag and drop files to here to upload.</p>
+          </div>
+        }
+    </ng-template>
+    </p-fileUpload>
+
+    @if(files?.length > 0) {
+      <p-orderList
+        [responsive]="true"
+        scrollHeight="auto"
+        #orderList
+        [value]="files"
+        (onReorder)="reorder()"
+        [header]="'Uploaded Files' | translate"
+        [filterBy]="files.length > 5 ? 'label' : null"
+        [dragdrop]="false"
+        controlsPosition="right"
+        class="ui:[&_.p-orderlist-list-container]:flex-grow"
+        metaKeySelection="true"
+        [filterPlaceholder]="'Filter by label' | translate"
+      >
+        <ng-template let-file pTemplate="item">
+          <sonar-file-item
+            class="ui:flex-grow"
+            [schema]="fileSchema()"
+            (update)="update(file, $event)"
+            (delete)="deleteFile($event)"
+            [file]="file"
+            (upload)="uploadNewVersion($event)"
+          />
+        </ng-template>
+      </p-orderList>
+  }
+  </div>
+} @else {
+  <i class="fa fa-spinner fa-spin"></i>
+}

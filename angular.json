@@ -11,12 +11,19 @@
       "prefix": "sonar",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/sonar",
+            "allowedCommonJsDependencies": [
+              "crypto-js",
+              "easymde"
+            ],
+            "outputPath": {
+              "base": "dist/sonar"
+            },
             "index": "projects/sonar/src/index.html",
-            "main": "projects/sonar/src/main.ts",
-            "polyfills": "projects/sonar/src/polyfills.ts",
+            "polyfills": [
+              "projects/sonar/src/polyfills.ts"
+            ],
             "tsConfig": "projects/sonar/tsconfig.app.json",
             "assets": [
               "projects/sonar/src/favicon.ico",
@@ -25,14 +32,19 @@
             "styles": [
               "projects/sonar/src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": ["import"]
+              },
+              "includePaths": ["node_modules"]
+            },
             "scripts": [],
             "preserveSymlinks": true,
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "projects/sonar/src/main.ts"
           },
           "configurations": {
             "proxy": {},
@@ -43,17 +55,15 @@
                   "with": "projects/sonar/src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": true,
               "outputHashing": "none",
+              "optimization": true,
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
+                  "maximumWarning": "3.5mb",
                   "maximumError": "5mb"
                 },
                 {
@@ -68,22 +78,22 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "sonar:build"
+            "buildTarget": "sonar:build"
           },
           "configurations": {
             "proxy": {
-              "browserTarget": "sonar:build:proxy",
-              "proxyConfig": "proxy.conf.json"
+              "proxyConfig": "proxy.conf.json",
+              "buildTarget": "sonar:build:proxy"
             },
             "production": {
-              "browserTarget": "sonar:build:production"
+              "buildTarget": "sonar:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sonar:build"
+            "buildTarget": "sonar:build"
           }
         },
         "test": {
@@ -100,6 +110,9 @@
             "styles": [
               "projects/sonar/src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "scripts": []
           }
         },

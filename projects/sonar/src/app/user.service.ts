@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ApiService } from '@rero/ng-core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -25,25 +25,16 @@ import { AppConfigService } from './app-config.service';
   providedIn: 'root'
 })
 export class UserService {
+
+  private apiService: ApiService = inject(ApiService);
+  private http: HttpClient = inject(HttpClient);
+  private appConfigService: AppConfigService = inject(AppConfigService);
+
   // Subject for generating new users.
   private _userSubject: BehaviorSubject<any> = new BehaviorSubject(null);
 
   // Logged user
   private _user: any = null;
-
-  /**
-   * Constructor
-   * @param _apiService API service.
-   * @param _http HTTP client.
-   * @param _appConfigService App Config Service.
-   */
-  constructor(
-    private _apiService: ApiService,
-    private _http: HttpClient,
-    private _appConfigService: AppConfigService)
-  {
-    this.loadLoggedUser().subscribe();
-  }
 
   /**
    * Get user observable
@@ -58,8 +49,8 @@ export class UserService {
    * @return Observable of user
    */
   loadLoggedUser(resolve: boolean = true): Observable<any> {
-    return this._http
-      .get<any>(`${this._apiService.baseUrl}/logged-user/${resolve ? '?resolve=1' : ''}`)
+    return this.http
+      .get<any>(`${this.apiService.baseUrl}/logged-user/${resolve ? '?resolve=1' : ''}`)
       .pipe(
         catchError((e) => {
           this._userSubject.error(e);
@@ -71,7 +62,7 @@ export class UserService {
             this._userSubject.next(user.metadata);
           }
           if (user.settings) {
-            this._appConfigService.settings = user.settings;
+            this.appConfigService.settings = user.settings;
           }
         })
       );
@@ -81,7 +72,7 @@ export class UserService {
    * Return $ref endpoint for current logged user.
    */
   getUserRefEndpoint() {
-    return this._apiService.getRefEndpoint('users', this._user.pid);
+    return this.apiService.getRefEndpoint('users', this._user.pid);
   }
 
   /**
@@ -112,7 +103,7 @@ export class UserService {
   }
 
   /**
-   * Check if user reference is corresonding to logged user id.
+   * Check if user reference is corresponding to logged user id.
    * @param reference User JSON endpoint reference.
    * @return true if the reference is the same user.
    */
@@ -139,7 +130,7 @@ export class UserService {
    * Check if the current user is on dedicated organisation.
    * @return true if the organisation is dedicated.
    */
-  isDedecatedOrganisation(): boolean {
+  isDedicatedOrganisation(): boolean {
     return 'isDedicated' in this._user.organisation
       && this._user.organisation.isDedicated;
   }
@@ -149,7 +140,7 @@ export class UserService {
    * @returns Link to public interface.
    */
    getPublicInterfaceLink(): string {
-    if (this.isDedecatedOrganisation()) {
+    if (this.isDedicatedOrganisation()) {
       return `/${this._user.organisation.code}`;
     }
 

@@ -14,13 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { DialogService, RecordService } from '@rero/ng-core';
+import { CONFIG, RecordService } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { EMPTY } from 'rxjs';
-import { first, switchMap } from 'rxjs/operators';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserService } from '../../user.service';
 import { validation_action, validation_status } from './constants';
 
@@ -30,9 +28,17 @@ import { validation_action, validation_status } from './constants';
 @Component({
   selector: 'sonar-record-validation',
   templateUrl: './validation.component.html',
-  styles: [],
+  standalone: false,
 })
 export class ValidationComponent implements OnInit {
+
+  private userService: UserService = inject(UserService);
+  private recordService: RecordService = inject(RecordService);
+  private translateService: TranslateService = inject(TranslateService);
+  private messageService: MessageService = inject(MessageService);
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private spinner: NgxSpinnerService = inject(NgxSpinnerService);
+
   // Constant for validation status.
   readonly validationStatus = validation_status;
 
@@ -40,12 +46,10 @@ export class ValidationComponent implements OnInit {
   readonly validationAction = validation_action;
 
   // Record object.
-  @Input()
-  record: any;
+  @Input() record: any;
 
   // Resource type.
-  @Input()
-  type: string;
+  @Input() type: string;
 
   // Current logged user.
   user: any;
@@ -57,37 +61,12 @@ export class ValidationComponent implements OnInit {
   showLogs = false;
 
   /** Used to retrieve value for the comment */
-  @ViewChild('comment')
-  comment: ElementRef;
+  @ViewChild('comment') comment: ElementRef;
 
-  /**
-   * Constructor.
-   *
-   * @param _userService User service.
-   * @param _recordService Record service.
-   * @param _translateService Translate service.
-   * @param _toastr Toastr.
-   * @param _dialogService Dialog service.
-   * @param _spinner Spinner service.
-   */
-  constructor(
-    private _userService: UserService,
-    private _recordService: RecordService,
-    private _translateService: TranslateService,
-    private _toastr: ToastrService,
-    private _dialogService: DialogService,
-    private _spinner: NgxSpinnerService
-  ) {}
-
-  /**
-   * Component initialization.
-   *
-   * Store validation metadata and current logged user.
-   */
   ngOnInit(): void {
     this.validation = this.record.metadata.validation;
 
-    this._userService.user$.subscribe((user) => {
+    this.userService.user$.subscribe((user) => {
       this.user = user;
     });
   }
@@ -98,7 +77,7 @@ export class ValidationComponent implements OnInit {
    * @returns True if current user is the creator of the record.
    */
   isOwner(): boolean {
-    return this._userService.getUserRefEndpoint() === this.validation.user.$ref;
+    return this.userService.getUserRefEndpoint() === this.validation.user.$ref;
   }
 
   /**
@@ -116,51 +95,39 @@ export class ValidationComponent implements OnInit {
    * @param action Action done.
    */
   updateValidation(action: string): void {
-    this._dialogService
-      .show({
-        ignoreBackdropClick: true,
-        initialState: {
-          title: this._translateService.instant('validation_action_' + action),
-          body: this._translateService.instant(
-            'Do you really want to do this action?'
-          ),
-          confirmButton: true,
-          confirmTitleButton: this._translateService.instant('OK'),
-          cancelTitleButton: this._translateService.instant('Cancel'),
-        },
-      })
-      .pipe(
-        first(), // Useful to complete the observable.
-        switchMap((result: boolean) => {
-          if (result === false) {
-            return EMPTY;
-          }
+    this.confirmationService.confirm({
+      header: this.translateService.instant('validation_action_' + action),
+      message: this.translateService.instant(
+        'Do you really want to do this action?'
+      ),
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        this.spinner.show();
 
-          this._spinner.show();
+        this.validation.action = action;
 
-          this.validation.action = action;
+        // Store the comment
+        if (this.comment && this.comment.nativeElement.value) {
+          this.validation.comment = this.comment.nativeElement.value;
+        } else {
+          delete this.validation.comment;
+        }
 
-          // Store the comment
-          if (this.comment && this.comment.nativeElement.value) {
-            this.validation.comment = this.comment.nativeElement.value;
-          } else {
-            delete this.validation.comment;
-          }
-
-          return this._recordService.update(
-            this.type,
-            this.record.id,
-            this.record
-          );
-        })
-      )
-      .subscribe((record: any) => {
-        this.record = record;
-        this.validation = this.record.metadata.validation;
-        this._spinner.hide();
-        this._toastr.success(
-          this._translateService.instant('Review has been done successfully!')
-        );
-      });
+        this.recordService
+          .update(this.type, this.record.id, this.record)
+          .subscribe((record: any) => {
+            this.record = record;
+            this.validation = this.record.metadata.validation;
+            this.spinner.hide();
+            this.messageService.add({
+              severity: 'success',
+              detail: this.translateService.instant('Review has been done successfully!'),
+              life: CONFIG.MESSAGE_LIFE,
+            });
+          });
+      },
+    });
   }
 }

@@ -1,0 +1,130 @@
+<!--
+  SONAR User Interface
+  Copyright (C) 2024 RERO
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, version 3 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<p-panel [toggleable]="true" collapsed="true">
+  <ng-template pTemplate="header">
+    <ng-container
+      [ngTemplateOutlet]="fileLink"
+      [ngTemplateOutletContext]="{ file: file(), name: file().label }"
+    />
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <p-button
+      [title]="'edit' | translate"
+      [text]="true"
+      icon="fa fa-edit"
+      class="p-panel-header-icon p-link"
+      (onClick)="showEditor()"
+    />
+    <p-button
+      [title]="'remove' | translate"
+      [text]="true"
+      icon="fa fa-trash"
+      class="p-panel-header-icon p-link"
+      (onClick)="deleteFile()"
+    />
+  </ng-template>
+
+  <div class="ui:p-4 ui:bg-white ui:flex ui:flex-col ui:gap-1">
+    @if(file().key) {
+      <sonar-field-description
+          [label]="'Filename' | translate"
+          [field]="file().key"
+        />
+    }
+    @if(file().size) {
+      <sonar-field-description
+          [label]="'File Size' | translate"
+          [field]="file().size | filesize"
+        />
+    }
+    @if(file().updated) {
+      <sonar-field-description
+          [label]="'Updated at' | translate"
+          [field]="file().updated | dateTranslate: 'fullDate'"
+        />
+    }
+    @let data = file().metadata;
+    @if(data.access) {
+      <sonar-field-description
+          [label]="'Access' | translate"
+          [field]="data.access | translate"
+        />
+    }
+    @if(data.embargo_date) {
+      <sonar-field-description
+          [label]="'Embargo Date' | translate"
+          [field]="data.embargo_date | dateTranslate: 'fullDate'"
+        />
+    }
+    @if(data.embargoDate) {
+      <sonar-field-description
+          [label]="'Embargo Date' | translate"
+          [field]="data.embargoDate | dateTranslate: 'fullDate'"
+        />
+    }
+    <p-divider align="left" ><b translate>Versions</b></p-divider>
+
+    @if (file().versions) {
+      <ul>
+        @for (version of file()?.versions; track $index) {
+        <li>
+          <ng-container
+            [ngTemplateOutlet]="fileLink"
+            [ngTemplateOutletContext]="{
+              file: version,
+              name: version.created | dateTranslate
+            }"
+          ></ng-container>
+        </li>
+        }
+      </ul>
+    }
+      <div class="ui:flex ui:justify-end ui:flex-wrap">
+        <p-fileUpload
+          [chooseButtonProps]="{size:'small'}"
+          mode="basic"
+          [chooseLabel]="'A new version' | translate"
+          chooseIcon="fa fa-upload"
+          [accept]="file().metadata.mimetype"
+          fileLimit="1"
+          [auto]="true"
+          [maxFileSize]="maxFileSize"
+          [customUpload]="true"
+          (uploadHandler)="uploadHandler($event)"
+        />
+      </div>
+  </div>
+</p-panel>
+
+<ng-template #fileLink let-file="file" let-name="name">
+  @if (file?.links?.self) {
+  <a
+    pButton
+    iconPos="right"
+    tabindex="-1"
+    [pTooltip]="(file.size | filesize) + ' / ' + (file.updated | dateTranslate : 'medium')"
+    [title]="'download' | translate"
+    [href]="downloadURL(file)"
+    icon="fa fa-download"
+    [text]="true"
+    download
+    [label]="name"
+    ></a>
+  }
+</ng-template>

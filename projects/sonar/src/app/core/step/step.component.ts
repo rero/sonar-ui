@@ -14,86 +14,46 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { MenuItem } from 'primeng/api';
 
 @Component({
-  selector: 'sonar-deposit-step',
-  templateUrl: './step.component.html',
-  styleUrls: ['./step.component.scss']
+    selector: 'sonar-deposit-step',
+    templateUrl: './step.component.html',
+    standalone: false
 })
 export class StepComponent implements OnInit {
-  /** Current step of the process */
-  @Input()
-  currentStep: string = null;
 
+  private translateService: TranslateService = inject(TranslateService);
+
+  /** Current step of the process */
   /** Current max step, no link available for next steps. */
-  @Input()
-  maxStep: string = null;
+  @Input() maxStep: string = null;
 
   /** Array of step for deposit process */
-  @Input()
-  steps: string[] = [];
+  @Input() steps: string[] = [];
 
-  /** Link prefix for building routes */
-  @Input()
-  linkPrefix = '';
-
-  /** Event emitted when a deposit is deleted. */
-  @Output()
-  cancel: EventEmitter<any> = new EventEmitter();
-
-  /** Event emitted when a step is clicked. */
-  @Output()
-  clicked: EventEmitter<any> = new EventEmitter();
+  items: MenuItem[] = [];
 
   ngOnInit() {
-    if (this.steps.length === 0) {
-      throw new Error('No steps defined');
-    }
-
-    if (!this.currentStep) {
-      this.currentStep = this.steps[0];
-    }
-
     if (!this.maxStep) {
       this.maxStep = this.steps[0];
     }
+    this.translateService.onLangChange.subscribe({
+      next: () => this.setItems(),
+    });
+    this.setItems();
   }
 
-  /**
-   * Return index corresponding to the step parameter.
-   *
-   * @return Max step index
-   */
-  get maxStepIndex(): number {
-    return this.steps.findIndex(element => element === this.maxStep);
-  }
-
-  /**
-   * Return index corresponding to the step parameter.
-   *
-   * @return Current step index
-   */
-  get currentStepIndex(): number {
-    return this.steps.findIndex(element => element === this.currentStep);
-  }
-
-  /**
-   * Trigger a cancel on parent.
-   *
-   * @param event DOM event click
-   */
-  doCancel(event: Event) {
-    event.preventDefault();
-    this.cancel.emit();
-  }
-
-  /**
-   * Method triggered when a step is clicked.
-   *
-   * @param step Step clicked.
-   */
-  click(step: string) {
-    this.clicked.emit(step);
+  setItems() {
+    let disabled = false;
+    this.items = this.steps.map((item: string): MenuItem => {
+      const data =  {label: this.translateService.instant(`step_${item}`), routerLink: ['..', item], disabled};
+      if (this.maxStep === item) {
+        disabled = true;
+      }
+      return data;
+    })
   }
 }

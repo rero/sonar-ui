@@ -18,8 +18,9 @@ import { Component, Input } from '@angular/core';
 import { IContribution } from '../contribution.interface';
 
 @Component({
-  selector: 'sonar-contribution',
-  templateUrl: './contribution.component.html'
+    selector: 'sonar-contribution',
+    templateUrl: './contribution.component.html',
+    standalone: false
 })
 export class ContributionComponent {
 
@@ -30,9 +31,7 @@ export class ContributionComponent {
   @Input() viewType: 'brief' | 'detail' = 'brief';
 
   get route(): string[] {
-    return !this.view
-      ? ['/records', 'documents']
-      : ['/', this.view, 'search', 'documents'];
+    return this.view ? ['/', this.view, 'search', 'documents'] : ['/records', 'documents'];
   }
 
   /**
@@ -40,7 +39,7 @@ export class ContributionComponent {
    * @return formatted meeting string
    */
   get meetingInfo(): string | null {
-    const agent = this.contributor.agent;
+    const { agent } = this.contributor;
     const meeting = [];
     ['number', 'date', 'place'].forEach((key: string) => {
       if (key in agent) {

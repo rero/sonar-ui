@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 /*
  * SONAR User Interface
  * Copyright (C) 2021 RERO
@@ -16,13 +16,11 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import {
-  TranslateLoader as BaseTranslateLoader,
-  TranslateModule
-} from '@ngx-translate/core';
+import { RouterModule } from '@angular/router';
+import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
 import { FileComponent } from './file.component';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('FileComponent', () => {
   let component: FileComponent;
@@ -30,20 +28,23 @@ describe('FileComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [FileComponent],
-      imports: [
-        HttpClientModule,
-        RouterTestingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: BaseTranslateLoader,
-            useClass: TranslateLoader,
-            deps: [CoreConfigService, HttpClient]
-          },
-        }),
-        RecordModule,
-      ],
-    }).compileComponents();
+    declarations: [FileComponent],
+    imports: [
+      RouterModule.forRoot([]),
+      TranslateModule.forRoot({
+        loader: {
+          provide: BaseTranslateLoader,
+          useClass: TranslateLoader,
+          deps: [CoreConfigService, HttpClient]
+        },
+      }),
+      RecordModule
+    ],
+    providers: [
+      provideHttpClient(withInterceptorsFromDi()),
+      provideHttpClientTesting()
+    ]
+}).compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-.step {
-  width: 40px;
-  height: 40px;
+import { Component, input } from '@angular/core';
+
+@Component({
+    selector: 'sonar-deposit-files',
+    templateUrl: './files.component.html',
+    standalone: false
+})
+export class FilesComponent {
+  mainFile = input.required<any>();
+  depositPid = input.required<string>();
+  additionalFiles = input<any>();
+  /** File key to preview */
+  previewFileKey: string;
+  isShowPreview = false;
 }
