@@ -18,48 +18,33 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DocumentFile } from '../document.interface';
 
 @Component({
-  selector: 'sonar-document-file',
-  templateUrl: './file.component.html'
+    selector: 'sonar-document-file',
+    templateUrl: './file.component.html',
+    standalone: false
 })
 export class FileComponent {
   // File object.
-  @Input()
-  file: DocumentFile;
-
-  // Record statistics.
-  @Input()
-  statistics;
+  @Input() file: DocumentFile;
 
   // Show preview icon
-  @Input()
-  showPreview = true;
+  @Input() showPreview = true;
 
   // Show download icon
-  @Input()
-  showDownload = true;
+  @Input() showDownload = true;
 
-  // Show statistics icon
-  @Input()
-  showStatistics = true;
-
-  @Input()
-  showExternalLink = true;
+  @Input() showExternalLink = true;
 
   // Show label
-  @Input()
-  showLabel = true;
+  @Input() showLabel = true;
 
   // Force link.
-  @Input()
-  link: string;
+  @Input() link: string;
 
   // In router or standard href link
-  @Input()
-  inRouter = false;
+  @Input() inRouter = false;
 
   /** Event emitted when a preview is clicked. */
-  @Output()
-  previewClicked: EventEmitter<any> = new EventEmitter();
+  @Output() previewClicked: EventEmitter<any> = new EventEmitter();
 
   /**
    * Scroll to target.

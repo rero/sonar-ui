@@ -14,22 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 /**
  * Highlight a JSON structure.
  */
 @Pipe({
-  name: 'highlightJson'
+    name: 'highlightJson',
+    standalone: false
 })
 export class HighlightJsonPipe implements PipeTransform {
-  /**
-   * Constructor.
-   *
-   * @param sanitizer DOM Sanitizer.
-   */
-  constructor(public sanitizer: DomSanitizer) {}
+
+  private sanitizer: DomSanitizer = inject(DomSanitizer);
 
   /**
    * Highlight a JSON structure.
@@ -46,17 +43,17 @@ export class HighlightJsonPipe implements PipeTransform {
     json = json.replace(
       /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
       (match: any) => {
-        let cls = 'number';
+        let cls = 'ui:text-muted-color';
         if (/^"/.test(match)) {
           if (/:$/.test(match)) {
-            cls = 'key';
+            cls = 'text-error';
           } else {
-            cls = 'string';
+            cls = 'text-success';
           }
         } else if (/true|false/.test(match)) {
-          cls = 'boolean';
+          cls = 'text-primary';
         } else if (/null/.test(match)) {
-          cls = 'null';
+          cls = 'text-warning';
         }
         return `<span class="${cls}">${match}</span>`;
       }

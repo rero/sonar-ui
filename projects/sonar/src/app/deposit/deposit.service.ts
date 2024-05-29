@@ -15,46 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ApiService, DialogService, orderedJsonSchema, RecordService, removeEmptyValues } from '@rero/ng-core';
-import { ToastrService } from 'ngx-toastr';
+import { ApiService, processJsonSchema, RecordService, removeEmptyValues, resolve$ref } from '@rero/ng-core';
+import { MessageService } from 'primeng/api';
 import { concat, from, Observable, of, Subscription, throwError } from 'rxjs';
-import { catchError, first, ignoreElements, map, mergeMap, reduce, switchMap, tap } from 'rxjs/operators';
+import { catchError, ignoreElements, map, mergeMap, reduce, tap } from 'rxjs/operators';
 import { UserService } from '../user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DepositService implements OnDestroy {
+
+  private apiService: ApiService = inject(ApiService);
+  private httpClient: HttpClient = inject(HttpClient);
+  private userService: UserService = inject(UserService);
+  private messageService: MessageService = inject(MessageService);
+  private translateService: TranslateService = inject(TranslateService);
+  private recordService: RecordService = inject(RecordService);
+
   // Logged user
-  private _user: any;
+  private user: any;
 
   // User subscription
-  private _userSubscription: Subscription;
+  private userSubscription: Subscription;
 
-  /**
-   * Constructor.
-   *
-   * @param _apiService API service.
-   * @param _httpClient HTTP client.
-   * @param _userService User service.
-   * @param _toastrService Toast service.
-   * @param _translateService Translate service.
-   * @param _dialogService Dialog service.
-   * @param _recordService Record service.
-   */
-  constructor(
-    private _apiService: ApiService,
-    private _httpClient: HttpClient,
-    private _userService: UserService,
-    private _toastrService: ToastrService,
-    private _translateService: TranslateService,
-    private _dialogService: DialogService,
-    private _recordService: RecordService
-  ) {
-    this._userSubscription = this._userService.user$.subscribe((user) => {
-      this._user = user;
+  constructor() {
+    this.userSubscription = this.userService.user$.subscribe((user) => {
+      this.user = user;
     });
   }
 
@@ -62,7 +51,7 @@ export class DepositService implements OnDestroy {
    * Service destruction
    */
   ngOnDestroy() {
-    this._userSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
 
   /**
@@ -71,7 +60,7 @@ export class DepositService implements OnDestroy {
    * @return Deposit endpoint as string.
    */
   get depositEndPoint(): string {
-    return `${this._apiService.getEndpointByType('deposits', true)}`;
+    return `${this.apiService.getEndpointByType('deposits', true)}`;
   }
 
   /**
@@ -79,11 +68,11 @@ export class DepositService implements OnDestroy {
    * @param id - string ID of deposit
    */
   get(id: string): Observable<any> {
-    return this._httpClient.get(`${this._apiService.getEndpointByType('deposits', true)}/${id}`).pipe(
+    return this.httpClient.get(`${this.apiService.getEndpointByType('deposits', true)}/${id}`).pipe(
       tap(result => {
         if (
-          this._userService.hasRole(['moderator', 'admin', 'superuser']) === false &&
-          this._userService.checkUserReference(result.metadata.user.$ref) === false
+          this.userService.hasRole(['moderator', 'admin', 'superuser']) === false &&
+          this.userService.checkUserReference(result.metadata.user.$ref) === false
         ) {
           throw new Error('Logged user is not owning this deposit');
         }
@@ -95,9 +84,9 @@ export class DepositService implements OnDestroy {
    * Create a deposit
    */
   create(): Observable<any> {
-    return this._httpClient.post(`${this._apiService.getEndpointByType('deposits', true)}/`, {
+    return this.httpClient.post(`${this.apiService.getEndpointByType('deposits', true)}/`, {
       user: {
-        $ref: this._userService.getUserRefEndpoint()
+        $ref: this.userService.getUserRefEndpoint()
       },
       step: 'metadata',
       status: 'in_progress'
@@ -113,11 +102,16 @@ export class DepositService implements OnDestroy {
     // Clean up empty values before sending the form.
     data = removeEmptyValues(data);
 
-    return this._httpClient
-      .put(`${this._apiService.getEndpointByType('deposits', true)}/${id}`, data)
+    return this.httpClient
+      .put(`${this.apiService.getEndpointByType('deposits', true)}/${id}`, data)
       .pipe(
         catchError(error => {
-          this._toastrService.error(error.error.message);
+          this.messageService.add({
+              severity: 'error',
+              detail: this.translateService.instant(error.error.message),
+              sticky: true,
+              closable: true,
+            });
           return of(null);
         })
       );
@@ -141,55 +135,10 @@ export class DepositService implements OnDestroy {
 
     return concat(
       deleteFileObservable$,
-      this._httpClient.delete(
-        `${this._apiService.getEndpointByType('deposits', true)}/${deposit.pid}`
+      this.httpClient.delete(
+        `${this.apiService.getEndpointByType('deposits', true)}/${deposit.pid}`
       )
     ).pipe(reduce(() => true));
-  }
-
-  /**
-   * Delete a deposit after a user confirmation.
-   * @param deposit Deposit to remove.
-   */
-  deleteDepositWithConfirmation(deposit: any): Observable<boolean> {
-    let observable$ = of(true);
-
-    if (deposit) {
-      observable$ = this._dialogService
-        .show({
-          ignoreBackdropClick: true,
-          initialState: {
-            title: this._translateService.instant('Confirmation'),
-            body: this._translateService.instant(
-              'Do you really want to cancel and remove this deposit?'
-            ),
-            confirmButton: true,
-            confirmTitleButton: this._translateService.instant('OK'),
-            cancelTitleButton: this._translateService.instant('Cancel')
-          }
-        })
-        .pipe(
-          first(),
-          switchMap((result: boolean) => {
-            if (result === true) {
-              return this.delete(deposit).pipe(
-                tap(() => {
-                  this._toastrService.success(
-                    this._translateService.instant('Deposit successfully removed.')
-                  );
-                }),
-                map(() => {
-                  return true;
-                })
-              );
-            }
-
-            return of(false);
-          })
-        );
-    }
-
-    return observable$;
   }
 
   /**
@@ -197,7 +146,7 @@ export class DepositService implements OnDestroy {
    * @param id Deposit ID to publish
    */
   publish(id: string): Observable<any> {
-    return this._httpClient
+    return this.httpClient
       .post(`${this.depositEndPoint}/${id}/publish`, null)
       .pipe(catchError(err => this._handleError(err)));
   }
@@ -210,8 +159,8 @@ export class DepositService implements OnDestroy {
    * @param file Binary data of the file
    */
   uploadFile(id: string, name: string, type: string, file: File): Observable<any> {
-    return this._httpClient.post(
-      `${this._apiService.getEndpointByType(
+    return this.httpClient.post(
+      `${this.apiService.getEndpointByType(
         'deposits',
         true
       )}/${id}/custom-files?key=${name}&type=${type}`,
@@ -225,9 +174,9 @@ export class DepositService implements OnDestroy {
    * @param data File data
    */
   updateFile(id: string, data: any): Observable<any> {
-    return this._httpClient
+    return this.httpClient
       .put(
-        `${this._apiService.getEndpointByType('deposits', true)}/${id}/custom-files/${data.key}`,
+        `${this.apiService.getEndpointByType('deposits', true)}/${id}/custom-files/${data.key}`,
         {
           label: data.label || data.key,
           embargo: data.embargo || false,
@@ -237,9 +186,12 @@ export class DepositService implements OnDestroy {
       )
       .pipe(
         catchError(() => {
-          this._toastrService.error(
-            this._translateService.instant('File could not be updated, please try again')
-          );
+          this.messageService.add({
+              severity: 'error',
+              detail: this.translateService.instant('File could not be updated, please try again'),
+              sticky: true,
+              closable: true,
+            });
           return of(null);
         })
       );
@@ -252,9 +204,9 @@ export class DepositService implements OnDestroy {
    * @param versionId File version, if specified, will make a hard delete of the file. See invenio-files-rest for detail.
    */
   removeFile(id: string, name: string, versionId: string = null): Observable<any> {
-    return this._httpClient
+    return this.httpClient
       .delete(
-        `${this._apiService.getEndpointByType('deposits', true)}/${id}/files/${name}${
+        `${this.apiService.getEndpointByType('deposits', true)}/${id}/files/${name}${
         versionId ? '?versionId=' + versionId : ''
         }`
       )
@@ -266,8 +218,8 @@ export class DepositService implements OnDestroy {
    * @param id Deposit id
    */
   getFiles(id: string): Observable<any> {
-    return this._httpClient.get(
-      `${this._apiService.getEndpointByType('deposits', true)}/${id}/custom-files`
+    return this.httpClient.get(
+      `${this.apiService.getEndpointByType('deposits', true)}/${id}/custom-files`
     );
   }
 
@@ -276,10 +228,10 @@ export class DepositService implements OnDestroy {
    * @param type Resource type
    */
   getJsonSchema(type: string): Observable<any> {
-    return this._recordService.getSchemaForm(type)
+    return this.recordService.getSchemaForm(type)
       .pipe(
         map((result: any) => {
-          orderedJsonSchema(result.schema);
+          result.schema = processJsonSchema(resolve$ref(result.schema, result.schema.properties));
           return result.schema;
         })
       );
@@ -292,12 +244,12 @@ export class DepositService implements OnDestroy {
   canAccessDeposit(deposit: any): boolean {
     if (
       (deposit.status === 'in_progress' || deposit.status === 'ask_for_changes') &&
-      this._userService.checkUserReference(deposit.user.$ref)
+      this.userService.checkUserReference(deposit.user.$ref)
     ) {
       return true;
     }
 
-    if (deposit.status === 'to_validate' && this._user && this._user.is_moderator) {
+    if (deposit.status === 'to_validate' && this.user && this.user.is_moderator) {
       return true;
     }
 
@@ -310,11 +262,11 @@ export class DepositService implements OnDestroy {
    * @param action Action to send to API
    */
   reviewDeposit(deposit: any, action: string, comment: string = null): Observable<any> {
-    return this._httpClient
+    return this.httpClient
       .post(`${this.depositEndPoint}/${deposit.pid}/review`, {
         action,
         user: {
-          $ref: this._userService.getUserRefEndpoint()
+          $ref: this.userService.getUserRefEndpoint()
         },
         comment: comment || null
       })
@@ -326,9 +278,11 @@ export class DepositService implements OnDestroy {
    * @param deposit Deposit
    */
   extractPDFMetadata(deposit: any): Observable<any> {
-    return this._httpClient
+    return this.httpClient
       .get(`${this.depositEndPoint}/${deposit.pid}/extract-pdf-metadata`)
-      .pipe(catchError(err => this._handleError(err)));
+      .pipe(
+        catchError(err => this._handleError(err))
+      );
   }
 
   /**
@@ -336,7 +290,12 @@ export class DepositService implements OnDestroy {
    * @param error - HttpErrorResponse
    */
   private _handleError(error: HttpErrorResponse) {
-    this._toastrService.error(error.error.message);
-    return throwError('Something bad happened; please try again later.');
+    this.messageService.add({
+      severity: 'error',
+      detail: this.translateService.instant(error.statusText),
+      sticky: true,
+      closable: true,
+    });
+    return throwError(() => new Error('Something bad happened; please try again later.'));
   }
 }

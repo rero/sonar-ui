@@ -30,13 +30,12 @@ export class AggregationFilter {
    * @returns Observable resolving aggregations.
    */
   static filter(aggregations: object): Observable<any> {
-    const obs = new Observable((observer: Subscriber<any>): void => {
+    return new Observable((observer: Subscriber<any>): void => {
       observer.next(AggregationFilter.aggregationFilter(aggregations));
       AggregationFilter.translateService.onLangChange.subscribe(() => {
         observer.next(AggregationFilter.aggregationFilter(aggregations));
       });
     });
-    return obs;
   }
 
   /**

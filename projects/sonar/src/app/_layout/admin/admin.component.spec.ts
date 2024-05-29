@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,18 +14,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { CollapseModule } from 'ngx-bootstrap/collapse';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
 import { DepositService } from '../../deposit/deposit.service';
 import { UserService } from '../../user.service';
 import { AdminComponent } from './admin.component';
+import { MenubarModule } from 'primeng/menubar';
 
 describe('AdminComponent', () => {
   let component: AdminComponent;
@@ -33,27 +32,26 @@ describe('AdminComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        BrowserAnimationsModule,
-        RouterTestingModule,
-        HttpClientModule,
-        CollapseModule.forRoot(),
-        RecordModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: BaseTranslateLoader,
-            useClass: TranslateLoader,
-            deps: [CoreConfigService, HttpClient]
-          }
-        })
-      ],
-      declarations: [AdminComponent],
-      providers: [
-        BsLocaleService,
-        { provide: UserService, useValue: userTestingService },
-        { provide: DepositService, useValue: depositTestingService }
-      ]
-    }).compileComponents();
+    declarations: [AdminComponent],
+    imports: [
+      BrowserAnimationsModule,
+      RouterModule.forRoot([]),
+      RecordModule,
+      TranslateModule.forRoot({
+        loader: {
+          provide: BaseTranslateLoader,
+          useClass: TranslateLoader,
+          deps: [CoreConfigService, HttpClient]
+        }
+      }),
+      MenubarModule
+    ],
+    providers: [
+      { provide: UserService, useValue: userTestingService },
+      { provide: DepositService, useValue: depositTestingService },
+      provideHttpClient(withInterceptorsFromDi())
+    ]
+}).compileComponents();
   }));
 
   beforeEach(() => {
