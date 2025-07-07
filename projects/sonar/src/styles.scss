@@ -25,6 +25,10 @@
 
 @plugin "tailwindcss-primeui";
 
+body {
+  margin: 0;
+}
+
 @layer sonar-ui {
   .sonar-ui {
     @import "@rero/ng-core/assets/scss/ng-core";
