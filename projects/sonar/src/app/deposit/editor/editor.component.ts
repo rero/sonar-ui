@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,12 +30,11 @@ import { UserService } from '../../user.service';
 import { DepositService } from '../deposit.service';
 
 @Component({
-    selector: 'sonar-deposit-editor',
-    templateUrl: './editor.component.html',
-    standalone: false
+  selector: 'sonar-deposit-editor',
+  templateUrl: './editor.component.html',
+  standalone: false,
 })
 export class EditorComponent implements OnInit, OnDestroy {
-
   private messageService: MessageService = inject(MessageService);
   private depositService = inject(DepositService);
   private router = inject(Router);
@@ -75,20 +74,23 @@ export class EditorComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   ngOnInit(): void {
-
-    this.subscriptions.add(this.deposit$.pipe(
-        switchMap(() => {
-          return combineLatest([
-            this.userService.user$,
-            this.depositService.getJsonSchema('deposits')
-          ]);
-        }),
-        map((results) => {
-          this.user = results[0];
-          this._createForm(results[1]);
-          this.setImportMenu();
-        })
-    ).subscribe());
+    this.subscriptions.add(
+      this.deposit$
+        .pipe(
+          switchMap(() => {
+            return combineLatest([
+              this.userService.user$,
+              this.depositService.getJsonSchema('deposits'),
+            ]);
+          }),
+          map((results) => {
+            this.user = results[0];
+            this.createForm(results[1]);
+            this.setImportMenu();
+          })
+        )
+        .subscribe()
+    );
   }
 
   ngOnDestroy(): void {
@@ -99,22 +101,21 @@ export class EditorComponent implements OnInit, OnDestroy {
     let items = [
       {
         label: this.translateService.instant('Import from swisscovery'),
-          command: () => {
-            this.importModalIsVisible = true;
-          }
-      }
+        command: () => {
+          this.importModalIsVisible = true;
+        },
+      },
     ];
     if (this.mainFile()) {
       items.push({
         label: this.translateService.instant('Analyze uploaded PDF'),
         command: () => {
           this.confirmPdfImport();
-        }
+        },
       });
     }
     this.importMenuItems = items;
   }
-
 
   /** Return if current logged user is an admin or a standard user */
   get isAdminUser(): boolean {
@@ -134,37 +135,18 @@ export class EditorComponent implements OnInit, OnDestroy {
     return this.steps()[currentIndex + 1];
   }
 
-
-
   /**
    * Save current state on database with API call.
    */
   save() {
     this.form.updateValueAndValidity();
 
-    if (this.form.valid === false) {
-      const fields = [];
-      let control:any = this.form.controls['metadata'];
-      Object.keys(control.controls).forEach((key: string) => {
-        if (control.controls[key].status !== 'VALID') {
-          fields.push(this.translateService.instant(key));
-        }
-      });
-      let errorMessage = '';
-      if (fields.length > 0) {
-        errorMessage += '<br>' + this.translateService.instant('Field(s) in error: ');
-        errorMessage += fields.join(', ');
-      }
-      this.messageService.add({
-        severity: 'error',
-        detail: this.translateService.instant('The form contains errors.') + errorMessage,
-        sticky: true,
-        closable: true,
-      });
+    if (!this.form.valid) {
+      this.form.markAllAsTouched();
       return;
     }
 
-    this._upgradeStep();
+    this.upgradeStep();
 
     this.deposit()[this.currentStep()] = this.model[this.currentStep()];
 
@@ -173,13 +155,17 @@ export class EditorComponent implements OnInit, OnDestroy {
       .subscribe((result: any) => {
         if (result) {
           this.messageService.add({
-              severity: 'success',
-              detail: this.translateService.instant('Deposit saved'),
-              life: CONFIG.MESSAGE_LIFE,
-            });
+            severity: 'success',
+            detail: this.translateService.instant('Deposit saved'),
+            life: CONFIG.MESSAGE_LIFE,
+          });
           // navigate to the next step
           if (this.currentStep() !== this.steps()[this.steps().length - 1]) {
-            this.router.navigate(['deposit', this.deposit().pid, this.nextStep]);
+            this.router.navigate([
+              'deposit',
+              this.deposit().pid,
+              this.nextStep,
+            ]);
           }
         }
       });
@@ -193,7 +179,8 @@ export class EditorComponent implements OnInit, OnDestroy {
       (this.deposit().status === 'in_progress' ||
         this.deposit().status === 'ask_for_changes') &&
       this.currentStep() === 'diffusion' &&
-      this.deposit().diffusion && this.deposit().diffusion.license
+      this.deposit().diffusion &&
+      this.deposit().diffusion.license
     );
   }
 
@@ -201,13 +188,12 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.confirmationService.confirm({
       message: 'Do you really want to publish this document ?',
       header: this.translateService.instant('Confirmation'),
-      acceptIcon:"none",
-      rejectIcon:"none",
-      rejectButtonStyleClass:"p-button-text",
+      rejectButtonStyleClass: 'p-button-text',
+      closable: false,
       accept: () => {
         this.publish();
-      }
-  });
+      },
+    });
   }
   /**
    * Publish a deposit after user confirmation. If user is a standard user, this will send an email
@@ -216,9 +202,9 @@ export class EditorComponent implements OnInit, OnDestroy {
   publish() {
     this.spinner.show();
     this.depositService.publish(this.deposit().pid).subscribe(() => {
-        this.spinner.hide();
-        this.router.navigate(['deposit', this.deposit().pid, 'confirmation']);
-      });
+      this.spinner.hide();
+      this.router.navigate(['deposit', this.deposit().pid, 'confirmation']);
+    });
   }
 
   confirmPdfImport() {
@@ -229,57 +215,59 @@ export class EditorComponent implements OnInit, OnDestroy {
       header: this.translateService.instant('Confirmation'),
       accept: () => {
         this.extractPdfMetadata();
-      }
-  });
+      },
+    });
   }
   /**
    * Extract metadata from PDF and populate deposit.
    */
   extractPdfMetadata() {
     this.spinner.show();
-    this.depositService.extractPDFMetadata(this.deposit()).pipe(
+    this.depositService
+      .extractPDFMetadata(this.deposit())
+      .pipe(
         tap((result: any) => {
           if (result === false) {
             return;
           }
           let metadata: any = {};
-          ['title', 'documentDate', 'publication', 'abstracts', 'language'].map(field => {
-            if(result[field]) {
-              metadata[field] = result[field];
-              if (field === 'abstract') {
-                metadata.abstracts = [
-                  {
-                    language: result?.languages[0] || 'eng',
-                    abstract: result.abstract,
-                  },
-                ]
+          ['title', 'documentDate', 'publication', 'abstracts', 'language'].map(
+            (field) => {
+              if (result[field]) {
+                metadata[field] = result[field];
+                if (field === 'abstract') {
+                  metadata.abstracts = [
+                    {
+                      language: result?.languages[0] || 'eng',
+                      abstract: result.abstract,
+                    },
+                  ];
+                } else if (field === 'languages') {
+                  metadata.language = result.languages[0];
+                } else result[field];
               }
-              else if (field === 'languages') {
-                metadata.language = result.languages[0];
-              }
-              else result[field];
             }
-          });
+          );
           if (metadata) {
             this.updateModel(metadata, 'metadata');
           }
-          if(result.authors) {
-            this.updateModel({contributors: result.authors}, 'contributors');
+          if (result.authors) {
+            this.updateModel({ contributors: result.authors }, 'contributors');
           }
         })
-      ).subscribe({
+      )
+      .subscribe({
         next: () => this.spinner.hide(),
-        error: () => this.spinner.hide()
+        error: () => this.spinner.hide(),
       });
   }
-
 
   /**
    * Map the swisscovery record to the deposit data.
    *
    * @returns void
    */
-  mapSwisscoverRecord(data): void {
+  mapSwisscoveryRecord(data): void {
     this.importModalIsVisible = false;
     if (!data) {
       return;
@@ -292,20 +280,20 @@ export class EditorComponent implements OnInit, OnDestroy {
    * Create form by extracting section corresponding to current step from JSON schema.
    * @param schema JSON schema
    */
-  private _createForm(schema: any) {
+  private createForm(schema: any) {
     schema = processJsonSchema(resolve$ref(schema, schema.properties));
-        // form configuration
+    // form configuration
     const editorConfig = {
       pid: this.deposit().pid,
       longMode: false,
-      recordType: 'deposits'
-    }
+      recordType: 'deposits',
+    };
     const depositFields = this.formlyJsonschema.toFieldConfig(schema, {
       map: (field: any, fieldSchema: any) => {
         field = this.jsonschemaService.processField(field, fieldSchema);
 
         field.props.editorConfig = editorConfig;
-        field.props.getRoot = (() => this.fields[0]);
+        field.props.getRoot = () => this.fields[0];
 
         // Force validate `value` field when type is changed.
         if (fieldSchema.key && fieldSchema.key === 'identified_by_type') {
@@ -351,9 +339,9 @@ export class EditorComponent implements OnInit, OnDestroy {
     });
 
     this.form = new UntypedFormGroup({});
-    let currentStepData = this.deposit()[this.currentStep()];
+    let currentStepData = this.deposit()[this.currentStep()] || {};
 
-    this.fields = this._getFormFields(
+    this.fields = this.getFormFields(
       depositFields.fieldGroup,
       this.currentStep()
     );
@@ -361,18 +349,18 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.updateModel(currentStepData);
   }
 
-  updateModel(data, step=undefined) {
-    if (!data) {
-      return;
-    }
-    step = step? step: this.currentStep();
+  updateModel(data, step = undefined) {
+    step = step || this.currentStep();
     let currentValue = this.model[step];
-    if(currentValue) {
-      this.model[step] = data instanceof Array ? [...currentValue, ...data] : {...currentValue, ...data};
+    if (currentValue) {
+      this.model[step] =
+        data instanceof Array
+          ? [...currentValue, ...data]
+          : { ...currentValue, ...data };
     } else {
       this.model[step] = data;
     }
-    this.model = {...this.model};
+    this.model = { ...this.model };
   }
 
   /**
@@ -380,7 +368,7 @@ export class EditorComponent implements OnInit, OnDestroy {
    * @param fieldGroup Array of fields extracted from JSON schema
    * @param step Current step
    */
-  private _getFormFields(fieldGroup: Array<any>, step: string): Array<any> {
+  private getFormFields(fieldGroup: Array<any>, step: string): Array<any> {
     const fields = fieldGroup.filter((item) => item.key === step);
     return [fields[0]];
   }
@@ -388,7 +376,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   /**
    * Upgrade step of the deposit only if current step is greater than deposit step.
    */
-  private _upgradeStep() {
+  private upgradeStep() {
     const depositIndex = this.steps().findIndex(
       (step) => step === this.deposit().step
     );

@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -16,50 +16,25 @@
 -->
 
 <div class="ui:flex ui:justify-end ui:items-center ui:flex-wrap ui:gap-2">
-    @if(currentStep() === 'metadata') {
-    <p-splitButton
-      [label]="'Import metadata' | translate"
-      [model]="importMenuItems"
-      appendTo="body"
-    />
-    }
-    @if(currentStep() === 'diffusion') {
-    <p-button
-      (onClick)="save()"
-      [label]="'Save' | translate"
-      iconPos="right"
-    />
-    }
-    @else {
-    <p-button
-      (onClick)="save()"
-      icon="fa fa-chevron-right"
-      [label]="'Continue' | translate"
-      iconPos="right"
-    />
-    }
-    @if(canSubmit()) {
-    <p-button
-      (onClick)="confirmPublish()"
-      [label]="isAdminUser ? ('Publish' | translate) : ('Submit' | translate)"
-      iconPos="right"
-    />
-    }
+  @if(currentStep() === 'metadata') {
+  <p-splitButton [label]="'Import metadata' | translate" [model]="importMenuItems" appendTo="body" />
+  }
+  @if(currentStep() === 'diffusion') {
+  <p-button (onClick)="save()" [label]="'Save' | translate" iconPos="right" />
+  }
+  @else {
+  <p-button (onClick)="save()" icon="fa fa-chevron-right" [label]="'Continue' | translate" iconPos="right" />
+  }
+  @if(canSubmit()) {
+  <p-button (onClick)="confirmPublish()" [label]="isAdminUser ? ('Publish' | translate) : ('Submit' | translate)"
+    iconPos="right" />
+  }
 </div>
 
 <!-- metadata editor -->
-<formly-form
-  [form]="form"
-  [model]="model"
-  [fields]="fields"
-  [class]="'step-' + currentStep"
-/>
+<formly-form [form]="form" [model]="model" [fields]="fields" [class]="'step-' + currentStep" />
 
-<p-dialog
-  [header]="'Import from swisscovery' | translate"
-  [modal]="true"
-  [(visible)]="importModalIsVisible"
-  styleClass="ui:w-[40lvw]"
->
-  <sonar-deposit-editor-swisscovery (data)="mapSwisscoverRecord($event)"/>
+<p-dialog [header]="'Import from swisscovery' | translate" [modal]="true" [(visible)]="importModalIsVisible"
+  styleClass="ui:w-[40lvw]">
+  <sonar-deposit-editor-swisscovery (data)="mapSwisscoveryRecord($event)" />
 </p-dialog>

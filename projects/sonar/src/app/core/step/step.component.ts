@@ -49,7 +49,11 @@ export class StepComponent implements OnInit {
   setItems() {
     let disabled = false;
     this.items = this.steps.map((item: string): MenuItem => {
-      const data =  {label: this.translateService.instant(`step_${item}`), routerLink: ['..', item], disabled};
+      const data =  {
+        label: this.translateService.instant(`step_${item}`),
+        routerLink: ['..', item],
+        disabled
+      };
       if (this.maxStep === item) {
         disabled = true;
       }
