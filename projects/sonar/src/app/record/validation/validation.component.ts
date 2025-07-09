@@ -100,8 +100,7 @@ export class ValidationComponent implements OnInit {
       message: this.translateService.instant(
         'Do you really want to do this action?'
       ),
-      acceptIcon: 'none',
-      rejectIcon: 'none',
+      closable: false,
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
         this.spinner.show();
