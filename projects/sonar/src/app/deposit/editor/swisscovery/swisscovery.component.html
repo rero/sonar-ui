@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 -->
 <div class="ui:flex ui:flex-col ui:gap-2">
   <p-select
+    appendTo="body"
     styleClass="ui:w-full"
     [options]="types"
     [(ngModel)]="scType"
@@ -42,19 +43,20 @@
     ></button>
   </p-inputgroup>
 
-  @if(scResult) {
-    @if(hasSwisscoveryResult){
-      <dl class="metadata">
-        <dt translate>Title</dt>
-        <dd>{{ scResult?.metadata?.title ? scResult.metadata.title : ('no title' | translate) }}</dd>
-        @if(scResult?.contributors) {
-        <dt translate>Contributors</dt>
-        <dd>{{ scResult.contributors }}</dd>
-        }
-      </dl>
-      <p-button (onClick)="save()" [label]="'Import' | translate" />
-    }
-    @else {
+  @if (scResult) {
+    @if (hasSwisscoveryResult){
+      <div class="ui:flex ui:flex-col ui:gap-2">
+        <dl class="metadata">
+          <dt translate>Title</dt>
+          <dd>{{ scResult?.metadata?.title ? scResult.metadata.title : ('no title' | translate) }}</dd>
+          @if(scResult?.contributors) {
+          <dt translate>Contributors</dt>
+          <dd>{{ scResult.contributors }}</dd>
+          }
+        </dl>
+        <p-button (onClick)="save()" [label]="'Import' | translate" />
+      </div>
+    } @else {
       <p-messages
         [value]="[{ severity: 'warn', detail: 'No result found' | translate }]"
         [enableService]="false"
