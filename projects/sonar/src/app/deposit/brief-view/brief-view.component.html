@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -65,10 +65,11 @@
     </div>
 
     @if(record.metadata.logs) {
-      <p-panel header="Header" [toggleable]="true" [collapsed]="true">
+      <p-panel [toggleable]="true" [collapsed]="true">
         <ng-template #header>
-          <div class="flex items-center gap-2">
-          <span translate>History</span>&nbsp;<p-badge [value]="record.metadata.logs.length" severity="secondary"></p-badge>
+          <div class="ui:flex ui:items-center ui:gap-2">
+            <span class="p-panel-title" translate>History</span>
+            <p-badge [value]="record.metadata.logs.length" severity="info" />
           </div>
         </ng-template>
         <p-table [value]="record.metadata.logs" [tableStyle]="{ 'min-width': '50rem' }">
@@ -97,7 +98,7 @@
           severity="primary"
           size="small"
           [routerLink]="['/deposit', record.id, 'files']"
-          [label]="'Continue process'"
+          [label]="'Continue process' | translate"
         />
     }
     @if(canReview()) {
@@ -105,7 +106,7 @@
           severity="primary"
           size="small"
           [routerLink]="['/deposit', record.id, 'files']"
-          [label]="' Review deposit'"
+          [label]="'Review deposit' | translate"
         />
     }
   </div>
