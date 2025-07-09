@@ -331,8 +331,7 @@ export class UploadFilesComponent {
       message: this.translateService.instant(
         'Do you really want to remove this file and all versions?'
       ),
-      acceptIcon: 'none',
-      rejectIcon: 'none',
+      closable: false,
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
         this.httpClient
