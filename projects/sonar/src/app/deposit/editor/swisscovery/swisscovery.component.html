@@ -51,7 +51,13 @@
           <dd>{{ scResult?.metadata?.title ? scResult.metadata.title : ('no title' | translate) }}</dd>
           @if(scResult?.contributors) {
           <dt translate>Contributors</dt>
-          <dd>{{ scResult.contributors }}</dd>
+          <dd>
+            <ul>
+              @for(contributor of scResult.contributors; track $index) {
+                <li>{{contributor.name}}</li>
+              }
+            </ul>
+          </dd>
           }
         </dl>
         <p-button (onClick)="save()" [label]="'Import' | translate" />

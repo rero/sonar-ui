@@ -42,6 +42,7 @@
           [currentStep]="currentStep"
           [steps]="steps"
           [mainFile]="mainFile()"
+          (depositChanged)="updateDeposit($event)"
         />
       </p-tabpanel>
       <p-tabpanel value="json">

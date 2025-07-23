@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { MenuItem } from 'primeng/api';
 
@@ -23,38 +24,31 @@ import { MenuItem } from 'primeng/api';
     templateUrl: './step.component.html',
     standalone: false
 })
-export class StepComponent implements OnInit {
+export class StepComponent {
 
   private translateService: TranslateService = inject(TranslateService);
 
-  /** Current step of the process */
   /** Current max step, no link available for next steps. */
-  @Input() maxStep: string = null;
+  maxStep = input.required<string>();
 
   /** Array of step for deposit process */
-  @Input() steps: string[] = [];
+  steps = input.required<string[]>();
 
-  items: MenuItem[] = [];
+  items: Signal<MenuItem[]> = computed(() => this.getItems());
 
-  ngOnInit() {
-    if (!this.maxStep) {
-      this.maxStep = this.steps[0];
-    }
-    this.translateService.onLangChange.subscribe({
-      next: () => this.setItems(),
-    });
-    this.setItems();
-  }
+  language = toSignal(this.translateService.onLangChange);
 
-  setItems() {
+  getItems() {
     let disabled = false;
-    this.items = this.steps.map((item: string): MenuItem => {
+    // the language has been changed
+    this.language();
+    return this.steps().map((item: string): MenuItem => {
       const data =  {
         label: this.translateService.instant(`step_${item}`),
         routerLink: ['..', item],
         disabled
       };
-      if (this.maxStep === item) {
+      if (this.maxStep() === item) {
         disabled = true;
       }
       return data;
