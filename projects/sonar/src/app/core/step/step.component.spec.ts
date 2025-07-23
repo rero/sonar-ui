@@ -57,7 +57,8 @@ describe('StepComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(StepComponent);
     component = fixture.componentInstance;
-    component.steps = ['create', 'metadata', 'contributors', 'diffusion'];
+    fixture.componentRef.setInput('steps', ['create', 'metadata', 'contributors', 'diffusion']);
+    fixture.componentRef.setInput('maxStep', 'metadata');
     fixture.detectChanges();
   });
 
