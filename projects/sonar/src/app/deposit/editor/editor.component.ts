@@ -14,17 +14,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnDestroy, OnInit, inject, input } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+  input,
+  output
+} from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { FormlyJsonschema } from '@ngx-formly/core/json-schema';
 import { TranslateService } from '@ngx-translate/core';
-import { CONFIG, JSONSchemaService, processJsonSchema, resolve$ref } from '@rero/ng-core';
+import {
+  CONFIG,
+  JSONSchemaService,
+  processJsonSchema,
+  resolve$ref,
+} from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { UserService } from '../../user.service';
 import { DepositService } from '../deposit.service';
@@ -48,15 +60,13 @@ export class EditorComponent implements OnInit, OnDestroy {
   /** Deposit object */
   deposit = input.required<any>();
   private deposit$ = toObservable(this.deposit);
+  depositChanged = output<any>();
 
   currentStep = input.required<string>();
 
   steps = input.required<any[]>();
 
   mainFile = input.required<any>();
-
-  /** Current user */
-  user: any = null;
 
   /** Form for current type */
   form: UntypedFormGroup = new UntypedFormGroup({});
@@ -74,20 +84,28 @@ export class EditorComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   ngOnInit(): void {
+    this.setImportMenu();
     this.subscriptions.add(
-      this.deposit$
+      this.depositService
+        .getJsonSchema('deposits')
         .pipe(
-          switchMap(() => {
-            return combineLatest([
-              this.userService.user$,
-              this.depositService.getJsonSchema('deposits'),
-            ]);
-          }),
-          map((results) => {
-            this.user = results[0];
-            this.createForm(results[1]);
-            this.setImportMenu();
-          })
+          map((schema) => this.getDepositFields(schema)),
+          switchMap((depositFields: any) => {
+            return this.deposit$.pipe(
+              tap(() => {
+                this.fields = this.getFormFields(
+                  depositFields.fieldGroup,
+                  this.currentStep()
+                );
+                let currentStepData = this.deposit()[this.currentStep()];
+                this.model = {};
+                if (currentStepData) {
+                  this.model[this.currentStep()] = currentStepData;
+                }
+              })
+            )
+          }
+          )
         )
         .subscribe()
     );
@@ -145,11 +163,8 @@ export class EditorComponent implements OnInit, OnDestroy {
       this.form.markAllAsTouched();
       return;
     }
-
     this.upgradeStep();
-
     this.deposit()[this.currentStep()] = this.model[this.currentStep()];
-
     this.depositService
       .update(this.deposit().pid, this.deposit())
       .subscribe((result: any) => {
@@ -232,28 +247,36 @@ export class EditorComponent implements OnInit, OnDestroy {
             return;
           }
           let metadata: any = {};
-          ['title', 'documentDate', 'publication', 'abstracts', 'language'].map(
+          ['title', 'documentDate', 'publication', 'abstract', 'languages'].map(
             (field) => {
               if (result[field]) {
-                metadata[field] = result[field];
-                if (field === 'abstract') {
-                  metadata.abstracts = [
-                    {
-                      language: result?.languages[0] || 'eng',
-                      abstract: result.abstract,
-                    },
-                  ];
-                } else if (field === 'languages') {
-                  metadata.language = result.languages[0];
-                } else result[field];
+                switch (field) {
+                  case 'abstract':
+                    metadata.abstracts = [
+                      {
+                        language: result?.languages[0] || 'eng',
+                        abstract: result.abstract,
+                      },
+                    ];
+                    break;
+                  case 'languages':
+                    metadata.language = result.languages[0];
+                    break;
+                  default:
+                    metadata[field] = result[field];
+                }
               }
             }
           );
+          const data = {};
           if (metadata) {
-            this.updateModel(metadata, 'metadata');
+            data['metadata'] = metadata;
           }
           if (result.authors) {
-            this.updateModel({ contributors: result.authors }, 'contributors');
+            data['contributors'] = result.authors;
+          }
+          if (data) {
+            this.depositChanged.emit({ ...this.deposit(), ...data });
           }
         })
       )
@@ -273,15 +296,14 @@ export class EditorComponent implements OnInit, OnDestroy {
     if (!data) {
       return;
     }
-    this.updateModel(data['metadata'], 'metadata');
-    this.updateModel(data['contributors'], 'contributors');
+    this.depositChanged.emit({ ...this.deposit(), ...data });
   }
 
   /**
    * Create form by extracting section corresponding to current step from JSON schema.
    * @param schema JSON schema
    */
-  private createForm(schema: any) {
+  private getDepositFields(schema: any): any {
     schema = processJsonSchema(resolve$ref(schema, schema.properties));
     // form configuration
     const editorConfig = {
@@ -289,7 +311,7 @@ export class EditorComponent implements OnInit, OnDestroy {
       longMode: false,
       recordType: 'deposits',
     };
-    const depositFields = this.formlyJsonschema.toFieldConfig(schema, {
+    return this.formlyJsonschema.toFieldConfig(schema, {
       map: (field: any, fieldSchema: any) => {
         field = this.jsonschemaService.processField(field, fieldSchema);
 
@@ -339,29 +361,6 @@ export class EditorComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.form = new UntypedFormGroup({});
-    let currentStepData = this.deposit()[this.currentStep()] || {};
-
-    this.fields = this.getFormFields(
-      depositFields.fieldGroup,
-      this.currentStep()
-    );
-    this.model = {};
-    this.updateModel(currentStepData);
-  }
-
-  updateModel(data, step = undefined) {
-    step = step || this.currentStep();
-    let currentValue = this.model[step];
-    if (currentValue) {
-      this.model[step] =
-        data instanceof Array
-          ? [...currentValue, ...data]
-          : { ...currentValue, ...data };
-    } else {
-      this.model[step] = data;
-    }
-    this.model = { ...this.model };
   }
 
   /**

@@ -104,9 +104,7 @@ export class SwisscoveryComponent {
           result.metadata = data.metadata;
         }
         if (data?.contributors) {
-          result.contributors = data.contributors
-            .map((res) => res.name)
-            .join(', ');
+          result.contributors = data.contributors;
         }
         this.scResult = result;
 

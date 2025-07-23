@@ -100,5 +100,8 @@ export class MetadataComponent implements OnInit {
       }
       );
   }
+  updateDeposit(value) {
+    this.deposit.set(value);
+  }
 
 }
