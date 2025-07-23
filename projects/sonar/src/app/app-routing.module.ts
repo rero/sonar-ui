@@ -173,7 +173,7 @@ export class AppRoutingModule {
             aggregationsBucketSize: 10,
             searchFields: [
               {
-                label: _('full-text'),
+                label: _('Search in full-text'),
                 path: 'fulltext'
               }
             ],
@@ -265,7 +265,7 @@ export class AppRoutingModule {
         },
         searchFields: [
           {
-            label: _('full-text'),
+            label: _('Search in full-text'),
             path: 'fulltext',
           },
         ],
