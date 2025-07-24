@@ -22,7 +22,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, primeNGConfig, RecordModule, RemoteAutocompleteService } from '@rero/ng-core';
+import { CoreConfigService, RecordModule, RemoteAutocompleteService } from '@rero/ng-core';
 import { ButtonModule } from 'primeng/button';
 import { ButtonGroupModule } from 'primeng/buttongroup';
 import { CarouselModule } from 'primeng/carousel';
@@ -66,6 +66,7 @@ import { BriefViewComponent } from './deposit/brief-view/brief-view.component';
 import { ConfirmationComponent } from './deposit/confirmation/confirmation.component';
 import { EditorComponent } from './deposit/editor/editor.component';
 import { SwisscoveryComponent } from './deposit/editor/swisscovery/swisscovery.component';
+import { primeNGSonarConfig } from './primeng-config';
 import { FilesComponent } from './deposit/files/files.component';
 import { MetadataComponent } from './deposit/metadata/metadata.component';
 import { ReviewComponent } from './deposit/review/review.component';
@@ -209,7 +210,7 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     },
     DatePipe,
     provideHttpClient(withInterceptorsFromDi()),
-    providePrimeNG(primeNGConfig),
+    providePrimeNG(primeNGSonarConfig),
   ],
 })
 export class AppModule {}
