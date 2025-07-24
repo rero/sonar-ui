@@ -21,7 +21,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { ToastrModule } from 'ngx-toastr';
 import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
 import { JoinPipe } from '../../core/join.pipe';
 import { UserService } from '../../user.service';
@@ -45,7 +44,6 @@ describe('ConfirmationComponent', () => {
           deps: [CoreConfigService, HttpClient]
         }
       }),
-      ToastrModule.forRoot(),
       RecordModule
     ],
     providers: [
