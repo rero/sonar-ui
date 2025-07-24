@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, ElementRef, inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CONFIG } from '@rero/ng-core';
@@ -47,7 +47,7 @@ export class ReviewComponent implements OnInit, OnDestroy {
   private _userSubscription: Subscription;
 
   /** Used to retrieve value for the comment */
-  @ViewChild('comment') comment: ElementRef;
+  comment: string;
 
   ngOnInit() {
     this._userSubscription = this.userService.user$.subscribe((user) => {
@@ -71,7 +71,7 @@ export class ReviewComponent implements OnInit, OnDestroy {
           this.depositService.reviewDeposit(
             this.deposit,
             action,
-            this.comment.nativeElement.value
+            this.comment
           ).subscribe((deposit: any) => {
             this.messageService.add({
               severity: 'success',
