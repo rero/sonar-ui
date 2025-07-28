@@ -319,17 +319,17 @@ export const primeNGSonarConfig = {
         iconSize: "1rem",
         anchorGutter: "2px",
         primary: {
-          50: "#f3f5f7",
-          100: "#c8d0d7",
-          200: "#bfdbfe",
-          300: "#9cabb8",
-          400: "#708699",
-          500: "#446179",
-          600: "#183c5a",
-          700: "#112a3f",
-          800: "#0d2132",
-          900: "#0a1824",
-          950: "#060f17"
+          50: "#f4f6f8",
+          100: "#c9d5df",
+          200: "#9fb4c5",
+          300: "#7593ab",
+          400: "#4a7192",
+          500: "#205078",
+          600: "#1b4466",
+          700: "#163854",
+          800: "#122c42",
+          900: "#0d2030",
+          950: "#08141e"
         },
         formField: {
           paddingX: "0.75rem",
@@ -429,10 +429,10 @@ export const primeNGSonarConfig = {
               950: "#020617"
             },
             primary: {
-              color: "{primary.600}",
+              color: "{primary.500}",
               contrastColor: "#ffffff",
-              hoverColor: "{primary.700}",
-              activeColor: "{primary.800}"
+              hoverColor: "{primary.600}",
+              activeColor: "{primary.700}"
             },
             highlight: {
               background: "{primary.50}",
@@ -730,8 +730,8 @@ export const primeNGSonarConfig = {
           colorScheme: {
               light: {
                   primary: {
-                      background: "{primary.100}",
-                      color: "{primary.700}"
+                      background: "{primary.600}",
+                      color: "{surface.0}"
                   },
                   secondary: {
                       background: "{surface.500}",
@@ -754,13 +754,13 @@ export const primeNGSonarConfig = {
                       color: "{red.700}"
                   },
                   contrast: {
-                      background: "{surface.950}",
+                      background: "{surface.700}",
                       color: "{surface.0}"
                   }
               },
               dark: {
                   primary: {
-                      background: "color-mix(in srgb, {primary.600}, transparent 84%)",
+                      background: "color-mix(in srgb, {primary.500}, transparent 84%)",
                       color: "{primary.300}"
                   },
                   secondary: {
