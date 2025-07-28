@@ -38,7 +38,7 @@
   </span>
 
   <p>{{ record.metadata.projectSponsor }} ({{ 'Project sponsor' | translate }}, {{ record.metadata.statusHep }})</p>
-
+  <div class="ui:flex-col ui:flex ui:gap-2">
     <!-- Internal research associates -->
     <sonar-field-description [label]="'Internal research associates' | translate" [field]="record.metadata.innerSearcher | join:', ' "/>
 
@@ -73,8 +73,7 @@
     </sonar-field-description>
 
     <!-- Date of approval by the Team Leader -->
-    <sonar-field-description [label]="'Date of approval by the Team Leader' | translate" [field]="record.metadata.approvalDate | dateTranslate: 'longDate' ">
-    </sonar-field-description>
+    <sonar-field-description [label]="'Date of approval by the Team Leader' | translate" [field]="record.metadata.approvalDate | dateTranslate: 'longDate' "/>
 
     <!-- Realization framework -->
     <sonar-field-description [label]="'Realization framework' | translate" [field]="record.metadata.realizationFramework | join:', ' "/>
@@ -181,6 +180,8 @@
         <ng-core-text-read-more [text]="searchResultsValorised"></ng-core-text-read-more>
       </ng-template>
     </sonar-field-description>
+  </div>
+
 
   @if (user$ | async; as user) {
     @if (record.metadata.documents && record.metadata.documents.length > 0 && user.is_moderator) {
