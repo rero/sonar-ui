@@ -31,7 +31,7 @@
       }
       @switch(record.metadata.status) {
         @case('in_progress') {
-          <p-tag severity="contrast" [value]="('deposit_status_' + record.metadata.status) | translate" />
+          <p-tag severity="primary" [value]="('deposit_status_' + record.metadata.status) | translate" />
         }
         @case('to_validate') {
           <p-tag severity="info" [value]="('deposit_status_' + record.metadata.status) | translate" />
