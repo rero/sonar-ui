@@ -27,6 +27,8 @@ export class BriefViewComponent implements OnInit, OnDestroy {
 
   private _userService: UserService = inject(UserService);
 
+  historyDialogVisible = false;
+
   /** Record data */
   record: any;
 
@@ -46,6 +48,9 @@ export class BriefViewComponent implements OnInit, OnDestroy {
     this.userSubscription.unsubscribe();
   }
 
+  showHistoryDialog() {
+    this.historyDialogVisible = true;
+  }
   /**
    * Check if current logged user can continue to fill the deposit.
    */

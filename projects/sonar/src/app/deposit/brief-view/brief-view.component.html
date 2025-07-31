@@ -65,13 +65,18 @@
     </div>
 
     @if(record.metadata.logs) {
-      <p-panel [toggleable]="true" [collapsed]="true">
-        <ng-template #header>
-          <div class="ui:flex ui:items-center ui:gap-2">
-            <span class="p-panel-title" translate>History</span>
-            <p-badge [value]="record.metadata.logs.length" severity="info" />
-          </div>
-        </ng-template>
+      <div class="flex justify-center">
+          <p-button size="small" severity="secondary" (onClick)="showHistoryDialog()" icon="fa fa-history" [label]="'History' | translate" />
+      </div>
+      <p-dialog
+          header="Header"
+          [resizable]="false"
+          [modal]="true"
+          appendTo="body"
+          [(visible)]="historyDialogVisible"
+          [style]="{ width: '75vw' }"
+          [contentStyle]="{ height: '300px' }"
+      >
         <p-table [value]="record.metadata.logs" [tableStyle]="{ 'min-width': '50rem' }">
           <ng-template #header>
               <tr>
@@ -90,7 +95,7 @@
             </tr>
           </ng-template>
         </p-table>
-      </p-panel>
+      </p-dialog>
     }
 
     @if(canContinueProcess()) {
