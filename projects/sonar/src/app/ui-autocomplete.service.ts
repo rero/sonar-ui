@@ -80,16 +80,17 @@ export class UIAutocompleteService {
   getValueAsHTML(queryOptions: IQueryOptions, item: ISuggestionItem): Observable<string> {
     const url = item.value.split('/');
     if(url.length < 2) {
-      return of(item.value);
+      return of(this.formatValue(item.value));
     }
     const pid = url.pop();
     return this.recordService
       .getRecord(queryOptions.type, pid, 1)
       .pipe(
-        map((data: any) =>{
-          return `<span class="ui:p-2"><strong>${data.metadata[queryOptions.label]}</strong></span>`;
-        }
-        )
+        map((data: any) => this.formatValue(data.metadata[queryOptions.label]))
       );
+  }
+
+  private formatValue(value:string): string {
+    return `<span class="ui:p-2"><strong>${value}</strong></span>`;
   }
 }
