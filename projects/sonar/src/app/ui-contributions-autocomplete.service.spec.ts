@@ -18,10 +18,10 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { ContributionsAutocompleteService } from './contributions-autocomplete.service';
+import { UIAutocompleteService } from './ui-autocomplete.service';
 
-describe('ContributionsAutocompleteService', () => {
-  let service: ContributionsAutocompleteService;
+describe('UIAutocompleteService', () => {
+  let service: UIAutocompleteService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -33,7 +33,7 @@ describe('ContributionsAutocompleteService', () => {
         provideHttpClient()
       ]
     });
-    service = TestBed.inject(ContributionsAutocompleteService);
+    service = TestBed.inject(UIAutocompleteService);
   });
 
   it('should be created', () => {

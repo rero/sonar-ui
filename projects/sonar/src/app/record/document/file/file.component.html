@@ -36,9 +36,9 @@
     }
     @else {
       @if(showPreview && file.links.preview) {
-        <a [href]="file.links.preview" (click)="preview(file); $event.preventDefault()">
+        <div class="ui:hover:cursor-pointer" (click)="preview(file); $event.preventDefault()">
           <ng-container [ngTemplateOutlet]="thumbnail" />
-        </a>
+        </div>
       }
       @else {
         @if(showDownload && file.links.download) {
@@ -61,15 +61,13 @@
   }
   <div class="ui:flex ui:gap-1 ui:justify-center">
     @if(showExternalLink && file.links.external) {
-      <a pButton [text]="true" icon="fa fa-external-link" [href]="file.links.external" target="_blank">
-      </a>
+      <a pButton [text]="true" icon="fa fa-external-link" [href]="file.links.external" target="_blank"></a>
     }
     @if(showPreview && file.links.preview) {
-      <a pButton text="true" icon="fa fa-eye" [href]="file.links.preview" (onClick)="preview(file)">
-      </a>
+      <p-button [text]="true" icon="fa fa-eye" (onClick)="preview(file)" />
     }
     @if (showDownload && file.links.download) {
-      <a pButton text="true" icon="fa fa-download" [href]="file.links.download" download>
+      <a pButton [text]="true" icon="fa fa-download" [href]="file.links.download" download>
       </a>
     }
   </div>
