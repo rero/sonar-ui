@@ -54,7 +54,7 @@ import { AppInitializerService } from './app-initializer.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppTranslateLoader } from './app-translate-loader';
 import { AppComponent } from './app.component';
-import { ContributionsAutocompleteService } from './contributions-autocomplete.service';
+import { UIAutocompleteService } from './ui-autocomplete.service';
 import { FieldDescriptionComponent } from './core/field-description/field-description.component';
 import { FileLinkPipe } from './core/file-link.pipe';
 import { FileSizePipe } from './core/filesize.pipe';
@@ -206,7 +206,7 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     }),
     {
       provide: RemoteAutocompleteService,
-      useClass: ContributionsAutocompleteService,
+      useClass: UIAutocompleteService,
     },
     DatePipe,
     provideHttpClient(withInterceptorsFromDi()),

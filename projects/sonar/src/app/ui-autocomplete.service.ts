@@ -26,7 +26,7 @@ import { catchError, map, Observable, of } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ContributionsAutocompleteService {
+export class UIAutocompleteService {
 
   private httpClient: HttpClient = inject(HttpClient);
   private translateService: TranslateService = inject(TranslateService);
