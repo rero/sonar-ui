@@ -304,8 +304,7 @@ export class UploadFilesComponent {
     if (existingFileNames.length > 0) {
       this.fileUpload.msgs.push({
         severity: 'error',
-        summary: 'This filename already exists.',
-        detail: `${existingFileNames.join(', ')}`
+        text: this.translateService.instant('These filenames already exists') + `: ${existingFileNames.join(', ')}`
       });
       this.fileUpload.files = this.fileUpload.files.filter(
         (v) => !existingFileNames.some((n) => n == v.name)
