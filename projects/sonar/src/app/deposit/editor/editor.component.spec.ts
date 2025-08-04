@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,12 +22,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormlyModule } from '@ngx-formly/core';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
+import { CoreConfigService, FilesizePipe, RecordModule, TranslateLoader } from '@rero/ng-core';
 import { DialogModule } from 'primeng/dialog';
 import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
 import { of } from 'rxjs';
 import { FileLinkPipe } from '../../core/file-link.pipe';
-import { FileSizePipe } from '../../core/filesize.pipe';
 import { HighlightJsonPipe } from '../../core/highlight-json.pipe';
 import { JoinPipe } from '../../core/join.pipe';
 import { StepComponent } from '../../core/step/step.component';
@@ -59,7 +58,7 @@ describe('EditorComponent', () => {
         SwisscoveryComponent,
         JoinPipe,
         FileLinkPipe,
-        FileSizePipe,
+        FilesizePipe,
         HighlightJsonPipe
     ],
     imports: [BrowserAnimationsModule,
