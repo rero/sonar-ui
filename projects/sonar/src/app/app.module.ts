@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -57,7 +57,6 @@ import { AppComponent } from './app.component';
 import { UIAutocompleteService } from './ui-autocomplete.service';
 import { FieldDescriptionComponent } from './core/field-description/field-description.component';
 import { FileLinkPipe } from './core/file-link.pipe';
-import { FileSizePipe } from './core/filesize.pipe';
 import { HighlightJsonPipe } from './core/highlight-json.pipe';
 import { JoinPipe } from './core/join.pipe';
 import { StepComponent } from './core/step/step.component';
@@ -115,7 +114,6 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     LanguageValuePipe,
     DashboardComponent,
     UploadComponent,
-    FileSizePipe,
     EditorComponent,
     StepComponent,
     ConfirmationComponent,
