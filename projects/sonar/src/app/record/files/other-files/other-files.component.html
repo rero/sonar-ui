@@ -69,14 +69,12 @@
             }
             <div class="ui:flex ui:items-center ui:justify-center">
               @if (file.preview) {
-                <a
-                  pButton
+                <p-button
                   [text]="true"
                   icon="fa fa-eye"
-                  [href]="file.preview"
                   (onClick)="preview(file)"
                 >
-                </a>
+                </p-button>
               } @if (file.download) {
                 <a
                   pButton
