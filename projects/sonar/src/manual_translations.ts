@@ -51,3 +51,11 @@ _('masked_for_all');
 // Document and deposit
 _('Submitted to');
 _('Published in');
+
+// Resources type
+_('Collections');
+_('Documents');
+_('Organisations');
+_('Projects');
+_('Subdivisions');
+_('Users');

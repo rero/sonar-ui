@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, NgModule } from '@angular/core';
-import { ActivatedRoute, ActivationStart, Router, RouterModule, Routes, UrlSegment, mapToCanActivate } from '@angular/router';
+import { NgModule, inject } from '@angular/core';
+import { ActivatedRoute, ActivationStart, ResolveFn, Router, RouterModule, Routes, UrlSegment, mapToCanActivate } from '@angular/router';
 import { TranslateService, _ } from "@ngx-translate/core";
-import { ActionStatus, ApiService, DetailComponent, EditorComponent, RecordSearchPageComponent } from '@rero/ng-core';
+import { ActionStatus, ApiService, DetailComponent, EditorComponent, RecordSearchPageComponent, capitalize } from '@rero/ng-core';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { AdminComponent } from './_layout/admin/admin.component';
@@ -55,14 +55,20 @@ const routes: Routes = [
     path: '',
     component: AdminComponent,
     children: [
-      { path: '', component: DashboardComponent },
+      {
+        path: '',
+        title: _('Administration'),
+        component: DashboardComponent
+      },
       {
         path: 'deposit/create',
+        title: _('Deposit'),
         canActivate: mapToCanActivate([RoleGuard]),
         component: UploadComponent,
       },
       {
         path: 'deposit/:id',
+        title: _('Deposit'),
         canActivate: mapToCanActivate([RoleGuard]),
         data: {
           role: 'submitter'
@@ -70,14 +76,17 @@ const routes: Routes = [
         children: [
           {
             path: 'files',
+            title: _('Deposit'),
             component: UploadComponent
           },
           {
             path: 'confirmation',
+            title: _('Deposit'),
             component: ConfirmationComponent
           },
           {
             path: ':step',
+            title: _('Deposit'),
             component: MetadataComponent
           }
         ]
@@ -136,6 +145,10 @@ const fileConfig = {
   },
 }
 
+export const typeResolver: ResolveFn<string> = (route) => {
+  return capitalize(route.params["type"]);
+};
+
 @NgModule({
   imports: [RouterModule.forRoot(routes, {})],
   exports: [RouterModule]
@@ -155,8 +168,16 @@ export class AppRoutingModule {
     this.router.config.push({
       path: ':view/search',
       children: [
-        { path: ':type', component: RecordSearchPageComponent },
-        { path: ':type/detail/:pid', component: DetailComponent }
+        {
+          path: ':type',
+          title: typeResolver,
+          component: RecordSearchPageComponent
+        },
+        {
+          path: ':type/detail/:pid',
+          title: typeResolver,
+          component: DetailComponent
+        }
       ],
       data: {
         showSearchInput: false,
@@ -217,6 +238,7 @@ export class AppRoutingModule {
     this.router.config.push({
       path: ':type/profile/:pid',
       component: EditorComponent,
+      title: typeResolver,
       canActivate: mapToCanActivate([RoleGuard]),
       data: {
         types: [
@@ -458,9 +480,22 @@ export class AppRoutingModule {
             matcher: (url: any) => this.routeMatcher(url, config.type),
             canActivate: mapToCanActivate([RoleGuard]),
             children: [
-              { path: '', component: RecordSearchPageComponent },
-              { path: 'edit/:pid', component: EditorComponent },
-              { path: 'new', component: EditorComponent, canActivate: mapToCanActivate([CanAddGuard]) }
+              {
+                path: '',
+                title: typeResolver,
+                component: RecordSearchPageComponent
+              },
+              {
+                path: 'edit/:pid',
+                title: typeResolver,
+                component: EditorComponent
+              },
+              {
+                path: 'new',
+                title: typeResolver,
+                component: EditorComponent,
+                canActivate: mapToCanActivate([CanAddGuard])
+              }
             ],
             data: {
               role: 'submitter',
@@ -491,7 +526,11 @@ export class AppRoutingModule {
             }
           };
           if (config.detailView) {
-            route.children.push({ path: 'detail/:pid', component: DetailComponent });
+            route.children.push({
+              path: 'detail/:pid',
+              title: typeResolver,
+              component: DetailComponent
+            });
           }
           this.router.config[0].children.push(route);
         });
@@ -586,7 +625,7 @@ export class AppRoutingModule {
   private _documentAggregationsOrder(): Observable<any> {
     return of(null).pipe(
       switchMap(() => {
-        const view = this.route.snapshot.children[0].params.view;
+        const {view} = this.route.snapshot.children[0].params;
 
         let params = new HttpParams();
         if (view) {
