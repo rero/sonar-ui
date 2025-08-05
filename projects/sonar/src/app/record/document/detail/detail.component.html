@@ -350,22 +350,26 @@
 </section>
 
 <!-- TABS -->
-<p-tabs value="others">
+<p-tabs value="edit">
   <p-tablist>
-    <p-tab value="others" [disabled]="filteredFiles.length > 1? false: true">
-      {{ 'Other files' | translate}}
+    <p-tab value="edit">
+      {{ 'Edit Files' | translate}}
     </p-tab>
     <p-tab value="stats">
       {{ 'Statistics' | translate}}
     </p-tab>
-    <p-tab value="edit">
-      {{ 'Edit Files' | translate}}
+    <p-tab value="others" [disabled]="filteredFiles.length > 1? false: true">
+      {{ 'Other files' | translate}}
     </p-tab>
   </p-tablist>
   <p-tabpanels>
-    <p-tabpanel #otherFiles value="others">
-      @if(otherFiles.active() && filteredFiles.length > 1) {
-        <sonar-other-files [documentPid]="record.pid" />
+    <p-tabpanel #editFile value="edit">
+      @if(editFile.active()) {
+        <sonar-upload-files
+          recordType="documents"
+          [pid]="record.pid"
+          (filesChanged)="updateFiles($event)"
+        />
       }
     </p-tabpanel>
     <p-tabpanel #stats value="stats">
@@ -376,13 +380,9 @@
         />
       }
     </p-tabpanel>
-    <p-tabpanel #editFile value="edit">
-      @if(editFile.active()) {
-        <sonar-upload-files
-          recordType="documents"
-          [pid]="record.pid"
-          (filesChanged)="updateFiles($event)"
-        />
+    <p-tabpanel #otherFiles value="others">
+      @if(otherFiles.active() && filteredFiles.length > 1) {
+        <sonar-other-files [documentPid]="record.pid" />
       }
     </p-tabpanel>
   </p-tabpanels>
