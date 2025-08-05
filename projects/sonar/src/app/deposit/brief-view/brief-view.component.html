@@ -17,15 +17,48 @@
 
 @if(record && user) {
   <div class="ui:flex ui:flex-col ui:gap-2">
-    <h4>
-      @if(record?.metadata?.metadata) {
-        <span [innerHtml]="record.metadata.metadata.title | nl2br"></span>
-      }
-      @else {
-        {{ 'Deposit' | translate }} #{{ record.id }}
-      }
-    </h4>
     <div class="ui:flex ui:gap-1">
+      <h4 class="ui:flex-grow">
+        @if(record?.metadata?.metadata) {
+          <span [innerHtml]="record.metadata.metadata.title | nl2br"></span>
+        }
+        @else {
+          <span>{{ 'Deposit' | translate }} #{{ record.id }}</span>
+        }
+      </h4>
+      @if(record.metadata.logs) {
+        <p-button size="small" [outlined]="true" severity="secondary" (onClick)="showHistoryDialog()" icon="fa fa-history" [label]="'History' | translate" />
+        <p-dialog
+            header="Header"
+            [resizable]="false"
+            [modal]="true"
+            appendTo="body"
+            [(visible)]="historyDialogVisible"
+            [style]="{ width: '75vw' }"
+            [contentStyle]="{ height: '300px' }"
+        >
+          <p-table [value]="record.metadata.logs" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template #header>
+              <tr>
+                <th translate>Action</th>
+                <th translate>Date</th>
+                <th translate>User</th>
+                <th translate>Comment</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-log>
+              <tr>
+                <td>{{ ('deposit_log_action_' + log.action) | translate }}</td>
+                <td>{{ log.date | dateTranslate: 'medium' }}</td>
+                <td>{{ log.user.first_name }} {{ log.user.last_name }}</td>
+                <td [innerHtml]="log.comment | nl2br"></td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-dialog>
+      }
+    </div>
+    <div class="ui:flex ui:gap-1 ui:align-middle">
       @if(!record.metadata.logs || record.metadata.logs.length === 1) {
         <p-tag severity="contrast" [value]="'New' | translate" />
       }
@@ -52,67 +85,34 @@
       <p>{{record.metadata.metadata.abstracts[0].abstract | truncateText: 30 }}</p>
     }
 
-    <div class="ui:flex ui:gap-1">
-      <p-tag severity="secondary">
-        {{ 'Created by' | translate }}: {{ record.metadata.user.first_name }} {{ record.metadata.user.last_name }}
-      </p-tag>
-      <p-tag severity="secondary">
-        {{ 'Created at' | translate }}: {{ record.created | dateTranslate: 'medium' }}
-      </p-tag>
-      <p-tag severity="secondary">
-        {{ 'Updated at' | translate }}: {{ record.updated | dateTranslate: 'medium' }}
-      </p-tag>
+    <dl class="metadata ui:text-sm">
+      <dt>{{ 'Created by' | translate }}</dt>
+      <dd>{{ record.metadata.user.first_name }} {{ record.metadata.user.last_name }}</dd>
+
+      <dt>{{ 'Created at' | translate }}</dt>
+      <dd>{{ record.created | dateTranslate: 'medium' }}</dd>
+
+      <dt>{{ 'Updated at' | translate }}</dt>
+      <dd>{{ record.updated | dateTranslate: 'medium' }}</dd>
+    </dl>
+
+    <div class="ui:flex ui:gap-1 ui:flex-wrap">
+      @if(canContinueProcess()) {
+          <p-button
+            severity="primary"
+            size="small"
+            [routerLink]="['/deposit', record.id, 'files']"
+            [label]="'Continue process' | translate"
+          />
+      }
+      @if(canReview()) {
+          <p-button
+            severity="primary"
+            size="small"
+            [routerLink]="['/deposit', record.id, 'files']"
+            [label]="'Review deposit' | translate"
+          />
+      }
     </div>
-
-    @if(record.metadata.logs) {
-      <div class="flex justify-center">
-          <p-button size="small" severity="secondary" (onClick)="showHistoryDialog()" icon="fa fa-history" [label]="'History' | translate" />
-      </div>
-      <p-dialog
-          header="Header"
-          [resizable]="false"
-          [modal]="true"
-          appendTo="body"
-          [(visible)]="historyDialogVisible"
-          [style]="{ width: '75vw' }"
-          [contentStyle]="{ height: '300px' }"
-      >
-        <p-table [value]="record.metadata.logs" [tableStyle]="{ 'min-width': '50rem' }">
-          <ng-template #header>
-              <tr>
-                <th translate>Action</th>
-                <th translate>Date</th>
-                <th translate>User</th>
-                <th translate>Comment</th>
-              </tr>
-          </ng-template>
-          <ng-template #body let-log>
-            <tr>
-              <td>{{ ('deposit_log_action_' + log.action) | translate }}</td>
-              <td>{{ log.date | dateTranslate: 'medium' }}</td>
-              <td>{{ log.user.first_name }} {{ log.user.last_name }}</td>
-              <td [innerHtml]="log.comment | nl2br"></td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-dialog>
-    }
-
-    @if(canContinueProcess()) {
-        <p-button
-          severity="primary"
-          size="small"
-          [routerLink]="['/deposit', record.id, 'files']"
-          [label]="'Continue process' | translate"
-        />
-    }
-    @if(canReview()) {
-        <p-button
-          severity="primary"
-          size="small"
-          [routerLink]="['/deposit', record.id, 'files']"
-          [label]="'Review deposit' | translate"
-        />
-    }
   </div>
 }
