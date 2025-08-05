@@ -25,7 +25,7 @@
         {{ 'Deposit' | translate }} #{{ record.id }}
       }
     </h4>
-    <div class="ui:flex ui:gap-1">
+    <div class="ui:flex ui:gap-1 ui:flex-wrap">
       @if(!record.metadata.logs || record.metadata.logs.length === 1) {
         <p-tag severity="contrast" [value]="'New' | translate" />
       }
@@ -52,7 +52,7 @@
       <p>{{record.metadata.metadata.abstracts[0].abstract | truncateText: 30 }}</p>
     }
 
-    <div class="ui:flex ui:gap-1">
+    <div class="ui:flex ui:gap-1 ui:flex-wrap">
       <p-tag severity="secondary">
         {{ 'Created by' | translate }}: {{ record.metadata.user.first_name }} {{ record.metadata.user.last_name }}
       </p-tag>
