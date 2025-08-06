@@ -313,10 +313,22 @@
         [field]="record.usageAndAccessPolicy"
       >
         <ng-template let-usageAndAccessPolicy pTemplate="template">
-          {{ usageAndAccessPolicy.license | translate }}
-          @if(usageAndAccessPolicy.label) {
-          <br />{{ usageAndAccessPolicy.label }}
-          }
+          @let licenseLogo = usageAndAccessPolicy.license | license;
+          <div class="ui:flex ui:flex-col">
+            <div class="ui:flex ui:gap-2">
+              {{ usageAndAccessPolicy.license | translate }}
+              @if (licenseLogo) {
+                <a [href]="licenseLogo.link" target="_blank">
+                  <img [src]="licenseLogo.icon" [title]="usageAndAccessPolicy.license" width="73px" />
+                </a>
+              }
+            </div>
+            @if(usageAndAccessPolicy.label) {
+              <div>
+                {{ usageAndAccessPolicy.label }}
+              </div>
+            }
+          </div>
         </ng-template>
       </sonar-field-description>
 
