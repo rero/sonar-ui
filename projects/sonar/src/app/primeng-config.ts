@@ -72,17 +72,17 @@ export const primeNGSonarConfig = {
           950: "#450a0a"
         },
         orange: {
-          50: "#fff7ed",
-          100: "#ffedd5",
-          200: "#fed7aa",
-          300: "#fdba74",
-          400: "#fb923c",
-          500: "#f97316",
-          600: "#ea580c",
-          700: "#c2410c",
-          800: "#9a3412",
-          900: "#7c2d12",
-          950: "#431407"
+          50: "#fff9f3",
+          100: "#ffe1c6",
+          200: "#ffc999",
+          300: "#ffb26b",
+          400: "#ff9a3e",
+          500: "#ff8211",
+          600: "#d96f0e",
+          700: "#b35b0c",
+          800: "#8c4809",
+          900: "#663407",
+          950: "#402104"
         },
         amber: {
           50: "#fffbeb",
@@ -734,7 +734,7 @@ export const primeNGSonarConfig = {
                       color: "{surface.0}"
                   },
                   secondary: {
-                      background: "{surface.500}",
+                      background: "{orange.500}",
                       color: "{surface.0}"
                   },
                   success: {
@@ -764,7 +764,7 @@ export const primeNGSonarConfig = {
                       color: "{primary.300}"
                   },
                   secondary: {
-                      background: "{surface.800}",
+                      background: "{orange.500}",
                       color: "{surface.300}"
                   },
                   success: {
