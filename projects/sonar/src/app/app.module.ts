@@ -97,6 +97,7 @@ import { BriefViewComponent as SubdivisionBriefViewComponent } from './record/su
 import { UserComponent } from './record/user/user.component';
 import { ValidationComponent } from './record/validation/validation.component';
 import { UserService } from './user.service';
+import { LicensePipe } from './record/document/license.pipe';
 
 export function minElementError(err: any, field: FormlyFieldConfig) {
   return `This field must contain at least ${field.templateOptions.minItems} element.`;
@@ -145,6 +146,7 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     MetadataComponent,
     FilesComponent,
     SwisscoveryComponent,
+    LicensePipe
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
