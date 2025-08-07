@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -59,3 +59,11 @@ _('Organisations');
 _('Projects');
 _('Subdivisions');
 _('Users');
+
+// Status
+_('in_progress');
+_('validated');
+_('to_validate');
+_('rejected');
+_('ask_for_changes');
+

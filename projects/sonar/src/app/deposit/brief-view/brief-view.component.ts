@@ -25,7 +25,7 @@ import { UserService } from '../../user.service';
 })
 export class BriefViewComponent implements OnInit, OnDestroy {
 
-  private _userService: UserService = inject(UserService);
+  private userService: UserService = inject(UserService);
 
   historyDialogVisible = false;
 
@@ -38,8 +38,12 @@ export class BriefViewComponent implements OnInit, OnDestroy {
   // User subscription
   private userSubscription: Subscription;
 
+  get canAccessToDocumentRedirect(): boolean {
+    return this.userService.hasRole(['moderator', 'admin', 'superuser']);
+  }
+
   ngOnInit() {
-    this.userSubscription = this._userService.user$.subscribe((user) => {
+    this.userSubscription = this.userService.user$.subscribe((user) => {
       this.user = user;
     });
   }
@@ -51,6 +55,7 @@ export class BriefViewComponent implements OnInit, OnDestroy {
   showHistoryDialog() {
     this.historyDialogVisible = true;
   }
+
   /**
    * Check if current logged user can continue to fill the deposit.
    */
@@ -62,7 +67,7 @@ export class BriefViewComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    return this._userService.checkUserPid(this.record.metadata.user.pid);
+    return this.userService.checkUserPid(this.record.metadata.user.pid);
   }
 
   /**

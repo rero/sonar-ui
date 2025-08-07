@@ -86,14 +86,23 @@
     }
 
     <dl class="metadata ui:text-sm">
-      <dt>{{ 'Created by' | translate }}</dt>
+      <dt translate>Created by</dt>
       <dd>{{ record.metadata.user.first_name }} {{ record.metadata.user.last_name }}</dd>
 
-      <dt>{{ 'Created at' | translate }}</dt>
+      <dt translate>Created at</dt>
       <dd>{{ record.created | dateTranslate: 'medium' }}</dd>
 
-      <dt>{{ 'Updated at' | translate }}</dt>
+      <dt translate>Updated at</dt>
       <dd>{{ record.updated | dateTranslate: 'medium' }}</dd>
+
+      @if(canAccessToDocumentRedirect && record.metadata.document) {
+        <dt>{{ 'Document' | translate }}</dt>
+        <dd>
+          <a [routerLink]="['/records', 'documents', 'detail', record.metadata.document.pid]">
+            {{ record.metadata.metadata.title }}
+          </a>
+        </dd>
+      }
     </dl>
 
     <div class="ui:flex ui:gap-1 ui:flex-wrap">
