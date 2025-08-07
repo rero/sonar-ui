@@ -512,6 +512,7 @@ export class AppRoutingModule {
                   aggregationsExpand: config.aggregationsExpand || [],
                   aggregationsOrder: config.aggregationsOrder || [],
                   aggregationsBucketSize: 10,
+                  showFacetsIfNoResults: true,
                   files: config.files || null,
                   searchFields: config.searchFields || null,
                   recordResource: config.recordResource || null,

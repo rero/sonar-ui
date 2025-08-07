@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { UserService } from '../../user.service';
 import { DepositService } from '../deposit.service';
+import { validation_status } from '../../record/validation/constants';
 
 @Component({
     selector: 'sonar-deposit-review',
@@ -44,25 +45,25 @@ export class ReviewComponent implements OnInit, OnDestroy {
   user: any;
 
   // User subscription
-  private _userSubscription: Subscription;
+  private userSubscription: Subscription;
 
   /** Used to retrieve value for the comment */
   comment: string;
 
   ngOnInit() {
-    this._userSubscription = this.userService.user$.subscribe((user) => {
+    this.userSubscription = this.userService.user$.subscribe((user) => {
       this.user = user;
     });
   }
 
   ngOnDestroy() {
-    this._userSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
 
   /**
    * Approve the deposit.
    */
-  review(action: string) {
+  review(action: string, edit: boolean = false): void {
       this.confirmationService.confirm({
         header: this.translateService.instant('deposit_log_action_' + action),
         message: this.translateService.instant('Do you really want to do this action?'),
@@ -78,9 +79,14 @@ export class ReviewComponent implements OnInit, OnDestroy {
               detail: this.translateService.instant('Review has been done successfully!'),
               life: CONFIG.MESSAGE_LIFE,
             });
-            this.router.navigate(['records', 'deposits'], {
-              queryParams: { q: `pid:${deposit.pid}` }
-            });
+            if (edit) {
+              const documentPid = deposit.document.$ref.split('/').pop();
+              this.router.navigate(['records', 'documents', 'detail', documentPid]);
+            } else {
+              this.router.navigate(['records', 'deposits'], {
+                queryParams: { status: validation_status.TO_VALIDATE }
+              });
+            }
           });
         }
     });

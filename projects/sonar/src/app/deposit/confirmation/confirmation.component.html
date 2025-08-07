@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 @if(deposit$ | async; as deposit) {
-  <div class="ui:flex ui:flex-col ui:gap-2">
+  <div class="ui:flex ui:flex-col ui:gap-3">
     <p-message
       [text]="'Thank you for submitting a publication!' | translate"
       severity="success"
@@ -36,8 +36,12 @@
       />
     }
     @if(isSubmitter) {
-      <a [href]="publicInterfaceLink" translate>Back to public interface</a>
-      <a routerLink="['/deposit', 'create']" translate>Deposit another publication</a>
+      <div class="ui:flex ui:mt-4">
+        <div class="ui:grow">
+          <a [href]="publicInterfaceLink" translate>Back to public interface</a>
+        </div>
+        <a routerLink="['/deposit', 'create']" translate>Deposit another publication</a>
+      </div>
     }
   </div>
 }
