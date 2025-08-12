@@ -715,12 +715,17 @@ export const primeNGSonarConfig = {
             padding: "0"
           }
         },
+        tabs: {
+          tabpanel: {
+            padding: "1rem 0"
+          }
+        },
         tag: {
           root: {
             fontSize: "0.8rem",
             fontWeight: "600",
-            padding: "0.15rem 0.5rem",
-            gap: "0.25rem",
+            padding: "0.1rem 0.3rem",
+            gap: "0.15rem",
             borderRadius: "{content.border.radius}",
             roundedBorderRadius: "{border.radius.xl}"
           },

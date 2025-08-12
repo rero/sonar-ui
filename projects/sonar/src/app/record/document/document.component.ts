@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,6 +43,9 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
 
   // Abstract corresponding to current language.
   abstract: string;
+
+  contributorsLength = 5;
+  showMore = true;
 
   // Subscription to observables, used to unsubscribe to all at the same time.
   private _subscription: Subscription = new Subscription();
@@ -92,6 +95,12 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
     const files = this.record.metadata._files.filter((file: any) => file.type === 'file');
 
     return files.length === 0 ? null : files[0];
+  }
+
+  showMoreContributors(event: any, contributorsLength: number): void {
+    event.preventDefault();
+    this.showMore = false;
+    this.contributorsLength = contributorsLength;
   }
 
   /**
