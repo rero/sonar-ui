@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -75,29 +75,35 @@
         }
       }
     </h4>
-    @if(isGlobalView && record.metadata.organisation) {
+    @if(record.metadata.organisation || record.metadata.subdivisions) {
       <div class="ui:flex ui:gap-1">
-        @for(organisation of record.metadata.organisation; track $index) {
-        <p-tag severity="secondary"  [value]="organisation.name" />
+        @if(isGlobalView && record.metadata.organisation) {
+          @for(organisation of record.metadata.organisation; track $index) {
+            <p-tag severity="secondary" [value]="organisation.name" />
+          }
         }
-      </div>
-    }
-    @if(record.metadata.subdivisions) {
-      <div class="ui:flex ui:gap-1">
-        @for(subdivision of record.metadata.subdivisions; track $index) {
-        <p-tag severity="secondary"  [value]="subdivision.name | languageValue | async" />
+        @if(record.metadata.subdivisions) {
+          @for(subdivision of record.metadata.subdivisions; track $index) {
+            <p-tag severity="secondary" [value]="subdivision.name | languageValue | async" />
+          }
         }
       </div>
     }
     @if (record.metadata.contribution) {
-      <span>
-        @for (contributor of record.metadata.contribution|contributors; track $index; let first=$first) {
-          @if(!first) {
-            &nbsp;;&nbsp;
-          }
+      @let contributors = record.metadata.contribution|contributors;
+      <div class="ui:flex ui:flex-wrap ui:gap-1">
+        @for (contributor of contributors|slice:0:contributorsLength; track $index; let last=$last) {
           <sonar-contribution [view]="view" [contributor]="contributor" />
+          @if(!last) {
+            ;&nbsp;
+          }
         }
-      </span>
+        @if(showMore && contributors.length > contributorsLength) {
+          <a class="ui:ml-2" href="#" (click)="showMoreContributors($event, contributors.length)">
+            {{ 'Show more' | translate }}&hellip;
+          </a>
+        }
+      </div>
     }
     @if(record.metadata.partOf && record.metadata.partOf.length > 0) {
       <span>{{ record.metadata.partOf[0] | publication }}</span>
@@ -110,9 +116,7 @@
       @for(statement of record.metadata.provisionActivity; track $index) {
         @if(statement.text && statement.text.default) {
           @for(item of statement.text | keyvalue; track $index) {
-            <li>
-            {{item.value}}
-          </li>
+            <li>{{ item.value }}</li>
           }
         }
       }

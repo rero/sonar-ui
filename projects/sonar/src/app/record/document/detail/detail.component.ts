@@ -25,6 +25,7 @@ import { DocumentFile } from '../document.interface';
 @Component({
   templateUrl: './detail.component.html',
   standalone: false,
+  // styles: `p-tabpanels { padding: 1rem 0 !important}`
 })
 export class DetailComponent implements OnDestroy, OnInit {
 

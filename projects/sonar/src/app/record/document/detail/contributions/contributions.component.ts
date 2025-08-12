@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2022 RERO
+ * Copyright (C) 2022-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,7 +34,7 @@ export class ContributionsComponent implements OnInit {
   @Input() additionalInfosFields = false;
 
   /** Maximum starting size for contributions  */
-  contributorsLength = 3;
+  contributorsLength = 5;
 
   /** Show more link */
   showMore = true;

@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2019-2024 RERO
+ * Copyright (C) 2019-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,8 +18,26 @@
 import { FaIconClassPipe } from './fa-icon-class.pipe';
 
 describe('FaIconClassPipe', () => {
+  let pipe: FaIconClassPipe;
+
+  beforeEach(() => {
+    pipe = new FaIconClassPipe();
+  });
+
   it('create an instance', () => {
-    const pipe = new FaIconClassPipe();
     expect(pipe).toBeTruthy();
+  });
+
+  it('should return icons for the file', () => {
+    expect(pipe.transform(null, 'file')).toEqual('fa-file-o');
+    expect(pipe.transform('font/ttf', 'file')).toEqual('fa-file-o');
+    expect(pipe.transform('image/png', 'file')).toEqual('fa-file-image-o');
+  });
+
+  it('should return icons for the type of contribution', () => {
+    expect(pipe.transform(null, 'contribution')).toEqual('fa-circle');
+    expect(pipe.transform('bf:Person', 'contribution')).toEqual('fa-user');
+    expect(pipe.transform('bf:Organization', 'contribution')).toEqual('fa-building');
+    expect(pipe.transform('bf:Person', 'contribution')).toEqual('fa-user');
   });
 });

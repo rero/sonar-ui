@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2019-2024 RERO
+ * Copyright (C) 2019-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,6 +54,19 @@ export class FaIconClassPipe implements PipeTransform {
     return 'fa-file-o';
   }
 
+  faClassForContribution(type: string): string {
+    switch(type) {
+      case 'bf:Meeting':
+        return 'fa-users';
+      case 'bf:Organization':
+        return 'fa-building';
+      case 'bf:Person':
+        return 'fa-user';
+      default:
+        return 'fa-circle';
+    }
+  }
+
   /**
    * Get the font awesome class given a type and a value.
    *
@@ -65,6 +78,8 @@ export class FaIconClassPipe implements PipeTransform {
     switch(type) {
       case 'file':
         return this.faClassForMimeType(value);
+      case 'contribution':
+        return this.faClassForContribution(value);
     }
     return null;
   }
