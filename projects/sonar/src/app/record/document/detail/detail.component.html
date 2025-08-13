@@ -148,7 +148,8 @@
               <p-tag severity="secondary" icon="fa fa-tag">
                 <a
                 [routerLink]="['/', 'records', 'documents']"
-                [queryParams]="{ q: 'subjects.label.value:' + value }"
+                [queryParams]="{ q: 'subjects.label.value:' + '&quot;' + value + '&quot;'}"
+
                 >
                   {{value}}
                 </a>
@@ -239,25 +240,27 @@
       />
 
       <!-- CLASSIFICATION -->
-      @if (UDCclassifications.length > 0) {
-        <sonar-field-description
-          [label]="'Classification' | translate"
-          [field]="UDCclassifications"
-        >
-          <ng-template let-classification pTemplate="template">
-            <a
-              [routerLink]="['/', 'records', 'documents']"
-              [queryParams]="{
-                q:
-                  'classification.classificationPortion:' +
-                  classification.classificationPortion
-              }"
-            >
+      <sonar-field-description
+        [label]="'Classification' | translate"
+        [field]="record.classification"
+      >
+        <ng-template let-classification pTemplate="template">
+          <a
+            [routerLink]="['/', 'records', 'documents']"
+            [queryParams]="{
+              q:
+                'classification.classificationPortion:' + '&quot;' +
+                classification.classificationPortion + '&quot;'
+            }"
+          >
+            @if (classification.type === "bf:ClassificationUdc") {
               {{ 'classification_' + classification.classificationPortion | translate }}
-            </a>
-          </ng-template>
-        </sonar-field-description>
-      }
+            } @else {
+              {{ classification.classificationPortion }}
+            }
+          </a>
+        </ng-template>
+      </sonar-field-description>
 
       <!-- OTHER EDITION -->
       <sonar-field-description
