@@ -121,21 +121,6 @@ export class DetailComponent implements OnDestroy, OnInit {
   }
 
   /**
-   * Return the list of UDC classifications.
-   *
-   * @returns List of UDC classifications.
-   */
-  get UDCclassifications(): Array<any> {
-    if (!this.record.classification) {
-      return [];
-    }
-
-    return this.record.classification.filter((item: any) => {
-      return item.type === 'bf:ClassificationUdc';
-    });
-  }
-
-  /**
    * Scroll to target.
    *
    * @param event DOM event triggered.
