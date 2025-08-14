@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2024 RERO
+ * Copyright (C) 2024-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,16 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AppConfigService } from '../../../app-config.service';
 import { FileItemEditorComponent } from '../file-item-editor/file-item-editor.component';
+import { FileUploadHandlerEvent } from 'primeng/fileupload';
 
 @Component({
-    selector: 'sonar-file-item',
-    templateUrl: './file-item.component.html',
-    standalone: false
+  selector: 'sonar-file-item',
+  templateUrl: './file-item.component.html',
+  standalone: false
 })
 export class FileItemComponent {
 
@@ -45,14 +46,7 @@ export class FileItemComponent {
   upload = output<any>();
 
   // maximum upload file size
-  maxFileSize: number;
-
-  /**
-   * constructor
-   */
-  constructor() {
-    this.maxFileSize = this.appConfigService.maxFileSize;
-  }
+  maxFileSize = computed(() => this.appConfigService.maxFileSize);
 
   showEditor() {
      let modalRef = this.dialogService.open(FileItemEditorComponent, {
@@ -67,6 +61,7 @@ export class FileItemComponent {
       });
     modalRef.onClose.subscribe(model => model ? this.update.emit(model): null);
   }
+
   /**
    * Get the download URL for a given file
    *
@@ -84,16 +79,16 @@ export class FileItemComponent {
    *
    * @param file to delete
    */
-  deleteFile() {
+  deleteFile(): void {
     this.delete.emit(this.file());
   }
 
   /**
    * Upload a new version of a file
    *
-   * @param event
+   * @param FileUploadHandlerEvent event
    */
-  uploadHandler(event) {
+  uploadHandler(event: FileUploadHandlerEvent): void {
     this.upload.emit({ file: this.file(), fileUpload: event.files[0] });
   }
 }

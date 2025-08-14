@@ -14,36 +14,36 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if(record) {
+@if(record()) {
 <section class="ui:mt-3">
   <div class="ui:grid ui:grid-cols-12 ui:gap-4">
     <div class="ui:col-span-12 ui:md:col-span-3 ui:text-center">
       <div class="ui:mb-4">
         <sonar-document-file
-          [file]="mainFile"
-          [statistics]="record.statistics"
+          [file]="mainFile()"
+          [statistics]="record().statistics"
           (previewClicked)="showPreview($event)"
         />
       </div>
 
       <!-- DOCUMENT TYPE -->
-      @if(record.documentType){
+      @if(record().documentType){
       <span class="ui:text-lg">
-        {{ 'document_type_' + record.documentType | translate }}
+        {{ 'document_type_' + record().documentType | translate }}
       </span>
       }
     </div>
     <div class="ui:col-span-12 ui:md:col-span-9 ui:flex ui:flex-col ui:gap-2 ui:[&>*]:empty:hidden">
       <h2>
-        @if(record.masked && record.masked !== 'not_masked') {
+        @if(record().masked && record().masked !== 'not_masked') {
           <i
             class="fa fa-eye-slash ui:mr-2"
             [class]="
               'text-' +
-              (record.masked === 'masked_for_all' ? 'danger' : 'warning')
+              (record().masked === 'masked_for_all' ? 'danger' : 'warning')
             "
             [pTooltip]="
-              record.masked === 'masked_for_all'
+              record().masked === 'masked_for_all'
                 ? ('Masked for all' | translate)
                 : ('Masked for external IP addresses' | translate)
             "
@@ -51,34 +51,34 @@
         }
         <span
           [innerHTML]="
-            record.title[0].mainTitle | languageValue | async | nl2br
+            record().title[0].mainTitle | languageValue | async | nl2br
           "
         ></span>
-        @if(record.title[0].subtitle) {
+        @if(record().title[0].subtitle) {
           &nbsp;:&nbsp;
-          {{ record.title[0].subtitle | languageValue | async }}
+          {{ record().title[0].subtitle | languageValue | async }}
         }
       </h2>
 
       <div class="ui:flex ui:gap-1 ui:flex-wrap">
-        @if(record.organisation) {
-          @for (organisation of record.organisation; track organisation.name) {
+        @if(record().organisation) {
+          @for (organisation of record().organisation; track organisation.name) {
             <p-tag severity="secondary" [value]="organisation.name" />
           }
-        } @if(record.subdivisions) {
-          @for (subdivision of record.subdivisions; track subdivision.name) {
+        } @if(record().subdivisions) {
+          @for (subdivision of record().subdivisions; track subdivision.name) {
             <p-tag severity="secondary" [value]=" subdivision.name | languageValue | async" />
           }
         }
       </div>
 
       <!-- CONTRIBUTORS Not bf:Meeting -->
-      <sonar-contributions [contributions]="record.contribution" />
+      <sonar-contributions [contributions]="record().contribution" />
 
       <!-- PUBLICATION STATEMENT -->
-      @if(record.provisionActivity && record.provisionActivity.length > 0) {
+      @if(record().provisionActivity && record().provisionActivity.length > 0) {
         <ul class="ui:list-none">
-          @for(statement of record.provisionActivity; track $index) {
+          @for(statement of record().provisionActivity; track $index) {
             @if(statement.text && statement.text.default) {
               @for(item of statement.text | keyvalue; track $index) {
                 <li>{{ item.value }}</li>
@@ -92,46 +92,46 @@
       }
 
       <!-- EXTENT AND FORMAT -->
-      @if(record.extent || record.formats) {
+      @if(record().extent || record().formats) {
         <p>
-          @if(record.extent) {
-            {{ record.extent }}
+          @if(record().extent) {
+            {{ record().extent }}
           }
-          @if(record.extent && record.formats) { ; }
-          @if(record.formats) {
-            {{ record.formats | join : ', ' }}
+          @if(record().extent && record().formats) { ; }
+          @if(record().formats) {
+            {{ record().formats | join : ', ' }}
           }
         </p>
       }
 
       <!-- EDITION STATEMENT -->
-      @if(record.editionStatement) {
+      @if(record().editionStatement) {
         <p>
-          {{ record.editionStatement.editionDesignation.value }}
-          @if(record.editionStatement.responsibility) {
-            / {{ record.editionStatement.responsibility.value }}
+          {{ record().editionStatement.editionDesignation.value }}
+          @if(record().editionStatement.responsibility) {
+            / {{ record().editionStatement.responsibility.value }}
           }
         </p>
       }
 
       <!-- DISSERTATION -->
-      @if(record.dissertation) {
-        <p>{{ record.dissertation.text }}</p>
+      @if(record().dissertation) {
+        <p>{{ record().dissertation.text }}</p>
       }
 
       <!-- PART OF -->
-      @if (record.partOf && record.partOf.length > 0) {
+      @if (record().partOf && record().partOf.length > 0) {
         <div class="ui:flex ui:gap-2">
             <strong>
               {{
-                (record.documentType !== 'coar:c_816b'
+                (record().documentType !== 'coar:c_816b'
                   ? 'Published in'
                   : 'Submitted to'
                 ) | translate
               }}:
             </strong>
             <ul class="ui:list-none">
-              @for (partOf of record.partOf; track $index) {
+              @for (partOf of record().partOf; track $index) {
               <li>
                 {{ partOf.text }}
               </li>
@@ -141,9 +141,9 @@
       }
 
       <!-- ---------------------- SUBJECTS ---------------------- -->
-      @if(record.subjects && record.subjects.length > 0) {
+      @if(record().subjects && record().subjects.length > 0) {
         <div class="ui:flex ui:gap-1 ui:flex-wrap">
-          @for (subject of record.subjects; track $index) {
+          @for (subject of record().subjects; track $index) {
             @for(value of subject.label.value; track $index) {
               <p-tag severity="secondary" icon="fa fa-tag">
                 <a
@@ -160,16 +160,16 @@
       }
 
       <!-- ---------------------- ABSTRACT ---------------------- -->
-      @if (record.abstracts.length > 0) {
-        <p-tabs [value]="record.abstracts[0].language">
+      @if (record().abstracts.length > 0) {
+        <p-tabs [value]="record().abstracts[0].language">
           <p-tablist>
-            @for (abstract of record.abstracts; track $index) {
+            @for (abstract of record().abstracts; track $index) {
               <p-tab [value]="abstract.language">{{ abstract.language | translateLanguage }}</p-tab>
             }
           </p-tablist>
 
           <p-tabpanels>
-            @for (abstract of record.abstracts; track $index) {
+            @for (abstract of record().abstracts; track $index) {
               <p-tabpanel [value]="abstract.language">
                 <p-scrollpanel styleClass="ui:h-[10rem]">
                   <p [innerHtml]="abstract.value | nl2br"></p>
@@ -184,7 +184,7 @@
       <!-- PROJECTS -->
       <sonar-field-description
         [label]="'Research project' | translate"
-        [field]="record.projects"
+        [field]="record().projects"
       >
         <ng-template let-project pTemplate="template">
           <a
@@ -199,7 +199,7 @@
       <!-- COLLECTIONS -->
       <sonar-field-description
         [label]="'Collections' | translate"
-        [field]="record.collections"
+        [field]="record().collections"
       >
         <ng-template let-collection pTemplate="template">
           <a [routerLink]="[ '/', 'records', 'collections', 'detail', collection.pid ]">
@@ -212,14 +212,14 @@
       @for (i of [1, 2, 3]; track i) {
         <sonar-field-description
           [label]="'Custom field ' + i | translate"
-          [field]="record['customField' + i]?.join(', ')"
+          [field]="record()['customField' + i]?.join(', ')"
         />
       }
 
       <!-- LANGUAGE -->
       <sonar-field-description
         [label]="'Language' | translate"
-        [field]="record.language"
+        [field]="record().language"
       >
         <ng-template let-language pTemplate="template">
           {{ language.value | translateLanguage }}
@@ -228,7 +228,7 @@
 
       <!-- CONTRIBUTIONS -> TYPE: bf:Meeting -->
       <sonar-contributions
-        [contributions]="record.contribution"
+        [contributions]="record().contribution"
         [meeting]="true"
         [additionalInfosFields]="true"
       />
@@ -236,13 +236,13 @@
       <!-- CONTENT NOTE -->
       <sonar-field-description
         [label]="'Content' | translate"
-        [field]="record.contentNote"
+        [field]="record().contentNote"
       />
 
       <!-- CLASSIFICATION -->
       <sonar-field-description
         [label]="'Classification' | translate"
-        [field]="record.classification"
+        [field]="record().classification"
       >
         <ng-template let-classification pTemplate="template">
           <a
@@ -265,7 +265,7 @@
       <!-- OTHER EDITION -->
       <sonar-field-description
         [label]="'Other electronic version' | translate"
-        [field]="record.otherEdition"
+        [field]="record().otherEdition"
       >
         <ng-template let-otherEdition pTemplate="template">
           <a [href]="otherEdition.document.electronicLocator" target="_blank">
@@ -278,7 +278,7 @@
       <!-- RELATED TO -->
       <sonar-field-description
         [label]="'Related to' | translate"
-        [field]="record.relatedTo"
+        [field]="record().relatedTo"
       >
         <ng-template let-relatedTo pTemplate="template">
           <a [href]="relatedTo.document.electronicLocator" target="_blank">
@@ -291,7 +291,7 @@
       <!-- SERIES -->
       <sonar-field-description
         [label]="'Series statement' | translate"
-        [field]="record.series"
+        [field]="record().series"
       >
         <ng-template let-serie pTemplate="template">
           {{ serie.name }}
@@ -303,19 +303,19 @@
       <!-- OTHER MATERIAL CHARACTERISTICS -->
       <sonar-field-description
         [label]="'Other material characteristics' | translate"
-        [field]="record.otherMaterialCharacteristics"
+        [field]="record().otherMaterialCharacteristics"
       />
 
       <!-- ADDITIONAL MATERIALS -->
       <sonar-field-description
         [label]="'Accompanying material' | translate"
-        [field]="record.additionalMaterials"
+        [field]="record().additionalMaterials"
       />
 
       <!-- LICENSE -->
       <sonar-field-description
         [label]="'License' | translate"
-        [field]="record.usageAndAccessPolicy"
+        [field]="record().usageAndAccessPolicy"
       >
         <ng-template let-usageAndAccessPolicy pTemplate="template">
           @let licenseLogo = usageAndAccessPolicy.license | license;
@@ -340,13 +340,13 @@
       <!-- OA STATUS -->
       <sonar-field-description
         [label]="'Open Access status' | translate"
-        [field]="record.oa_status"
+        [field]="record().oa_status"
       />
 
       <!-- IDENTIFIED BY -->
       <sonar-field-description
         [label]="'Identifiers' | translate"
-        [field]="record.identifiedBy"
+        [field]="record().identifiedBy"
       >
         <ng-template let-identifier pTemplate="template">
           <sonar-record-identifier type="identifiedBy" [data]="identifier" />
@@ -356,7 +356,7 @@
       <!-- PERMALINK -->
       <sonar-field-description
         [label]="'Permalink' | translate"
-        [field]="record.permalink"
+        [field]="record().permalink"
       >
         <ng-template let-permalink pTemplate="template">
           <a [href]="permalink">{{ permalink }}</a>
@@ -375,7 +375,7 @@
     <p-tab value="stats">
       {{ 'Statistics' | translate}}
     </p-tab>
-    <p-tab value="others" [disabled]="filteredFiles.length > 1? false: true">
+    <p-tab value="others" [disabled]="filteredFiles().length > 1? false: true">
       {{ 'Other files' | translate}}
     </p-tab>
   </p-tablist>
@@ -384,28 +384,28 @@
       @if(editFile.active()) {
         <sonar-upload-files
           recordType="documents"
-          [pid]="record.pid"
-          (filesChanged)="updateFiles($event)"
+          [pid]="record().pid"
+          (filesChanged)="updateFiles()"
         />
       }
     </p-tabpanel>
     <p-tabpanel #stats value="stats">
       @if(stats.active()) {
         <sonar-stats-files
-          [record]="record"
-          [filteredKeys]="filteredKeys"
+          [record]="record()"
+          [filteredKeys]="filteredKeys()"
         />
       }
     </p-tabpanel>
     <p-tabpanel #otherFiles value="others">
-      @if(otherFiles.active() && filteredFiles.length > 1) {
-        <sonar-other-files [documentPid]="record.pid" />
+      @if(otherFiles.active() && filteredFiles().length > 1) {
+        <sonar-other-files [documentPid]="record().pid" />
       }
     </p-tabpanel>
   </p-tabpanels>
 </p-tabs>
 
-@if(previewFile) {
+@if(previewFile()) {
 <p-dialog
   [modal]="true"
   [(visible)]="isShowPreview"
@@ -415,13 +415,13 @@
   >
   <ng-template #header>
     <h4>
-      {{ previewFile?.label? previewFile.label : "Preview"|translate }}
+      {{ previewFile()?.label? previewFile().label : "Preview"|translate }}
     </h4>
   </ng-template>
   <iframe
     id="preview-iframe"
     [style]="{ width: '100%', height: '800px', border: 'none' }"
-    [src]="previewFile.url"
+    [src]="previewFile().url"
   ></iframe>
 </p-dialog>
 }

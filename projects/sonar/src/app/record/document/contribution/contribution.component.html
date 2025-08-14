@@ -15,34 +15,34 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-@if(viewType === 'detail') {
-  <i class="fa ui:mr-2" [ngClass]="contributor.agent.type | faIconClass: 'contribution'"></i>
+@if(viewType() === 'detail') {
+  <i class="fa ui:mr-2" [ngClass]="contributor().agent.type | faIconClass: 'contribution'"></i>
 }
 <a
   class="ui:mr-1"
-  [routerLink]="route"
-  [queryParams]="{ q: 'contribution.agent.preferred_name:' + contributor.agent.preferred_name, page: 1, size: 10 }"
->{{ contributor.agent.preferred_name }}</a>
-@if (contributor.agent.type === 'bf:Person' && contributor.role && contributor.role[0] !== 'cre') {
-  <span class="ui:mr-1">({{ ('contribution_role_' + contributor.role[0]) | translate }})</span>
+  [routerLink]="route()"
+  [queryParams]="{ q: 'contribution.agent.preferred_name:' + contributor().agent.preferred_name, page: 1, size: 10 }"
+>{{ contributor().agent.preferred_name }}</a>
+@if (contributor().agent.type === 'bf:Person' && contributor().role && contributor().role[0] !== 'cre') {
+  <span class="ui:mr-1">({{ ('contribution_role_' + contributor().role[0]) | translate }})</span>
 }
 
-@if (contributor.agent.type === 'bf:Meeting' && meetingInfo) {
-  ({{ meetingInfo }})
+@if (contributor().agent.type === 'bf:Meeting' && meetingInfo()) {
+  ({{ meetingInfo() }})
 }
-@if (contributor.agent.identifiedBy) {
-  <sonar-record-identifier class="ui:mr-1" type="agent" [data]="contributor.agent.identifiedBy" />
+@if (contributor().agent.identifiedBy) {
+  <sonar-record-identifier class="ui:mr-1" type="agent" [data]="contributor().agent.identifiedBy" />
 }
 
-@if(viewType === 'detail' && contributor.affiliation) {
-  @if(contributor.controlledAffiliation) {
+@if(viewType() === 'detail' && contributor().affiliation) {
+  @if(contributor().controlledAffiliation) {
     <span
       class="ui:text-muted-color ui:text-sm ui:italic"
-      [pTooltip]="contributor.controlledAffiliation | join:' ; '"
+      [pTooltip]="contributor().controlledAffiliation | join:' ; '"
       tooltipPosition="top"
-    >{{ contributor.affiliation }}</span>
+    >{{ contributor().affiliation }}</span>
 
   } @else {
-    <span class="ui:text-muted-color ui:text-sm ui:italic">{{ contributor.affiliation }}</span>
+    <span class="ui:text-muted-color ui:text-sm ui:italic">{{ contributor().affiliation }}</span>
   }
 }

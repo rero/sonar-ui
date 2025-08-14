@@ -95,7 +95,6 @@ import { BriefViewComponent as ProjectBriefViewComponent } from './record/projec
 import { DetailComponent as ProjectDetailComponent } from './record/project/detail/detail.component';
 import { BriefViewComponent as SubdivisionBriefViewComponent } from './record/subdivision/brief-view/brief-view.component';
 import { UserComponent } from './record/user/user.component';
-import { ValidationComponent } from './record/validation/validation.component';
 import { UserService } from './user.service';
 import { LicensePipe } from './record/document/license.pipe';
 import { BucketNameService } from './bucket-name.service';
@@ -131,7 +130,6 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
     ProjectDetailComponent,
     IdentifierComponent,
     HepvsProjectDetailComponent,
-    ValidationComponent,
     CollectionBriefViewComponent,
     CollectionDetailComponent,
     SubdivisionBriefViewComponent,

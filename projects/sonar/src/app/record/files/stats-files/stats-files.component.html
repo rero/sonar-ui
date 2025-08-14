@@ -16,16 +16,16 @@
 -->
 <dl class="metadata">
   <dt translate>Document views</dt>
-  <dd>{{ statistics['record-view'] }}</dd>
+  <dd>{{ statistics()['record-view'] }}</dd>
 </dl>
 <p-divider />
 <h6 translate>File downloads</h6>
 <dl class="metadata">
-  @for (key of filteredKeys; track $index) {
+  @for (key of filteredKeys(); track $index) {
     <dt>{{ key }}</dt>
     <dd>
-      @if(statistics[key]) {
-        {{ statistics[key] }}
+      @if(statistics()[key]) {
+        {{ statistics()[key] }}
       } @else {
         0
       }

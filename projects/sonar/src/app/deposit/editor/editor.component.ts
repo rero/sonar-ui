@@ -18,9 +18,11 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  computed,
   inject,
   input,
-  output
+  output,
+  signal
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { UntypedFormGroup } from '@angular/forms';
@@ -77,9 +79,19 @@ export class EditorComponent implements OnInit, OnDestroy {
   /** Form fields for current type */
   fields: any;
 
-  importModalIsVisible = false;
+  importModalIsVisible = signal(false);
 
-  importMenuItems = [];
+  importMenuItems = signal([]);
+
+  isAdminUser = computed(() => this.userService.hasRole(['superuser', 'admin', 'moderator']));
+
+  nextStep = computed(() => this.getNextStep());
+
+  canSubmit = computed(() =>
+    ['in_progress', 'ask_for_changes'].includes(this.deposit().status)
+    && this.currentStep() === 'diffusion'
+    && this.deposit().diffusion?.license !== undefined
+  );
 
   private subscriptions = new Subscription();
 
@@ -115,48 +127,26 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  setImportMenu() {
+  setImportMenu(): void {
     let items = [
       {
         label: this.translateService.instant('Import from swisscovery'),
-        command: () => {
-          this.importModalIsVisible = true;
-        },
+        command: () => this.importModalIsVisible.set(true),
       },
     ];
     if (this.mainFile()) {
       items.push({
         label: this.translateService.instant('Analyze uploaded PDF'),
-        command: () => {
-          this.confirmPdfImport();
-        },
+        command: () => this.confirmPdfImport()
       });
     }
-    this.importMenuItems = items;
-  }
-
-  /** Return if current logged user is an admin or a standard user */
-  get isAdminUser(): boolean {
-    return this.userService.hasRole(['superuser', 'admin', 'moderator']);
-  }
-
-  /**
-   * Return next step key
-   */
-  get nextStep() {
-    const currentIndex = this.steps().findIndex(
-      (element) => element === this.currentStep()
-    );
-    if (!this.steps()[currentIndex + 1]) {
-      return this.steps()[currentIndex];
-    }
-    return this.steps()[currentIndex + 1];
+    this.importMenuItems.set(items);
   }
 
   /**
    * Save current state on database with API call.
    */
-  save() {
+  save(): void {
     this.form.updateValueAndValidity();
 
     if (!this.form.valid) {
@@ -179,27 +169,16 @@ export class EditorComponent implements OnInit, OnDestroy {
             this.router.navigate([
               'deposit',
               this.deposit().pid,
-              this.nextStep,
+              this.nextStep(),
             ]);
+          } else {
+            this.depositChanged.emit({...this.deposit()});
           }
         }
       });
   }
 
-  /**
-   * Return if the form is ready to publish or not.
-   */
-  canSubmit(): boolean {
-    return (
-      (this.deposit().status === 'in_progress' ||
-        this.deposit().status === 'ask_for_changes') &&
-      this.currentStep() === 'diffusion' &&
-      this.deposit().diffusion &&
-      this.deposit().diffusion.license
-    );
-  }
-
-  confirmPublish() {
+  confirmPublish(): void {
     this.confirmationService.confirm({
       message: 'Do you really want to publish this document ?',
       header: this.translateService.instant('Confirmation'),
@@ -210,11 +189,12 @@ export class EditorComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   /**
    * Publish a deposit after user confirmation. If user is a standard user, this will send an email
    * to moderators to validate the deposit.
    */
-  publish() {
+  publish(): void {
     this.spinner.show();
     this.depositService.publish(this.deposit().pid).subscribe(() => {
       this.spinner.hide();
@@ -222,7 +202,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     });
   }
 
-  confirmPdfImport() {
+  confirmPdfImport(): void {
     this.confirmationService.confirm({
       message: this.translateService.instant(
         'Do you really want to extract metadata from PDF and overwrite current data ?'
@@ -237,7 +217,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   /**
    * Extract metadata from PDF and populate deposit.
    */
-  extractPdfMetadata() {
+  extractPdfMetadata(): void {
     this.spinner.show();
     this.depositService
       .extractPDFMetadata(this.deposit())
@@ -292,11 +272,24 @@ export class EditorComponent implements OnInit, OnDestroy {
    * @returns void
    */
   mapSwisscoveryRecord(data): void {
-    this.importModalIsVisible = false;
+    this.importModalIsVisible.set(false);
     if (!data) {
       return;
     }
     this.depositChanged.emit({ ...this.deposit(), ...data });
+  }
+
+  /**
+   * Return next step key
+   */
+  private getNextStep(): string {
+    const currentIndex = this.steps().findIndex(
+      (element) => element === this.currentStep()
+    );
+    if (!this.steps()[currentIndex + 1]) {
+      return this.steps()[currentIndex];
+    }
+    return this.steps()[currentIndex + 1];
   }
 
   /**
@@ -376,14 +369,14 @@ export class EditorComponent implements OnInit, OnDestroy {
   /**
    * Upgrade step of the deposit only if current step is greater than deposit step.
    */
-  private upgradeStep() {
+  private upgradeStep(): void {
     const depositIndex = this.steps().findIndex(
       (step) => step === this.deposit().step
     );
-    const nextIndex = this.steps().findIndex((step) => step === this.nextStep);
+    const nextIndex = this.steps().findIndex((step) => step === this.nextStep());
 
     if (depositIndex < nextIndex) {
-      this.deposit().step = this.nextStep;
+      this.deposit().step = this.nextStep();
     }
   }
 }

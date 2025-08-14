@@ -14,37 +14,38 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { AfterContentInit, Component, ContentChildren, QueryList, TemplateRef, computed, input } from '@angular/core';
+import { Component, computed, contentChildren, input } from '@angular/core';
 import { PrimeTemplate } from 'primeng/api';
-import { Nullable } from 'primeng/ts-helpers';
 
 @Component({
-    selector: 'sonar-field-description',
-    templateUrl: './field-description.component.html',
-    standalone: false
+  selector: 'sonar-field-description',
+  templateUrl: './field-description.component.html',
+  standalone: false
 })
-export class FieldDescriptionComponent implements AfterContentInit {
+export class FieldDescriptionComponent {
   label = input<string>();
   field = input<any>();
   type = computed(() => this.getType());
-  template: Nullable<TemplateRef<any>>;
 
-  @ContentChildren(PrimeTemplate) templates: QueryList<PrimeTemplate> | null;
-
-  ngAfterContentInit() {
-    (this.templates as QueryList<PrimeTemplate>).forEach((item) => {
-        switch (item.getType()) {
-            case 'template':
-                this.template = item.template;
-                break;
+  templates = contentChildren(PrimeTemplate);
+  template = computed(() => {
+    const result = this.templates().map((template: PrimeTemplate) => {
+        switch(template.getType()) {
+          case 'template':
+            return template.template;
+          default:
+            return null;
         }
-      });
-    }
-    getType() {
-      const field = this.field();
-      if (Array.isArray(field)) {
-        return 'array';
       }
-      return typeof field;
+    );
+    return result.length > 0 ? result[0] : null;
+  });
+
+  getType() {
+    const field = this.field();
+    if (Array.isArray(field)) {
+      return 'array';
     }
+    return typeof field;
+  }
 }

@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -14,36 +14,33 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@switch(identifier.field) {
+@switch(identifier().field) {
   @case ('identifiedBy') {
     <p-tag severity="secondary" styleClass="ui:mr-1">
-      {{ (identifier.source ? identifier.source : identifier.type|translate)|uppercase }}
+      {{ (identifier().source ? identifier().source : identifier().type|translate)|uppercase }}
     </p-tag>
-    @if(identifier.link) {
-      <a [href]="identifier.link" [title]="externalLinkText" target="_blank">{{ identifier.value }}</a>
-    }
-    @else {
-      @if(identifier.value.startsWith('http')) {
-        <a [href]="identifier.value" [title]="externalLinkText" target="_blank">{{ identifier.value }}</a>
-      }
-      @else {
-        {{ identifier.value }}
+    @if(identifier().link) {
+      <a [href]="identifier().link" [title]="externalLinkText" target="_blank">{{ identifier().value }}</a>
+    } @else {
+      @if(identifier().value.startsWith('http')) {
+        <a [href]="identifier().value" [title]="externalLinkText" target="_blank">{{ identifier().value }}</a>
+      } @else {
+        {{ identifier().value }}
       }
     }
   }
   @case ('agent') {
-    @if(identifier.link) {
+    @if(identifier().link) {
       <p-tag severity="secondary" styleClass="ui:mr-1">
-        <a [title]="externalLinkText" [href]="identifier.link">{{ (identifier.source ? identifier.source : identifier.type|translate)|uppercase }}</a>
+        <a [title]="externalLinkText" [href]="identifier().link">{{ (identifier().source ? identifier().source : identifier().type|translate)|uppercase }}</a>
       </p-tag>
-    }
-    @else {
+    } @else {
       <p-tag severity="secondary">
-        {{ (identifier.source ? identifier.source : identifier.type|translate)|uppercase }}
+        {{ (identifier().source ? identifier().source : identifier().type|translate)|uppercase }}
       </p-tag>
     }
   }
   @default {
-    {{ identifier.value }}
+    {{ identifier().value }}
   }
 }

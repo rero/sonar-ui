@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, input, OnInit, signal } from '@angular/core';
 import { IContribution } from '../../contribution.interface';
 
 @Component({
@@ -24,25 +24,20 @@ import { IContribution } from '../../contribution.interface';
 })
 export class ContributionsComponent implements OnInit {
 
-  /** Array of contributions */
-  @Input() contributions: IContribution[];
+  contributions = input.required<IContribution[]>();
 
-  /** Flag for selected contributions */
-  @Input() meeting = false;
+  meeting = input<boolean>(false);
 
-  /** Determines the location of the data */
-  @Input() additionalInfosFields = false;
+  additionalInfosFields = input<boolean>(false);
 
-  /** Maximum starting size for contributions  */
-  contributorsLength = 5;
+  contributorsLength = signal<number>(5);
 
-  /** Show more link */
-  showMore = true;
+  showMore = signal<boolean>(true);
 
   /** OnInit Hook */
   ngOnInit(): void {
-    if (this.meeting) {
-      this.contributorsLength = this.contributions?.length || 0;
+    if (this.meeting()) {
+      this.contributorsLength.set(this.contributions()?.length || 0);
     }
   }
 
@@ -53,9 +48,9 @@ export class ContributionsComponent implements OnInit {
    */
   showMoreContributors(event: any): void {
     event.preventDefault();
-    this.showMore = false;
-    this.contributorsLength = this.contributions
-      ? this.contributions.length
-      : 0;
+    this.showMore.set(false);
+    this.contributorsLength.set(this.contributions()
+      ? this.contributions().length
+      : 0);
   }
 }

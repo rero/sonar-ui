@@ -19,8 +19,8 @@ import { Observable } from 'rxjs';
 import { UserService } from '../../../user.service';
 
 @Component({
-    templateUrl: './detail.component.html',
-    standalone: false
+  templateUrl: './detail.component.html',
+  standalone: false
 })
 export class DetailComponent implements OnInit {
 
@@ -36,6 +36,6 @@ export class DetailComponent implements OnInit {
   type: string;
 
   ngOnInit(): void {
-      this.user$ = this.userService.user$;
+    this.user$ = this.userService.user$;
   }
 }

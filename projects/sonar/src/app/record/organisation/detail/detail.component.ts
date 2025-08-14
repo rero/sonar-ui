@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RecordService } from '@rero/ng-core';
 import { combineLatest, Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
-    templateUrl: './detail.component.html',
-    standalone: false
+  templateUrl: './detail.component.html',
+  standalone: false
 })
 export class DetailComponent implements OnInit {
 
@@ -31,39 +31,34 @@ export class DetailComponent implements OnInit {
   record$: Observable<any>;
 
   /** Organisation record. */
-  record: any;
+  record = signal(null);
 
   /** Subdivisions list. */
-  subdivisions: Array<any> = [];
+  subdivisions = signal([]);
 
   /** Collections list. */
-  collections: Array<any> = [];
+  collections = signal([]);
 
-  /**
-   * Component init.
-   *
-   * Load the collections and subdivisions for the organisation.
-   */
   ngOnInit(): void {
     this.record$
       .pipe(
         switchMap((record: any) => {
-          this.record = record;
-          return combineLatest(
+          this.record.set(record);
+          return combineLatest([
             this.recordService.getRecords(
               'subdivisions',
               `organisation.pid:${record.id}`
             ),
             this.recordService.getRecords(
               'collections',
-              // `organisation.pid:${record.id}`
+              `organisation.pid:${record.id}`
             ),
-          );
+          ]);
         })
       )
       .subscribe(([subdivisions, collections]: any) => {
-        this.subdivisions = subdivisions.hits.hits;
-        this.collections = collections.hits.hits;
+        this.subdivisions.set(subdivisions.hits.hits);
+        this.collections.set(collections.hits.hits);
       });
   }
 }

@@ -18,8 +18,8 @@ import { Component } from '@angular/core';
 import { ResultItem } from '@rero/ng-core';
 
 @Component({
-    templateUrl: './user.component.html',
-    standalone: false
+  templateUrl: './user.component.html',
+  standalone: false
 })
 export class UserComponent implements ResultItem {
   // Record data.

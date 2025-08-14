@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigService } from '../../app-config.service';
+import { Identifier } from '../../type/documentType';
 
 /**
  * Component that display an identifier.
@@ -26,58 +27,40 @@ import { AppConfigService } from '../../app-config.service';
   templateUrl: './identifier.component.html',
   standalone: false
 })
-export class IdentifierComponent implements OnInit {
+export class IdentifierComponent {
 
   private appConfigService: AppConfigService = inject(AppConfigService);
   private translateService: TranslateService = inject(TranslateService);
 
   /** Type of field (agent, identifiedBy) */
-  @Input() type: string;
+  type = input.required<string>();
 
   /** Identifier values */
-  @Input() data: { type: string, value: string, source?: string };
+  data = input.required<{ type: string, value: string, source?: string }>();
 
-  /** Processed identifier */
-  private _identifier: Identifier;
-
-  /** Return processed identifier data */
-  get identifier(): Identifier {
-    return this._identifier;
-  }
+  identifier = computed(() => this.processData());
 
   /** Return the title link for external url */
   get externalLinkText(): string {
     return this.translateService.instant('External link to the source');
   }
 
-  /** OnInit Hook */
-  ngOnInit(): void {
-    this._processData();
-  }
-
   /** Process data */
-  private _processData(): void {
+  private processData(): Identifier {
     const settings = this.appConfigService.settings.document_identifier_link;
-    this._identifier = {
-      field: this.type,
-      type: this.data.type,
-      value: this.data.value
+    const identifier: Identifier = {
+      field: this.type(),
+      type: this.data().type,
+      value: this.data().value
     };
-    if (this.data.type in settings) {
-      const source = this.data.source ? this.data.source.toLowerCase() : 'default';
-      this._identifier.source = this.data.source;
-      if (source in settings[this.data.type]) {
-        this._identifier.link = settings[this.data.type][source]
-          .replace('_identifier_', this.data.value);
+    if (this.data().type in settings) {
+      const source = this.data().source ? this.data().source.toLowerCase() : 'default';
+      identifier.source = this.data().source;
+      if (source in settings[this.data().type]) {
+        identifier.link = settings[this.data().type][source]
+          .replace('_identifier_', this.data().value);
       }
     }
+    return identifier;
   }
-}
-
-interface Identifier {
-  field: string;
-  type: string;
-  value: string;
-  source?: string;
-  link?: string;
 }

@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2024 RERO
+  Copyright (C) 2024-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,7 @@
   <p class="ui:text-white">
     {{ 'Loading...' | translate }}
     @if (fileUpload?.files?.length > 0) {
-      ({{ nUploadedFiles }} / {{ fileUpload.files.length }})
+      ({{ nUploadedFiles() }} / {{ fileUpload.files.length }})
     }
   </p>
 </ngx-spinner>

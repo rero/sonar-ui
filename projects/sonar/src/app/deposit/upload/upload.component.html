@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2024 RERO
+  Copyright (C) 2024-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <sonar-deposit-step
-  [maxStep]="maxStep"
+  [maxStep]="maxStep()"
   [steps]="['files', 'metadata', 'contributors', 'projects', 'diffusion']"
 />
 <div class="ui:flex ui:justify-end ui:flex-wrap">
@@ -28,6 +28,6 @@
   />
 </div>
 
-@if (deposit){
-  <sonar-upload-files recordType="deposits" [pid]="deposit.pid"/>
+@if (deposit()) {
+  <sonar-upload-files recordType="deposits" [pid]="deposit().pid"/>
 }

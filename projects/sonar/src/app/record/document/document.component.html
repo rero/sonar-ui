@@ -19,7 +19,6 @@
     @if(detailUrl) {
       <sonar-document-file
         [file]="mainFile"
-        [showLabel]="false"
         [showPreview]="false"
         [showDownload]="false"
         [showStatistics]="false"
@@ -31,7 +30,6 @@
     @else {
       <sonar-document-file
         [file]="mainFile"
-        [showLabel]="false"
         [showPreview]="false"
         [showDownload]="false"
         [showStatistics]="false"
@@ -77,7 +75,7 @@
     </h4>
     @if(record.metadata.organisation || record.metadata.subdivisions) {
       <div class="ui:flex ui:gap-1">
-        @if(isGlobalView && record.metadata.organisation) {
+        @if(isGlobalView() && record.metadata.organisation) {
           @for(organisation of record.metadata.organisation; track $index) {
             <p-tag severity="secondary" [value]="organisation.name" />
           }
@@ -92,13 +90,13 @@
     @if (record.metadata.contribution) {
       @let contributors = record.metadata.contribution|contributors;
       <div class="ui:flex ui:flex-wrap ui:gap-1">
-        @for (contributor of contributors|slice:0:contributorsLength; track $index; let last=$last) {
-          <sonar-contribution [view]="view" [contributor]="contributor" />
+        @for (contributor of contributors|slice:0:contributorsLength(); track $index; let last=$last) {
+          <sonar-contribution [view]="view()" [contributor]="contributor" />
           @if(!last) {
             ;&nbsp;
           }
         }
-        @if(showMore && contributors.length > contributorsLength) {
+        @if(showMore() && contributors.length > contributorsLength()) {
           <a class="ui:ml-2" href="#" (click)="showMoreContributors($event, contributors.length)">
             {{ 'Show more' | translate }}&hellip;
           </a>

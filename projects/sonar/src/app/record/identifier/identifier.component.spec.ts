@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -59,12 +59,12 @@ describe('IdentifierComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(IdentifierComponent);
     component = fixture.componentInstance;
-    component.type = 'identifiedBy';
-    component.data = {
+    fixture.componentRef.setInput('type', 'identifiedBy');
+    fixture.componentRef.setInput('data', {
       type: 'bf:Local',
       value: '0000-1111111',
       source: 'swisscovery'
-    };
+    });
     fixture.detectChanges();
   });
 

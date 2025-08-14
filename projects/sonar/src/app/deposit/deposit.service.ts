@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,19 +39,16 @@ export class DepositService implements OnDestroy {
   private user: any;
 
   // User subscription
-  private userSubscription: Subscription;
+  private subscription: Subscription = new Subscription();
 
   constructor() {
-    this.userSubscription = this.userService.user$.subscribe((user) => {
+    this.subscription.add(this.userService.user$.subscribe((user) => {
       this.user = user;
-    });
+    }));
   }
 
-  /**
-   * Service destruction
-   */
-  ngOnDestroy() {
-    this.userSubscription.unsubscribe();
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   /**

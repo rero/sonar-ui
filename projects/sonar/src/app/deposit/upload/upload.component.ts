@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs/operators';
@@ -32,31 +32,23 @@ export class UploadComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private spinner = inject(NgxSpinnerService);
 
-  /**
-   * Files list, an item can be a file to upload or an uploaded file.
-   */
-  files: Array<any> = [];
-
-  /**
-   * Deposit object
-   */
-  deposit: any = null;
+  deposit = signal(null);
+  maxStep = computed(() => this.deposit() ? this.deposit().step : 'metadata');
 
   ngOnInit(): void {
     if (this.route.snapshot.routeConfig.path == 'deposit/create') {
       this.createEmptyDeposit();
     } else if (this.route.snapshot?.params?.id) {
-
       this.depositService
         .get(this.route.snapshot.params.id)
         .pipe(
           tap((result) => {
             this.spinner.show();
-            this.deposit = result.metadata;
-            if (this.depositService.canAccessDeposit(this.deposit) === false) {
+            this.deposit.set(result.metadata);
+            if (this.depositService.canAccessDeposit(this.deposit()) === false) {
               this.router.navigate([
                 'deposit',
-                this.deposit.pid,
+                this.deposit().pid,
                 'confirmation',
               ]);
             }
@@ -70,37 +62,18 @@ export class UploadComponent implements OnInit {
    * Create a deposit without associated files.
    * @param event - Event
    */
-  createEmptyDeposit() {
+  createEmptyDeposit(): void {
     this.depositService.create().subscribe((deposit: any) => {
       this.router.navigate(['deposit', deposit.id, 'files']);
     });
   }
 
   /**
-   * Return link prefix
-   */
-  get linkPrefix() {
-    return `/deposit/${this.deposit ? this.deposit.pid : ''}/`;
-  }
-
-  /**
-   * Get max step
-   */
-  get maxStep() {
-
-    if (this.deposit) {
-      return this.deposit.step;
-    }
-    return 'metadata';
-  }
-
-
-  /**
    * Save files metadata and go to next step.
    * @param event Dom event
    */
-  saveAndContinue(event: Event) {
+  saveAndContinue(event: Event): void {
     event.preventDefault();
-    this.router.navigate(['deposit', this.deposit.pid, 'metadata']);
+    this.router.navigate(['deposit', this.deposit().pid, 'metadata']);
   }
 }
