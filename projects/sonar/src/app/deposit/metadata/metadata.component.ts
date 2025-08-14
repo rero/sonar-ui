@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,9 +24,9 @@ import { switchMap, tap } from 'rxjs/operators';
 import { DepositService } from '../deposit.service';
 
 @Component({
-    selector: 'sonar-deposit-metadata',
-    templateUrl: './metadata.component.html',
-    standalone: false
+  selector: 'sonar-deposit-metadata',
+  templateUrl: './metadata.component.html',
+  standalone: false
 })
 export class MetadataComponent implements OnInit {
 
@@ -40,18 +40,16 @@ export class MetadataComponent implements OnInit {
   deposit = signal<any>(null);
 
   /** Current form to show */
-  currentStep = 'metadata';
+  currentStep = signal<string>('metadata');
 
   /** Deposit steps */
-  steps: string[] = [
+  steps = signal<string[]>([
     'files',
     'metadata',
     'contributors',
     'projects',
     'diffusion',
-  ];
-
-  activeIndex = 0;
+  ]);
 
   /** Store files associated with deposit */
   private files = signal<any[]>([]);
@@ -64,7 +62,7 @@ export class MetadataComponent implements OnInit {
     this.route.params
       .pipe(
         tap((params) => {
-          this.currentStep = params.step;
+          this.currentStep.set(params.step);
         }),
         switchMap((params) => {
           return combineLatest([
@@ -75,7 +73,6 @@ export class MetadataComponent implements OnInit {
       )
       .subscribe({
         next: (result) => {
-          this.activeIndex = 0;
           this.deposit.set(result[0].metadata);
 
           // TODO: solve this

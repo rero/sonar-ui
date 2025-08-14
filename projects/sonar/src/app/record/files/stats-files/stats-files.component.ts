@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2019-2024 RERO
+ * Copyright (C) 2019-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { ApiService } from '@rero/ng-core';
 
 @Component({
@@ -29,14 +29,15 @@ export class StatsFilesComponent implements OnInit {
   private httpClient: HttpClient = inject(HttpClient);
   private apiService: ApiService = inject(ApiService);
 
-  statistics = {};
+  statistics = signal<{}>({});
 
-  @Input() record;
-  @Input() filteredKeys: string[];
+  record = input.required<any>();
+  filteredKeys = input.required<string[]>();
 
   ngOnInit(): void {
     this.getStats();
   }
+
   /**
    * Get the stats corresponding to given record.
    */
@@ -45,14 +46,14 @@ export class StatsFilesComponent implements OnInit {
       'record-view': {
         stat: 'record-view',
         params: {
-          pid_value: this.record.pid,
+          pid_value: this.record().pid,
           pid_type: 'doc'
         }
       },
       'file-download': {
         stat: 'file-download',
         params: {
-          bucket_id: this.record._bucket
+          bucket_id: this.record()._bucket
         }
       }
     };
@@ -66,7 +67,7 @@ export class StatsFilesComponent implements OnInit {
         );
       }
       statistics['record-view'] = results['record-view'].unique_count;
-      this.statistics = statistics;
+      this.statistics.set(statistics);
     });
   }
 

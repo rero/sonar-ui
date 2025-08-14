@@ -27,9 +27,9 @@
         }
       </h4>
       @if(record.metadata.logs) {
-        <p-button size="small" [outlined]="true" severity="secondary" (onClick)="showHistoryDialog()" icon="fa fa-history" [label]="'History' | translate" />
+        <p-button size="small" [outlined]="true" severity="secondary" (onClick)="historyDialogVisible.set(true)" icon="fa fa-history" [label]="'History' | translate" />
         <p-dialog
-            header="Header"
+            [header]="'History' | translate"
             [resizable]="false"
             [modal]="true"
             appendTo="body"
@@ -95,8 +95,8 @@
       <dt translate>Updated at</dt>
       <dd>{{ record.updated | dateTranslate: 'medium' }}</dd>
 
-      @if(canAccessToDocumentRedirect && record.metadata.document) {
-        <dt>{{ 'Document' | translate }}</dt>
+      @if(canAccessToDocumentRedirect() && record.metadata.document) {
+        <dt translate>Document</dt>
         <dd>
           <a [routerLink]="['/records', 'documents', 'detail', record.metadata.document.pid]">
             {{ record.metadata.metadata.title }}

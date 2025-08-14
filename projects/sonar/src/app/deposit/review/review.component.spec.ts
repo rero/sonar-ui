@@ -55,6 +55,7 @@ describe('ReviewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ReviewComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('deposit', {});
     fixture.detectChanges();
   });
 

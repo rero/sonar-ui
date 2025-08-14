@@ -715,6 +715,16 @@ export const primeNGSonarConfig = {
             padding: "0"
           }
         },
+        steps: {
+          item: {
+            number: {
+              active: {
+                background: "{primary.500}",
+                color: "{surface.0}"
+              }
+            }
+          }
+        },
         tabs: {
           tabpanel: {
             padding: "1rem 0"

@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2022 RERO
+ * Copyright (C) 2022-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,32 +14,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, Input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { IContribution } from '../contribution.interface';
 
 @Component({
-    selector: 'sonar-contribution',
-    templateUrl: './contribution.component.html',
-    standalone: false
+  selector: 'sonar-contribution',
+  templateUrl: './contribution.component.html',
+  standalone: false
 })
 export class ContributionComponent {
 
-  @Input() contributor: IContribution;
+  contributor = input.required<IContribution>();
 
-  @Input() view?: string;
+  view? = input<string>();
 
-  @Input() viewType: 'brief' | 'detail' = 'brief';
+  viewType = input<'brief' | 'detail'>('brief');
 
-  get route(): string[] {
-    return this.view ? ['/', this.view, 'search', 'documents'] : ['/records', 'documents'];
-  }
+  route = computed(() => this.view() ? ['/', this.view(), 'search', 'documents'] : ['/records', 'documents']);
 
-  /**
-   * Format meeting data
-   * @return formatted meeting string
-   */
-  get meetingInfo(): string | null {
-    const { agent } = this.contributor;
+  meetingInfo = computed(() => {
+    const { agent } = this.contributor();
     const meeting = [];
     ['number', 'date', 'place'].forEach((key: string) => {
       if (key in agent) {
@@ -48,5 +42,5 @@ export class ContributionComponent {
     });
 
     return meeting.length > 0 ? meeting.join(' : ') : null;
-  }
+  });
 }

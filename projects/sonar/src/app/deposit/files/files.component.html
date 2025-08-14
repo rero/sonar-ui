@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -22,8 +22,8 @@
   [text]="true"
   (onClick)="
     $event.preventDefault();
-    previewFileKey = mainFile().key;
-    isShowPreview = true
+    previewFileKey.set(mainFile().key);
+    isShowPreview.set(true)
   "
 />
 <a
@@ -44,7 +44,7 @@
           href="#"
           icon="fa fa-eye"
           [text]="true"
-          (onClick)="previewFileKey = file.key; isShowPreview=true"
+          (onClick)="previewFileKey.set(file.key); isShowPreview.set(true)"
         />
         <a
           pButton
@@ -60,10 +60,15 @@
 
 <!--Preview modal-->
 
-<p-dialog [header]="previewFileKey" [modal]="true" [(visible)]="isShowPreview"   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-  [style]="{ width: '50vw' }">
+<p-dialog
+  [header]="previewFileKey()"
+  [modal]="true"
+  [(visible)]="isShowPreview"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [style]="{ width: '50vw' }"
+>
   <iframe
     [style]="{ width: '100%', height: '800px', border: 'none' }"
-    [src]="previewFileKey | fileLink : 'deposits' : depositPid() : 'preview'"
+    [src]="previewFileKey() | fileLink : 'deposits' : depositPid() : 'preview'"
   ></iframe>
 </p-dialog>

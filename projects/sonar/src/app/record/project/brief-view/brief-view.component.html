@@ -30,8 +30,7 @@
     {{ record.metadata.startDate | dateTranslate: 'mediumDate' }} -
     @if(record.metadata?.endDate) {
       {{ record.metadata.endDate | dateTranslate: 'mediumDate' }}
-    }
-    @else {
+    } @else {
       ?
     }
   </span>

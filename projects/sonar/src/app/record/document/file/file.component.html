@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -15,67 +15,61 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <div class="ui:text-center">
-@if(file) {
-  @if(link) {
-    @if(inRouter) {
-      <a [routerLink]="link">
+@if(file()) {
+  @if(link()) {
+    @if(inRouter()) {
+      <a [routerLink]="link()">
+        <ng-container [ngTemplateOutlet]="thumbnail" />
+      </a>
+    } @else {
+      <a [href]="link()">
         <ng-container [ngTemplateOutlet]="thumbnail" />
       </a>
     }
-    @else {
-      <a [href]="link">
+  } @else {
+    @if (showExternalLink() && file().links.external) {
+      <a [href]="file().links.external" target="_blank">
         <ng-container [ngTemplateOutlet]="thumbnail" />
       </a>
-    }
-  }
-  @else {
-    @if (showExternalLink && file.links.external) {
-      <a [href]="file.links.external" target="_blank">
-        <ng-container [ngTemplateOutlet]="thumbnail" />
-      </a>
-    }
-    @else {
-      @if(showPreview && file.links.preview) {
-        <div class="ui:hover:cursor-pointer" (click)="preview(file); $event.preventDefault()">
+    } @else {
+      @if(showPreview() && file().links.preview) {
+        <div class="ui:hover:cursor-pointer" (click)="preview(file()); $event.preventDefault()">
           <ng-container [ngTemplateOutlet]="thumbnail" />
         </div>
-      }
-      @else {
-        @if(showDownload && file.links.download) {
-          <a [href]="file.links.download" download>
+      } @else {
+        @if(showDownload() && file().links.download) {
+          <a [href]="file().links.download" download>
             <ng-container [ngTemplateOutlet]="thumbnail" />
           </a>
-        }
-        @else {
+        } @else {
           <ng-container [ngTemplateOutlet]="thumbnail" />
         }
       }
     }
   }
-  @if(file?.restriction?.restricted && file?.restriction?.date) {
+  @if(file()?.restriction?.restricted && file()?.restriction?.date) {
     <div class="ui:mt-2">
       <p-tag severity="secondary">
-        {{ 'Public access from' | translate }}<br>{{ file.restriction.date }}
+        {{ 'Public access from' | translate }}<br>{{ file().restriction.date }}
       </p-tag>
     </div>
   }
   <div class="ui:flex ui:gap-1 ui:justify-center">
-    @if(showExternalLink && file.links.external) {
-      <a pButton [text]="true" icon="fa fa-external-link" [href]="file.links.external" target="_blank"></a>
+    @if(showExternalLink() && file().links.external) {
+      <a pButton [text]="true" icon="fa fa-external-link" [href]="file().links.external" target="_blank"></a>
     }
-    @if(showPreview && file.links.preview) {
-      <p-button [text]="true" icon="fa fa-eye" (onClick)="preview(file)" />
+    @if(showPreview() && file().links.preview) {
+      <p-button [text]="true" icon="fa fa-eye" (onClick)="preview(file())" />
     }
-    @if (showDownload && file.links.download) {
-      <a pButton [text]="true" icon="fa fa-download" [href]="file.links.download" download>
+    @if (showDownload() && file().links.download) {
+      <a pButton [text]="true" icon="fa fa-download" [href]="file().links.download" download>
       </a>
     }
   </div>
-}
-@else {
+} @else {
   <img src="/static/images/no-image.png" class="ui:max-w-full ui:h-auto ui:inline">
 }
 </div>
 <ng-template #thumbnail>
-  <img [src]="file.thumbnail" class="ui:max-w-full ui:h-auto ui:inline" [alt]="file.label">
+  <img [src]="file().thumbnail" class="ui:max-w-full ui:h-auto ui:inline" [alt]="file().label">
 </ng-template>

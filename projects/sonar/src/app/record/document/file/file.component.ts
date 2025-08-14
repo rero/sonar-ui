@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,48 +14,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { DocumentFile } from '../document.interface';
 
 @Component({
-    selector: 'sonar-document-file',
-    templateUrl: './file.component.html',
-    standalone: false
+  selector: 'sonar-document-file',
+  templateUrl: './file.component.html',
+  standalone: false
 })
 export class FileComponent {
-  // File object.
-  @Input() file: DocumentFile;
 
-  // Show preview icon
-  @Input() showPreview = true;
+  file = input.required<DocumentFile>();
 
-  // Show download icon
-  @Input() showDownload = true;
+  showPreview = input<boolean>(true);
 
-  @Input() showExternalLink = true;
+  showDownload = input<boolean>(true);
 
-  // Show label
-  @Input() showLabel = true;
+  showExternalLink = input<boolean>(true);
 
-  // Force link.
-  @Input() link: string;
+  link? = input<string>();
 
-  // In router or standard href link
-  @Input() inRouter = false;
+  inRouter = input<boolean>(false);
 
-  /** Event emitted when a preview is clicked. */
-  @Output() previewClicked: EventEmitter<any> = new EventEmitter();
-
-  /**
-   * Scroll to target.
-   *
-   * @param event DOM event triggered.
-   * @param target ID of the target element.
-   */
-   goToElement(event: any, target: string) {
-    event.preventDefault();
-    document.querySelector('#' + target).scrollIntoView({ behavior: 'smooth' });
-  }
+  previewClicked = output<DocumentFile>();
 
   /**
    * Method called when a preview link is clicked.

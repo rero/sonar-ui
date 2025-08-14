@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -15,8 +15,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 @if(deposit()) {
-  <sonar-deposit-step [maxStep]="maxStep()" [steps]="steps" />
-  @if(currentStep === 'diffusion') {
+  <sonar-deposit-step [maxStep]="maxStep()" [(steps)]="steps" />
+  @if(currentStep() === 'diffusion') {
     <sonar-deposit-review [deposit]="deposit()" />
   }
 
@@ -39,8 +39,8 @@
       <p-tabpanel value="editor">
         <sonar-deposit-editor
           [deposit]="deposit()"
-          [currentStep]="currentStep"
-          [steps]="steps"
+          [currentStep]="currentStep()"
+          [steps]="steps()"
           [mainFile]="mainFile()"
           (depositChanged)="updateDeposit($event)"
         />

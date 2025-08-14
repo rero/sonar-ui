@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -22,9 +22,8 @@
         <ul class="ui:list-none">
           @for (value of field(); track $index; let last=$last; let index=$index) {
             <li>
-              @if (template) {
-                <ng-container
-                  *ngTemplateOutlet="template; context: { $implicit: value, last, index }"/>
+              @if (template()) {
+                <ng-container *ngTemplateOutlet="template(); context: { $implicit: value, last, index }"/>
               } @else {
                 {{ value }}
               }
@@ -33,9 +32,8 @@
         </ul>
       }
       @else {
-        @if (template) {
-          <ng-container
-            *ngTemplateOutlet="template; context: { $implicit: field() }"/>
+        @if (template()) {
+          <ng-container *ngTemplateOutlet="template(); context: { $implicit: field() }"/>
         } @else {
           {{ field() }}
         }

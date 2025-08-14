@@ -18,7 +18,7 @@
   <p-select
     appendTo="body"
     styleClass="ui:w-full"
-    [options]="types"
+    [options]="types()"
     [(ngModel)]="scType"
     optionLabel="name"
     [placeholder]="'Search in ...' | translate"
@@ -43,18 +43,18 @@
     ></button>
   </p-inputgroup>
 
-  @if (scResult) {
-    @if (hasSwisscoveryResult){
+  @if (scResult()) {
+    @if (hasSwisscoveryResult()) {
       <div class="ui:flex ui:flex-col ui:gap-2">
         <dl class="metadata">
           <dt translate>Title</dt>
-          <dd>{{ scResult?.metadata?.title ? scResult.metadata.title : ('no title' | translate) }}</dd>
-          @if(scResult?.contributors) {
+          <dd>{{ scResult()?.metadata?.title ? scResult().metadata.title : ('no title' | translate) }}</dd>
+          @if(scResult()?.contributors) {
           <dt translate>Contributors</dt>
           <dd>
             <ul>
-              @for(contributor of scResult.contributors; track $index) {
-                <li>{{contributor.name}}</li>
+              @for(contributor of scResult().contributors; track $index) {
+                <li>{{ contributor.name }}</li>
               }
             </ul>
           </dd>
@@ -63,10 +63,10 @@
         <p-button (onClick)="save()" [label]="'Import' | translate" />
       </div>
     } @else {
-      <p-messages
-        [value]="[{ severity: 'warn', detail: 'No result found' | translate }]"
-        [enableService]="false"
-        [closable]="false"
+      <p-message
+        [text]="'No result found' | translate"
+        severity="warn"
+        showTransitionOptions="0ms"
       />
     }
   }

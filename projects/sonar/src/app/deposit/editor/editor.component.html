@@ -17,17 +17,15 @@
 
 <div class="ui:flex ui:justify-end ui:items-center ui:flex-wrap ui:gap-2">
   @if(currentStep() === 'metadata') {
-  <p-splitButton [label]="'Import metadata' | translate" [model]="importMenuItems" appendTo="body" />
+  <p-splitButton [label]="'Import metadata' | translate" [model]="importMenuItems()" appendTo="body" />
   }
   @if(currentStep() === 'diffusion') {
   <p-button (onClick)="save()" [label]="'Save' | translate" iconPos="right" />
-  }
-  @else {
+  } @else {
   <p-button (onClick)="save()" icon="fa fa-chevron-right" [label]="'Continue' | translate" iconPos="right" />
   }
   @if(canSubmit()) {
-  <p-button (onClick)="confirmPublish()" [label]="isAdminUser ? ('Publish' | translate) : ('Submit' | translate)"
-    iconPos="right" />
+  <p-button (onClick)="confirmPublish()" [label]="isAdminUser() ? ('Publish' | translate) : ('Submit' | translate)" iconPos="right" />
   }
 </div>
 <!-- metadata editor -->

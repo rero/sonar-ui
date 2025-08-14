@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Component, inject, output } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiService } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -35,17 +35,9 @@ export class SwisscoveryComponent {
   private translateService: TranslateService = inject(TranslateService);
 
   /** Swisscovery result */
-  scResult: any = null;
+  scResult = signal(null);
   data = output<any>();
-  types = [];
-  searchTerms = '';
-  scType = {
-    name: 'Everywhere',
-    code: 'all_for_ui',
-  };
-
-  constructor() {
-    this.types = [
+  types = signal([
       {
         name: this.translateService.instant('Everywhere'),
         code: 'all_for_ui',
@@ -66,23 +58,31 @@ export class SwisscoveryComponent {
         name: this.translateService.instant('ISSN'),
         code: 'issn',
       },
-    ];
-  }
+    ]);
+
+  searchTerms = signal('');
+  scType = signal({
+    name: 'Everywhere',
+    code: 'all_for_ui',
+  });
+
+  hasSwisscoveryResult = computed(() => this.scResult() && Object.keys(this.scResult()).length > 0);
+
   /**
    * Search record in swisscovery
    *
    * @returns void
    */
   searchSwisscovery(): void {
-    if (!this.searchTerms) {
+    if (!this.searchTerms()) {
       return;
     }
 
     this.spinner.show();
 
     const params = new HttpParams()
-      .set('type', this.scType.code)
-      .set('query', this.searchTerms)
+      .set('type', this.scType().code)
+      .set('query', this.searchTerms())
       .set('format', 'deposit');
 
     this.httpClient
@@ -97,7 +97,7 @@ export class SwisscoveryComponent {
       )
       .subscribe((data) => {
         if (data === null) {
-          this.scResult = null;
+          this.scResult.set(null);
         }
         let result: any = {};
         if (data?.metadata) {
@@ -106,21 +106,13 @@ export class SwisscoveryComponent {
         if (data?.contributors) {
           result.contributors = data.contributors;
         }
-        this.scResult = result;
+        this.scResult.set(result);
 
         this.spinner.hide();
       });
   }
-  /**
-   * Check if a result exists for a swisscovery search.
-   *
-   * @returns True if a search is done and a result is found.
-   */
-  get hasSwisscoveryResult(): boolean {
-    return this.scResult && Object.keys(this.scResult).length > 0;
-  }
 
   save() {
-    this.data.emit(this.scResult);
+    this.data.emit(this.scResult());
   }
 }

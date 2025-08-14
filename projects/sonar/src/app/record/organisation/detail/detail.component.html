@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -14,47 +14,47 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if(record) {
+@if(record()) {
   <div class="ui:flex ui:flex-col ui:gap-2">
-    <h1 class="ui:mb-4">{{ record.metadata.name }}</h1>
-    <sonar-field-description [label]="'Code' | translate" [field]="record.metadata.code"/>
+    <h1 class="ui:mb-4">{{ record().metadata.name }}</h1>
+    <sonar-field-description [label]="'Code' | translate" [field]="record().metadata.code"/>
 
-    <sonar-field-description [label]="'Is shared' | translate" [field]="record.metadata.isShared">
+    <sonar-field-description [label]="'Is shared' | translate" [field]="record().metadata.isShared">
       <ng-template let-isShared pTemplate="template">
         <i class="fa fa-{{ isShared ? 'check' : 'close' }}"></i>
       </ng-template>
     </sonar-field-description>
 
-    <sonar-field-description [label]="'Is dedicated' | translate" [field]="record.metadata.isDedicated">
+    <sonar-field-description [label]="'Is dedicated' | translate" [field]="record().metadata.isDedicated">
       <ng-template let-isDedicated pTemplate="template">
         <i class="fa fa-{{ isDedicated ? 'check' : 'close' }}"></i>
       </ng-template>
     </sonar-field-description>
 
-    <sonar-field-description [label]="'Server name (without http)' | translate" [field]="record.metadata.serverName"/>
+    <sonar-field-description [label]="'Server name (without http)' | translate" [field]="record().metadata.serverName"/>
 
-    <sonar-field-description [label]="'Platform name' | translate" [field]="record.metadata.platformName">
+    <sonar-field-description [label]="'Platform name' | translate" [field]="record().metadata.platformName">
       <ng-template let-platformName pTemplate="template">
         <span [innerHtml]="platformName | markdown"></span>
       </ng-template>
     </sonar-field-description>
 
-    <sonar-field-description [label]="'Ark Name Assigning Authority Number (NAAN)' | translate" [field]="record.metadata.arkNAAN"/>
+    <sonar-field-description [label]="'Ark Name Assigning Authority Number (NAAN)' | translate" [field]="record().metadata.arkNAAN"/>
 
-    <sonar-field-description [label]="'Allowed IP addresses' | translate" [field]="record.metadata.allowedIps">
+    <sonar-field-description [label]="'Allowed IP addresses' | translate" [field]="record().metadata.allowedIps">
       <ng-template let-allowedIps pTemplate="template">
         <span [innerHtml]="allowedIps | nl2br"></span>
       </ng-template>
     </sonar-field-description>
 
-    <sonar-field-description [label]="'Description' | translate" [field]="record.metadata.description">
+    <sonar-field-description [label]="'Description' | translate" [field]="record().metadata.description">
       <ng-template let-description pTemplate="template">
         <span class="ui:font-bold">{{ 'lang_' + description.language | translate | ucfirst }}</span>
         <span [innerHtml]="description.value | markdown"></span>
       </ng-template>
     </sonar-field-description>
 
-    <sonar-field-description [label]="'Footer' | translate" [field]="record.metadata.footer">
+    <sonar-field-description [label]="'Footer' | translate" [field]="record().metadata.footer">
       <ng-template let-footer pTemplate="template">
         <span class="ui:font-bold">{{ 'lang_' + footer.language | translate | ucfirst }}</span>
         <span [innerHtml]="footer.value | markdown"></span>
@@ -62,7 +62,7 @@
     </sonar-field-description>
 
     @for (i of [1, 2, 3]; track i) {
-      <sonar-field-description [label]="'Custom field ' + i | translate" [field]="record.metadata['documentsCustomField' + i]">
+      <sonar-field-description [label]="'Custom field ' + i | translate" [field]="record().metadata['documentsCustomField' + i]">
         <ng-template let-customField pTemplate="template">
           @if (customField.label) {
             {{ 'Label' | translate }}: {{ customField.label | languageValue | async }}
@@ -74,23 +74,23 @@
       </sonar-field-description>
     }
 
-    <sonar-field-description [label]="'Visible facets in the public interface for documents' | translate" [field]="record.metadata.publicDocumentFacets">
+    <sonar-field-description [label]="'Visible facets in the public interface for documents' | translate" [field]="record().metadata.publicDocumentFacets">
       <ng-template let-publicDocumentFacet pTemplate="template">
         <i class="fa fa-check" aria-hidden="true"></i>
         {{ publicDocumentFacet | translate | ucfirst }}
       </ng-template>
     </sonar-field-description>
 
-    @if (subdivisions?.length) {
-      <sonar-field-description [label]="'Subdivisions' | translate" [field]="subdivisions">
+    @if (subdivisions()?.length) {
+      <sonar-field-description [label]="'Subdivisions' | translate" [field]="subdivisions()">
         <ng-template let-subdivision pTemplate="template">
           {{ subdivision.metadata.name | languageValue | async }}
         </ng-template>
       </sonar-field-description>
     }
 
-    @if (collections?.length) {
-      <sonar-field-description [label]="'Collections' | translate" [field]="collections">
+    @if (collections()?.length) {
+      <sonar-field-description [label]="'Collections' | translate" [field]="collections()">
         <ng-template let-collection pTemplate="template">
           <a [routerLink]="['/', 'records', 'collections', 'detail', collection.id]">
             {{ collection.metadata.name | languageValue | async }}
@@ -98,6 +98,6 @@
         </ng-template>
       </sonar-field-description>
     }
-    <sonar-upload-files recordType="organisations" [pid]="record.metadata.pid" />
+    <sonar-upload-files recordType="organisations" [pid]="record().metadata.pid" />
   </div>
 }

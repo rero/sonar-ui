@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ResultItem } from '@rero/ng-core';
 import { Subscription } from 'rxjs';
@@ -44,23 +44,17 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
   // Abstract corresponding to current language.
   abstract: string;
 
-  contributorsLength = 5;
-  showMore = true;
+  contributorsLength = signal<number>(5);
+
+  showMore = signal<boolean>(true);
+
+  isGlobalView = computed(() => this.configService.view === null
+      || this.configService.view === this.configService.globalviewName);
+
+  view = computed(() => this.configService.view);
 
   // Subscription to observables, used to unsubscribe to all at the same time.
-  private _subscription: Subscription = new Subscription();
-
-  // is a global view
-  // Admin interface: view is null
-  get isGlobalView(): boolean {
-    return this.configService.view === null
-      || this.configService.view === this.configService.globalviewName;
-  }
-
-  // Get Current view (for public interface)
-  get view(): string | null {
-    return this.configService.view;
-  }
+  private subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
     // Initialize and sort contributors
@@ -70,18 +64,18 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
     this._sortContributors();
 
     // Load abstract
-    this._storeAbstract();
+    this.storeAbstract();
 
     // When language change, abstracts are sorted and first one is displayed.
-    this._subscription.add(
+    this.subscription.add(
       this.translateService.onLangChange.subscribe(() => {
-        this._storeAbstract();
+        this.storeAbstract();
       })
     );
   }
 
   ngOnDestroy(): void {
-    this._subscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -99,8 +93,8 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
 
   showMoreContributors(event: any, contributorsLength: number): void {
     event.preventDefault();
-    this.showMore = false;
-    this.contributorsLength = contributorsLength;
+    this.showMore.set(false);
+    this.contributorsLength.set(contributorsLength);
   }
 
   /**
@@ -123,7 +117,7 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
     );
   }
 
-  private _storeAbstract(): void {
+  private storeAbstract(): void {
     if (
       !this.record.metadata.abstracts ||
       this.record.metadata.abstracts.length === 0

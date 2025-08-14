@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2024 RERO
+  Copyright (C) 2024-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if (loading) {
+@if (loading()) {
   <i class="fa fa-spinner fa-spin"></i>
 } @else {
 @if (files()?.length > 0) {
@@ -27,7 +27,6 @@
           pInputText
           [placeholder]="'filter' | translate"
           [(ngModel)]="filterText"
-          (keyup)="onTextChange($event)"
         />
         <p-inputgroup-addon>
           <i class="fa fa-filter"></i>
@@ -39,15 +38,15 @@
     </div>
   }
 
-  @if (filteredFiles.length > 0) {
+  @if (filteredFiles().length > 0) {
     <div class="ui:border ui:border-surface ui:rounded-border ui:text-center ui:py-4 ui:px-1 ui:mt-2">
       <p-carousel
         [showIndicators]="false"
         [showNavigators]="false"
-        [value]="filteredFiles"
-        [numVisible]="numVisible"
-        [page]="page"
-        [numScroll]="numVisible"
+        [value]="filteredFiles()"
+        [numVisible]="numVisible()"
+        [page]="page()"
+        [numScroll]="numVisible()"
         [circular]="false"
       >
         <ng-template let-file #item>
@@ -69,20 +68,9 @@
             }
             <div class="ui:flex ui:items-center ui:justify-center">
               @if (file.preview) {
-                <p-button
-                  [text]="true"
-                  icon="fa fa-eye"
-                  (onClick)="preview(file)"
-                >
-                </p-button>
+                <p-button [text]="true" icon="fa fa-eye" (onClick)="preview(file)" />
               } @if (file.download) {
-                <a
-                  pButton
-                  [text]="true"
-                  icon="fa fa-download"
-                  [href]="file.download"
-                download>
-                </a>
+                <a pButton [text]="true" icon="fa fa-download" [href]="file.download" download></a>
               }
             </div>
             <small>{{ file.label }}</small>
@@ -90,12 +78,12 @@
         </ng-template>
       </p-carousel>
     </div>
-    @if(files().length > numVisible) {
+    @if(files().length > numVisible()) {
       <p-paginator
         (onPageChange)="onPageChange($event)"
         [first]="1"
-        [rows]="numVisible"
-        [totalRecords]="filteredFiles.length"
+        [rows]="numVisible()"
+        [totalRecords]="filteredFiles().length"
         [showJumpToPageInput]="false"
         [pageLinkSize]="3"
       />
@@ -103,7 +91,7 @@
   }
 }
 
-@if(previewFile) {
+@if(previewFile()) {
   <p-dialog
     [modal]="true"
     [(visible)]="isShowPreview"
@@ -113,13 +101,13 @@
     >
     <ng-template #header>
       <h4>
-        {{ previewFile?.label? previewFile.label : "Preview"|translate }}
+        {{ previewFile()?.label? previewFile().label : "Preview" | translate }}
       </h4>
     </ng-template>
     <iframe
       id="preview-iframe"
       [style]="{ width: '100%', height: '800px', border: 'none' }"
-      [src]="previewFile.url"
+      [src]="previewFile().url"
     ></iframe>
   </p-dialog>
   }

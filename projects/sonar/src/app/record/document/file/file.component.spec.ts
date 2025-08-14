@@ -50,6 +50,20 @@ describe('FileComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FileComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('file', {
+      key: 'file-key',
+      label: 'file-label',
+      thumbnail: 'file-thumbnail.jpg',
+      links: {
+        external: 'external-link',
+        preview: 'preview',
+        download: 'download'
+      },
+      restriction: {
+        restricted: false,
+        date: '2025-01-01'
+      }
+    });
     fixture.detectChanges();
   });
 

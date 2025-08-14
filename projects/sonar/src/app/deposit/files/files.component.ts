@@ -14,18 +14,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 
 @Component({
-    selector: 'sonar-deposit-files',
-    templateUrl: './files.component.html',
-    standalone: false
+  selector: 'sonar-deposit-files',
+  templateUrl: './files.component.html',
+  standalone: false
 })
 export class FilesComponent {
   mainFile = input.required<any>();
   depositPid = input.required<string>();
   additionalFiles = input<any>();
   /** File key to preview */
-  previewFileKey: string;
-  isShowPreview = false;
+  previewFileKey = signal<string>('');
+  isShowPreview = signal<boolean>(false);
 }

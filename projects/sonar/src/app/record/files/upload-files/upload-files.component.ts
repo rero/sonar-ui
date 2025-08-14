@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2024 RERO
+ * Copyright (C) 2024-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewChild, effect, inject, input, output } from '@angular/core';
+import { Component, ViewChild, effect, inject, input, output, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { CONFIG, RecordService } from '@rero/ng-core';
@@ -43,7 +43,7 @@ export class UploadFilesComponent {
   private appConfigService: AppConfigService = inject(AppConfigService);
 
   // number of uploaded files
-  nUploadedFiles = 0;
+  nUploadedFiles = signal<number>(0);
 
   // resource pid
   pid = input.required<string>();
@@ -55,7 +55,7 @@ export class UploadFilesComponent {
 
   // initial record from pid and recordType
   initialRecord = toSignal(
-    combineLatest(toObservable(this.pid), toObservable(this.recordType)).pipe(
+    combineLatest([toObservable(this.pid), toObservable(this.recordType)]).pipe(
       switchMap(([pid, recordType]) =>
         pid && recordType
           ? this.httpClient
@@ -191,7 +191,7 @@ export class UploadFilesComponent {
               detail: this.translateService.instant('File uploaded successfully.'),
               life: CONFIG.MESSAGE_LIFE,
             });
-            this.nUploadedFiles = 0;
+            this.nUploadedFiles.set(0);
             this.filesChanged.emit(this.files);
           })
         )
@@ -270,7 +270,7 @@ export class UploadFilesComponent {
         )
       ),
       map((file: any) => {
-        this.nUploadedFiles += 1;
+        this.nUploadedFiles.set(this.nUploadedFiles() + 1);
         this.files = this.processFiles([
           {
             label: file.key,
