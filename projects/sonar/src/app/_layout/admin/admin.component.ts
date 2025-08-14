@@ -178,9 +178,9 @@ export class AdminComponent implements OnInit, OnDestroy {
               url: '/users/profile',
             },
             {
-              label:  this.translateService.instant('Administration'),
-              url: '/manage',
-              visible: this.user.is_admin
+              label:  this.translateService.instant('Super administration'),
+              url: '/admin',
+              visible: this.user.is_superuser
             },
             {
               label:  this.translateService.instant('Logout'),
