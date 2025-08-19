@@ -20,6 +20,7 @@
 @use "easymde/dist/easymde.min";
 @use "node_modules/ngx-spinner/animations/ball-zig-zag.css";
 @use "@rero/ng-core/assets/scss/ng-core-tailwind";
+@use "@rero/ng-core/assets/scss/katex";
 @import "tailwindcss/theme.css" layer(theme) prefix(ui);
 @import "tailwindcss/utilities.css" layer(utilities) prefix(ui);
 
