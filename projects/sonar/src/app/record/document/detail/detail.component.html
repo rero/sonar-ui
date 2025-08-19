@@ -49,14 +49,9 @@
             "
           ></i>
         }
-        <span
-          [innerHTML]="
-            record().title[0].mainTitle | languageValue | async | nl2br
-          "
-        ></span>
+        <span katex [innerHTML]="record().title[0].mainTitle | languageValue | async | nl2br"></span>
         @if(record().title[0].subtitle) {
-          &nbsp;:&nbsp;
-          {{ record().title[0].subtitle | languageValue | async }}
+          &nbsp;:<span class="ui:ml-2" katex [innerHTML]="record().title[0].subtitle | languageValue | async"></span>
         }
       </h2>
 
@@ -83,8 +78,7 @@
               @for(item of statement.text | keyvalue; track $index) {
                 <li>{{ item.value }}</li>
               }
-            }
-            @else {
+            } @else {
               <li>{{ statement.text }}</li>
             }
           }
@@ -132,9 +126,7 @@
             </strong>
             <ul class="ui:list-none">
               @for (partOf of record().partOf; track $index) {
-              <li>
-                {{ partOf.text }}
-              </li>
+              <li>{{ partOf.text }}</li>
               }
             </ul>
         </div>
@@ -149,9 +141,8 @@
                 <a
                 [routerLink]="['/', 'records', 'documents']"
                 [queryParams]="{ q: 'subjects.label.value:' + '&quot;' + value + '&quot;'}"
-
                 >
-                  {{value}}
+                  {{ value }}
                 </a>
               </p-tag>
             }
@@ -172,7 +163,7 @@
             @for (abstract of record().abstracts; track $index) {
               <p-tabpanel [value]="abstract.language">
                 <p-scrollpanel styleClass="ui:h-[10rem]">
-                  <p [innerHtml]="abstract.value | nl2br"></p>
+                  <p katex [innerHtml]="abstract.value | nl2br"></p>
                 </p-scrollpanel>
               </p-tabpanel>
             }
@@ -187,9 +178,7 @@
         [field]="record().projects"
       >
         <ng-template let-project pTemplate="template">
-          <a
-            [routerLink]="['/', 'records', 'projects', 'detail', project.pid]"
-          >
+          <a [routerLink]="['/', 'records', 'projects', 'detail', project.pid]">
             {{ project.name }}
           </a>
           {{ getFundingOrganisations(project) }}
@@ -197,10 +186,7 @@
       </sonar-field-description>
 
       <!-- COLLECTIONS -->
-      <sonar-field-description
-        [label]="'Collections' | translate"
-        [field]="record().collections"
-      >
+      <sonar-field-description [label]="'Collections' | translate" [field]="record().collections">
         <ng-template let-collection pTemplate="template">
           <a [routerLink]="[ '/', 'records', 'collections', 'detail', collection.pid ]">
             {{ collection.name | languageValue | async }}
@@ -370,10 +356,10 @@
 <p-tabs value="edit">
   <p-tablist>
     <p-tab value="edit">
-      {{ 'Edit Files' | translate}}
+      {{ 'Edit Files' | translate }}
     </p-tab>
     <p-tab value="stats">
-      {{ 'Statistics' | translate}}
+      {{ 'Statistics' | translate }}
     </p-tab>
     <p-tab value="others" [disabled]="filteredFiles().length > 1? false: true">
       {{ 'Other files' | translate}}
@@ -414,9 +400,7 @@
   styleClass="ui:transform-none"
   >
   <ng-template #header>
-    <h4>
-      {{ previewFile()?.label? previewFile().label : "Preview"|translate }}
-    </h4>
+    <h4>{{ previewFile()?.label? previewFile().label : "Preview"|translate }}</h4>
   </ng-template>
   <iframe
     id="preview-iframe"
