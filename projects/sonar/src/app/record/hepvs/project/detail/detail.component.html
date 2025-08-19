@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -68,7 +68,7 @@
     <!-- Project summary -->
     <sonar-field-description [label]="'Project summary' | translate" [field]="record.metadata.description">
       <ng-template let-description pTemplate="template">
-        <ng-core-text-read-more [text]="description"/>
+        <ng-core-read-more [text]="description" />
       </ng-template>
     </sonar-field-description>
 
@@ -117,28 +117,28 @@
     <!-- Benefits -->
     <sonar-field-description [label]="'What are the benefits and quality improvements in the research in this project?' | translate" [field]="record.metadata.benefits">
       <ng-template let-benefit pTemplate="template">
-        <ng-core-text-read-more [text]="benefit"/>
+        <ng-core-read-more [text]="benefit" />
       </ng-template>
     </sonar-field-description>
 
     <!-- Impact on formation -->
     <sonar-field-description [label]="'What are the impacts of training research?' | translate" [field]="record.metadata.impactOnFormation">
       <ng-template let-impactOnFormation pTemplate="template">
-        <ng-core-text-read-more [text]="impactOnFormation"/>
+        <ng-core-read-more [text]="impactOnFormation" />
       </ng-template>
     </sonar-field-description>
 
     <!-- Impact on professional environment -->
     <sonar-field-description [label]="'What are the impacts of training research?' | translate" [field]="record.metadata.impactOnProfessionalEnvironment">
       <ng-template let-impactOnProfessionalEnvironment pTemplate="template">
-        <ng-core-text-read-more [text]="impactOnProfessionalEnvironment"/>
+        <ng-core-read-more [text]="impactOnProfessionalEnvironment" />
       </ng-template>
     </sonar-field-description>
 
     <!-- Impact on public action -->
     <sonar-field-description [label]="'What is the impact of research on public action or on internal or external governance?' | translate" [field]="record.metadata.impactOnPublicAction">
       <ng-template let-impactOnPublicAction pTemplate="template">
-        <ng-core-text-read-more [text]="impactOnPublicAction"/>
+        <ng-core-read-more [text]="impactOnPublicAction" />
       </ng-template>
     </sonar-field-description>
 
@@ -160,7 +160,7 @@
 
       <sonar-field-description [label]="'Brief description of the mandate' | translate" [field]="record.metadata.relatedToMandate.briefDescription">
         <ng-template let-briefDescription pTemplate="template">
-          <ng-core-text-read-more [text]="briefDescription"></ng-core-text-read-more>
+          <ng-core-read-more [text]="briefDescription" />
         </ng-template>
       </sonar-field-description>
     }
@@ -169,7 +169,7 @@
     @if (record.metadata.educationalDocument?.choice) {
       <sonar-field-description [label]="'Brief description of the report' | translate" [field]="record.metadata.educationalDocument.briefDescription">
         <ng-template let-briefDescription pTemplate="template">
-          <ng-core-text-read-more [text]="briefDescription"></ng-core-text-read-more>
+          <ng-core-read-more [text]="briefDescription" />
         </ng-template>
       </sonar-field-description>
     }
@@ -177,7 +177,7 @@
     <!-- Search results valorised -->
     <sonar-field-description [label]="'How are research results used in training?' | translate" [field]="record.metadata.searchResultsValorised">
       <ng-template let-searchResultsValorised pTemplate="template">
-        <ng-core-text-read-more [text]="searchResultsValorised"></ng-core-text-read-more>
+        <ng-core-read-more [text]="searchResultsValorised" />
       </ng-template>
     </sonar-field-description>
   </div>
@@ -189,7 +189,7 @@
       <ul class="ui:list-none">
         @for (document of record.metadata.documents; track $index) {
           <li>
-            <a [routerLink]="['/', 'records', 'documents', 'detail', document.pid]">
+            <a katex [routerLink]="['/', 'records', 'documents', 'detail', document.pid]">
               {{ document.title[0].mainTitle | languageValue | async }}
             </a>
           </li>
