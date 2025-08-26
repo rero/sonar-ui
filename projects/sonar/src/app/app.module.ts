@@ -22,7 +22,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, RemoteAutocompleteService } from '@rero/ng-core';
+import { BucketNameService as CoreBucketNameService, CoreConfigService, RecordModule, RemoteAutocompleteService } from '@rero/ng-core';
 import { ButtonModule } from 'primeng/button';
 import { ButtonGroupModule } from 'primeng/buttongroup';
 import { CarouselModule } from 'primeng/carousel';
@@ -98,6 +98,7 @@ import { UserComponent } from './record/user/user.component';
 import { ValidationComponent } from './record/validation/validation.component';
 import { UserService } from './user.service';
 import { LicensePipe } from './record/document/license.pipe';
+import { BucketNameService } from './bucket-name.service';
 
 export function minElementError(err: any, field: FormlyFieldConfig) {
   return `This field must contain at least ${field.templateOptions.minItems} element.`;
@@ -209,8 +210,10 @@ export function minElementError(err: any, field: FormlyFieldConfig) {
       useClass: UIAutocompleteService,
     },
     DatePipe,
+    LanguageValuePipe,
     provideHttpClient(withInterceptorsFromDi()),
     providePrimeNG(primeNGSonarConfig),
+    { provide: CoreBucketNameService, useClass: BucketNameService },
   ],
 })
 export class AppModule {}
