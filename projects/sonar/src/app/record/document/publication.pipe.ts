@@ -35,7 +35,7 @@ export class PublicationPipe implements PipeTransform {
    * @returns Text representing the publication.
    */
   transform(value: any): string {
-    const journal: Array<string> = [];
+    const journal: string[] = [];
 
     if (value.document && value.document.title) {
       journal.push(value.document.title);

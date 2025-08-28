@@ -109,7 +109,7 @@ export class EditorComponent implements OnInit, OnDestroy {
                   depositFields.fieldGroup,
                   this.currentStep()
                 );
-                let currentStepData = this.deposit()[this.currentStep()];
+                const currentStepData = this.deposit()[this.currentStep()];
                 this.model = {};
                 if (currentStepData) {
                   this.model[this.currentStep()] = currentStepData;
@@ -128,7 +128,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   }
 
   setImportMenu(): void {
-    let items = [
+    const items = [
       {
         label: this.translateService.instant('Import from swisscovery'),
         command: () => this.importModalIsVisible.set(true),
@@ -226,7 +226,7 @@ export class EditorComponent implements OnInit, OnDestroy {
           if (result === false) {
             return;
           }
-          let metadata: any = {};
+          const metadata: any = {};
           ['title', 'documentDate', 'publication', 'abstract', 'languages'].map(
             (field) => {
               if (result[field]) {
@@ -361,7 +361,7 @@ export class EditorComponent implements OnInit, OnDestroy {
    * @param fieldGroup Array of fields extracted from JSON schema
    * @param step Current step
    */
-  private getFormFields(fieldGroup: Array<any>, step: string): Array<any> {
+  private getFormFields(fieldGroup: any[], step: string): any[] {
     const fields = fieldGroup.filter((item) => item.key === step);
     return [fields[0]];
   }

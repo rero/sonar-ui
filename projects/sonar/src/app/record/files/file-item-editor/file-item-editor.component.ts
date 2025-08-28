@@ -59,7 +59,7 @@ export class FileItemEditorComponent implements OnInit{
    * @returns the formly fields.
    */
   private createForm() {
-    let schema = processJsonSchema(resolve$ref(this.schema, this.schema.properties));
+    const schema = processJsonSchema(resolve$ref(this.schema, this.schema.properties));
     // form configuration
     const editorConfig = {
       longMode: false,
