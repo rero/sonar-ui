@@ -141,19 +141,23 @@ export class AdminComponent implements OnInit, OnDestroy {
             {
               label:  this.translateService.instant('Public interface'),
               url: this.userService.getPublicInterfaceLink(),
+              target: 'public',
             },
             {
               label:  this.translateService.instant('Profile'),
               url: '/users/profile',
+              target: '_self',
             },
             {
               label:  this.translateService.instant('Super administration'),
               url: '/admin',
-              visible: this.user.is_superuser
+              visible: this.user.is_superuser,
+              target: 'admin',
             },
             {
               label:  this.translateService.instant('Logout'),
               url: '/logout',
+              target: '_self',
             },
           ],
         },
