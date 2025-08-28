@@ -56,7 +56,7 @@
   }
   <div class="ui:flex ui:gap-1 ui:justify-center">
     @if(showExternalLink() && file().links.external) {
-      <a pButton [text]="true" icon="fa fa-external-link" [href]="file().links.external" target="_blank"></a>
+      <a pButton [text]="true" [href]="file().links.external" target="_blank"><i class="fa fa-external-link"></i></a>
     }
     @if(showPreview() && file().links.preview) {
       <p-button [text]="true" icon="fa fa-eye" (onClick)="preview(file())" />
@@ -67,7 +67,7 @@
     }
   </div>
 } @else {
-  <img src="/static/images/no-image.png" class="ui:max-w-full ui:h-auto ui:inline">
+  <img src="/static/images/no-image.png" [alt]="'No image' | translate" class="ui:max-w-full ui:h-auto ui:inline">
 }
 </div>
 <ng-template #thumbnail>

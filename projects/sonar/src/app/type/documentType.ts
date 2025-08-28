@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface Identifier {
+export type Identifier = {
   field: string;
   type: string;
   value: string;

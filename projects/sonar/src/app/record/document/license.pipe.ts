@@ -60,7 +60,7 @@ export class LicensePipe implements PipeTransform {
   }
 }
 
-interface licenseType {
+type licenseType = {
   icon: string;
   link: string;
 }
