@@ -128,7 +128,7 @@ export class UploadFilesComponent {
     }
     metadata.label = metadata.label.trim();
 
-    let indexToUpdate = this.record._files.findIndex(
+    const indexToUpdate = this.record._files.findIndex(
       (item) => item.key === file.key
     );
     if (indexToUpdate >= 0) {
@@ -163,7 +163,7 @@ export class UploadFilesComponent {
   uploadHandler(event, _) {
     if (event.files.length > 0) {
       this.spinner.show('file-upload');
-      let obs: Observable<any> = this.generateCreateRequests(event);
+      const obs: Observable<any> = this.generateCreateRequests(event);
       obs
         .pipe(
           catchError((e: any) => {
@@ -204,8 +204,8 @@ export class UploadFilesComponent {
    * @param event - dict with the file and the fileUpload stream.
    */
   uploadNewVersion(event) {
-    let { file } = event;
-    let fileUpload: File = event.fileUpload;
+    const { file } = event;
+    const fileUpload: File = event.fileUpload;
     this.spinner.show('file-upload');
     this.httpClient
       .put(
@@ -407,7 +407,7 @@ export class UploadFilesComponent {
    */
   private processFiles(files) {
     // get old versions
-    let versions = {};
+    const versions = {};
     files.map((file) => {
       if (file?.metadata?.type && file.metadata.type !== 'file') {
         return;
@@ -418,7 +418,7 @@ export class UploadFilesComponent {
       }
     });
     // get head files only
-    let headFiles = [];
+    const headFiles = [];
     files.map((file) => {
       if (file?.metadata?.type && file.metadata.type !== 'file') {
         return;
@@ -426,7 +426,7 @@ export class UploadFilesComponent {
       if (file.is_head) {
         // add versions if exists
         if (versions[file.key]) {
-          let fileVersions = versions[file.key];
+          const fileVersions = versions[file.key];
           fileVersions.sort((a, b) => a.metadata.created - b.metadata.created);
           file.versions = fileVersions;
         }
@@ -451,7 +451,7 @@ export class UploadFilesComponent {
 
   _reorder() {
     this.files.map((file, index) => {
-      let recordFile = this._getFileInRecord(file.key);
+      const recordFile = this._getFileInRecord(file.key);
       recordFile.order = index + 1;
     });
     return this.httpClient

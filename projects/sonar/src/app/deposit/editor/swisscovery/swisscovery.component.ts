@@ -99,7 +99,7 @@ export class SwisscoveryComponent {
         if (data === null) {
           this.scResult.set(null);
         }
-        let result: any = {};
+        const result: any = {};
         if (data?.metadata) {
           result.metadata = data.metadata;
         }

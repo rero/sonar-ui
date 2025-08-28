@@ -37,13 +37,13 @@ export class UIAutocompleteService {
     if (!query) {
       return of([]);
     }
-    var url = `/api/${queryOptions.type}/?q=${queryOptions.field}:${query}`;
+    let url = `/api/${queryOptions.type}/?q=${queryOptions.field}:${query}`;
     if(queryOptions.type === 'documents') {
       url = `/api/suggestions/completion?resource=${queryOptions.type}&field=${queryOptions.field}&q=${query}`;
     }
     return this.httpClient.get(url).pipe(
         map((results: any) => {
-          var toReturn = [];
+          let toReturn = [];
           if(results.hits) {
             toReturn = results.hits.hits.map((hit: any) => {
               return {

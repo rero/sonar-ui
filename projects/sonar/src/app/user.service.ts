@@ -31,7 +31,7 @@ export class UserService {
   private appConfigService: AppConfigService = inject(AppConfigService);
 
   // Subject for generating new users.
-  private _userSubject: BehaviorSubject<any> = new BehaviorSubject(null);
+  private _userSubject = new BehaviorSubject<any>(null);
 
   // Logged user
   private _user: any = null;
@@ -48,7 +48,7 @@ export class UserService {
    * Load logged user in backend
    * @return Observable of user
    */
-  loadLoggedUser(resolve: boolean = true): Observable<any> {
+  loadLoggedUser(resolve = true): Observable<any> {
     return this.http
       .get<any>(`${this.apiService.baseUrl}/logged-user/${resolve ? '?resolve=1' : ''}`)
       .pipe(
@@ -79,7 +79,7 @@ export class UserService {
    * Check if user has specified role(s).
    * @param roles String or array of roles to check against user
    */
-  hasRole(roles: string | Array<string>) {
+  hasRole(roles: string | string[]) {
     if (typeof roles === 'string') {
       roles = [roles];
     }

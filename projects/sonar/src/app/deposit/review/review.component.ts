@@ -63,7 +63,7 @@ export class ReviewComponent implements OnInit, OnDestroy {
   /**
    * Approve the deposit.
    */
-  review(action: string, edit: boolean = false): void {
+  review(action: string, edit = false): void {
       this.confirmationService.confirm({
         header: this.translateService.instant('deposit_log_action_' + action),
         message: this.translateService.instant('Do you really want to do this action?'),

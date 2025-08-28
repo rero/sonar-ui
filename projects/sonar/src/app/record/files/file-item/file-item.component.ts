@@ -49,7 +49,7 @@ export class FileItemComponent {
   maxFileSize = computed(() => this.appConfigService.maxFileSize);
 
   showEditor() {
-     let modalRef = this.dialogService.open(FileItemEditorComponent, {
+     const modalRef = this.dialogService.open(FileItemEditorComponent, {
         header: this.translateService.instant('Metadata Editor'),
         modal: true,
         data: {
@@ -70,7 +70,7 @@ export class FileItemComponent {
    */
   downloadURL(file): string {
     const urlObj = new URL(file.links.self);
-    let baseUrl = urlObj.pathname;
+    const baseUrl = urlObj.pathname;
     return `${baseUrl}/${file.key}?download&versionId=${file.version_id}`;
   }
 

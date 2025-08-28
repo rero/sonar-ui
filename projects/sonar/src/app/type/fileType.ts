@@ -17,7 +17,7 @@
 
 import { SafeUrl } from "@angular/platform-browser";
 
-export type File = {
+export interface File {
   // thumbnail URL
   thumbnail?: string;
   // download URL
@@ -28,7 +28,7 @@ export type File = {
   preview?: string;
 }
 
-export type previewFile = {
+export interface previewFile {
   label: string;
   url: SafeUrl;
 }
