@@ -30,9 +30,8 @@
   [href]="mainFile().key | fileLink : 'deposits' : depositPid() : 'files'"
   pButton
   target="_blank"
-  icon="fa fa-download"
   [text]="true"
-></a>
+><i class="fa fa-download"></i></a>
 
 @if(additionalFiles()?.length > 0) {
   <div class="ui:mt-2">
@@ -46,13 +45,12 @@
           [text]="true"
           (onClick)="previewFileKey.set(file.key); isShowPreview.set(true)"
         />
-        <a
-          pButton
+        <p-button
           [href]="file.key | fileLink : 'deposits' : depositPid() : 'files'"
           [text]="true"
           target="_blank"
           icon="fa fa-download"
-        ></a>
+        ></p-button>
       </div>
     }
   </div>

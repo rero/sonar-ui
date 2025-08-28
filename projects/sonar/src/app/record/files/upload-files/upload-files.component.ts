@@ -293,12 +293,12 @@ export class UploadFilesComponent {
    */
   onSelect(event, _) {
     const existingFileNames = [];
-    for (let i = 0; i < event.files.length; i++) {
-      const fileName = event.files[i].name;
+    for (const file of event.files) {
+      const fileName = file.name;
       if (this.files.some((v) => v.key == fileName)) {
         existingFileNames.push(fileName);
       } else {
-        event.files[i].label = fileName;
+        file.label = fileName;
       }
     }
     if (existingFileNames.length > 0) {

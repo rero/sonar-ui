@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface IContribution {
+export type IContribution = {
   text?: string;
   agent: {
     type: string;

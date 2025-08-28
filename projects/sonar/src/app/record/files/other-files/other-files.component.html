@@ -70,7 +70,7 @@
               @if (file.preview) {
                 <p-button [text]="true" icon="fa fa-eye" (onClick)="preview(file)" />
               } @if (file.download) {
-                <a pButton [text]="true" icon="fa fa-download" [href]="file.download" download></a>
+                <a pButton [text]="true" [href]="file.download"><i class="fa fa-download"></i></a>
               }
             </div>
             <small>{{ file.label }}</small>

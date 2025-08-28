@@ -12,6 +12,8 @@ module.exports = tseslint.config(
       '@angular-eslint/prefer-standalone': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-empty-object-type': 'warn',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@angular-eslint/directive-selector': [
         'error',
         {

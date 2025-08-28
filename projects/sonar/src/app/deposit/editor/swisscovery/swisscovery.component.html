@@ -27,20 +27,20 @@
     <input
       type="text"
       pAutoFocus
-     
       [(ngModel)]="searchTerms"
       (keyup.enter)="searchSwisscovery()"
       pInputText
       placeholder="Keyword"
     />
-    <button
-      pButton
+    <p-inputgroup-addon>
+      <p-button
       (onClick)="searchSwisscovery()"
       icon="fa fa-search"
       severity="secondary"
       variant="text"
-      outlined
-    ></button>
+      />
+    </p-inputgroup-addon>
+
   </p-inputgroup>
 
   @if (scResult()) {

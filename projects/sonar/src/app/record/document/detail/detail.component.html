@@ -324,7 +324,7 @@
               {{ usageAndAccessPolicy.license | translate }}
               @if (licenseLogo) {
                 <a [href]="licenseLogo.link" target="_blank">
-                  <img [src]="licenseLogo.icon" [title]="usageAndAccessPolicy.license" width="73px" />
+                  <img [src]="licenseLogo.icon" [title]="usageAndAccessPolicy.license" [alt]="usageAndAccessPolicy.license" width="73px" />
                 </a>
               }
             </div>
