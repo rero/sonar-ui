@@ -1,29 +1,94 @@
 # Changelog
 
+## [v19.0.0](https://github.com/rero/sonar-ui/tree/v19.0.0) (2025-10-08)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v14.0.1...v19.0.0)
+
+**New features:**
+
+- chore: upgrade to Angular 19 [#370](https://github.com/rero/sonar-ui/pull/370) (by @jma)
+- feat(document): add latex transformation [#406](https://github.com/rero/sonar-ui/pull/406) (by @Garfield-fr)
+- feat(deposit): add validate and see other deposits button [#398](https://github.com/rero/sonar-ui/pull/398) (by @Garfield-fr)
+- feat: add page title [#396](https://github.com/rero/sonar-ui/pull/396) (by @Garfield-fr)
+- feat(document): add license logo and link [#397](https://github.com/rero/sonar-ui/pull/397) (by @Garfield-fr)
+
+**Enhancements:**
+
+- fix(document): file label on stats [#416](https://github.com/rero/sonar-ui/pull/416) (by @Garfield-fr)
+- feat: display file label on the file download statistics [#412](https://github.com/rero/sonar-ui/pull/412) (by @jma)
+- feat(filters): translate button name [#405](https://github.com/rero/sonar-ui/pull/405) (by @Garfield-fr)
+- style(document): enhanced brief and detail view [#399](https://github.com/rero/sonar-ui/pull/399) (by @Garfield-fr)
+- style(deposit): enhance deposit detailed view [#391](https://github.com/rero/sonar-ui/pull/391) (by @jma)
+- style: enhance theming [#382](https://github.com/rero/sonar-ui/pull/382) (by @PascalRepond)
+- style: add custom prime config [#380](https://github.com/rero/sonar-ui/pull/380) (by @PascalRepond)
+
+**Fixes:**
+
+- fix: add missing translation for files deposit step [#420](https://github.com/rero/sonar-ui/pull/420) (by @PascalRepond)
+- fix(deposit): unable to remove embargo on files [#419](https://github.com/rero/sonar-ui/pull/419) (by @jma)
+- fix: remove ark identifier from the document editor [#413](https://github.com/rero/sonar-ui/pull/413) (by @jma)
+- fix(document): update metadata on edit file [#418](https://github.com/rero/sonar-ui/pull/418) (by @Garfield-fr)
+- fix(document): update the list of files [#417](https://github.com/rero/sonar-ui/pull/417) (by @Garfield-fr)
+- fix(files): number of files in filter label [#414](https://github.com/rero/sonar-ui/pull/414) (by @PascalRepond)
+- fix: set default value on the select of the swisscovery import [#410](https://github.com/rero/sonar-ui/pull/410) (by @jma)
+- fix: open logout in the same tab [#408](https://github.com/rero/sonar-ui/pull/408) (by @jma)
+- fix: remove 'Admin' entry from the admin menu [#402](https://github.com/rero/sonar-ui/pull/402) (by @PascalRepond)
+- fix(deposit): fix redirection for deposit another publication. [#401](https://github.com/rero/sonar-ui/pull/401) (by @PascalRepond)
+- fix(document): fix classification and subject links [#400](https://github.com/rero/sonar-ui/pull/400) (by @PascalRepond)
+- fix(document): change the order of files tabs [#392](https://github.com/rero/sonar-ui/pull/392) (by @Garfield-fr)
+- style: restore OA-orange as secondary colour [#394](https://github.com/rero/sonar-ui/pull/394) (by @PascalRepond)
+- fix(document): fix wrap subject tag [#389](https://github.com/rero/sonar-ui/pull/389) (by @Garfield-fr)
+- fix(files): fix preview link on the other files list [#388](https://github.com/rero/sonar-ui/pull/388) (by @jma)
+- style(editor): enhance the autocomplete html value [#384](https://github.com/rero/sonar-ui/pull/384) (by @jma)
+- fix(documents): fix preview button [#383](https://github.com/rero/sonar-ui/pull/383) (by @jma)
+- fix(deposit): fix unable to validate a deposit [#381](https://github.com/rero/sonar-ui/pull/381) (by @jma)
+- fix(deposit): fix import all fields from pdf [#378](https://github.com/rero/sonar-ui/pull/378) (by @jma)
+- fix(document): file preview [#376](https://github.com/rero/sonar-ui/pull/376) (by @Garfield-fr)
+- fix(deposit): swisscovery import [#375](https://github.com/rero/sonar-ui/pull/375) (by @Garfield-fr)
+- fix(deposit): Change the header title on history panel [#374](https://github.com/rero/sonar-ui/pull/374) (by @Garfield-fr)
+- fix: deposit form [#372](https://github.com/rero/sonar-ui/pull/372) (by @Garfield-fr)
+- chore: remove margin on body [#371](https://github.com/rero/sonar-ui/pull/371) (by @Garfield-fr)
+
+**Other changes:**
+
+- chore(dev): update eslint settings [#407](https://github.com/rero/sonar-ui/pull/407) (by @PascalRepond)
+- refactor: transform to signal [#403](https://github.com/rero/sonar-ui/pull/403) (by @Garfield-fr)
+- chore: update dependencies [#393](https://github.com/rero/sonar-ui/pull/393) (by @PascalRepond)
+- chore: remove filesize pipe [#387](https://github.com/rero/sonar-ui/pull/387) (by @Garfield-fr)
+- chore(deposit): display the history in a modal dialog [#385](https://github.com/rero/sonar-ui/pull/385) (by @jma)
+- chore: update dependencies [#379](https://github.com/rero/sonar-ui/pull/379) (by @jma)
+- chore(document): change label on search fields [#377](https://github.com/rero/sonar-ui/pull/377) (by @Garfield-fr)
+- chore: standardize confirmation messages [#373](https://github.com/rero/sonar-ui/pull/373) (by @Garfield-fr)
+
 ## [v14.0.1](https://github.com/rero/sonar-ui/tree/v14.0.1) (2023-12-20)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v14.0.0...v14.0.1)
 
-**Enahnacements:**
-* files: add files permissions to organisations and collections [\#357](https://github.com/rero/sonar-ui/pull/357) (by @jma)
+**Enhancements:**
+
+- files: add files permissions to organisations and collections [\#357](https://github.com/rero/sonar-ui/pull/357) (by @jma)
 
 **Fixes:**
-* fix: search components translations [\#355](https://github.com/rero/sonar-ui/pull/355) (by @PascalRepond)
-* chore: update github templates [\#350](https://github.com/rero/sonar-ui/pull/350) (by @PascalRepond)
+
+- fix: search components translations [\#355](https://github.com/rero/sonar-ui/pull/355) (by @PascalRepond)
+- chore: update github templates [\#350](https://github.com/rero/sonar-ui/pull/350) (by @PascalRepond)
 
 ## [v14.0.0](https://github.com/rero/sonar-ui/tree/v14.0.0) (2023-08-22)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v1.6.0...v14.0.0)
 
 **Enhancements:**
-* documents: add files permissions [\#340](https://github.com/rero/sonar-ui/pull/340) (by @jma)
+
+- documents: add files permissions [\#340](https://github.com/rero/sonar-ui/pull/340) (by @jma)
 
 **Fixes:**
-* translations: add missing manual translation [\#343](https://github.com/rero/sonar-ui/pull/343) (by @PascalRepond)
-* organisation: add missing fields to the detailed view [\#338](https://github.com/rero/sonar-ui/pull/338) (by @jma)
+
+- translations: add missing manual translation [\#343](https://github.com/rero/sonar-ui/pull/343) (by @PascalRepond)
+- organisation: add missing fields to the detailed view [\#338](https://github.com/rero/sonar-ui/pull/338) (by @jma)
 
 **Other changes:**
-* dependencies: move to angular 14 [\#339](https://github.com/rero/sonar-ui/pull/339) (by @jma)
+
+- dependencies: move to angular 14 [\#339](https://github.com/rero/sonar-ui/pull/339) (by @jma)
 
 ## [v1.6.0](https://github.com/rero/sonar-ui/tree/v1.6.0) (2022-08-25)
 
@@ -31,14 +96,14 @@
 
 **Implemented enhancements:**
 
-* documents: add search link on the author's name [\#318](https://github.com/rero/sonar-ui/pull/318) (by @Garfield-fr)
-* record: add record statistics section in admin view [\#316](https://github.com/rero/sonar-ui/pull/316) (by @vgranata)
-* document: add related to field on the detailed view [\#307](https://github.com/rero/sonar-ui/pull/307) (by @Garfield-fr)
+- documents: add search link on the author's name [\#318](https://github.com/rero/sonar-ui/pull/318) (by @Garfield-fr)
+- record: add record statistics section in admin view [\#316](https://github.com/rero/sonar-ui/pull/316) (by @vgranata)
+- document: add related to field on the detailed view [\#307](https://github.com/rero/sonar-ui/pull/307) (by @Garfield-fr)
 
 **Fixed bugs:**
 
-* editors: fix ng-core compatibility [\#320](https://github.com/rero/sonar-ui/pull/320) (by @PascalRepond)
-* deposit editor: remove preview display [\#319](https://github.com/rero/sonar-ui/pull/319) (by @PascalRepond)
+- editors: fix ng-core compatibility [\#320](https://github.com/rero/sonar-ui/pull/320) (by @PascalRepond)
+- deposit editor: remove preview display [\#319](https://github.com/rero/sonar-ui/pull/319) (by @PascalRepond)
 
 ## [v1.5.0](https://github.com/rero/sonar-ui/tree/v1.5.0) (2022-05-05)
 
@@ -453,7 +518,3 @@
 
 - application: initialize the application [\#3](https://github.com/rero/sonar-ui/pull/3) ([sebdeleze](https://github.com/sebdeleze))
 - project: add commit message template [\#2](https://github.com/rero/sonar-ui/pull/2) ([sebdeleze](https://github.com/sebdeleze))
-
-
-
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

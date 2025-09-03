@@ -1,6 +1,6 @@
 {
   "name": "@rero/sonar-ui",
-  "version": "14.0.1",
+  "version": "19.0.0",
   "description": "User interface for SONAR.",
   "keywords": [
     "rero",
@@ -45,7 +45,7 @@
     "@ngx-formly/primeng": "^7.0.0",
     "@ngx-translate/core": "^16.0.0",
     "@primeng/themes": "~19.1",
-    "@rero/ng-core": "^19.2.0",
+    "@rero/ng-core": "^19.3.0",
     "crypto-js": "^4.2.0",
     "easymde": "^2.20.0",
     "font-awesome": "^4.7.0",
