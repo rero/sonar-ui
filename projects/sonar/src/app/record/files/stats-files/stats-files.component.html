@@ -14,21 +14,32 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<dl class="metadata">
-  <dt translate>Document views</dt>
-  <dd>{{ statistics()['record-view'] }}</dd>
-</dl>
-<p-divider />
-<h6 translate>File downloads</h6>
-<dl class="metadata">
-  @for (key of filteredKeys(); track $index) {
-    <dt>{{ key }}</dt>
-    <dd>
-      @if(statistics()[key]) {
-        {{ statistics()[key] }}
-      } @else {
-        0
-      }
-    </dd>
+@if (statsWithLabel()) {
+  @if(statsWithLabel()['record-view']) {
+    <dl class="metadata">
+      <dt translate>Document views</dt>
+      <dd>{{ statsWithLabel()['record-view'].count }}</dd>
+    </dl>
+    <p-divider />
   }
-</dl>
+  @if(statsWithLabel()['file-download']) {
+    <h6 translate>File downloads</h6>
+    <dl class="metadata">
+      @for (key of filteredKeys(); track $index) {
+        <dt>
+          @if(statsWithLabel()['file-download'][key]?.label) {
+            <span [pTooltip]="key" tooltipPosition="top">
+              {{ statsWithLabel()['file-download'][key]?.label }}
+            </span>
+          }
+          @else {
+            {{ key }}
+          }
+        </dt>
+        <dd>
+          {{ statistics()['file-download'][key]?.count ?? 0 }}
+        </dd>
+      }
+    </dl>
+  }
+}
