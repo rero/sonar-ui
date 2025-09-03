@@ -16,7 +16,7 @@
  */
 
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, output, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiService } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -27,7 +27,7 @@ import { map } from 'rxjs';
   templateUrl: './swisscovery.component.html',
   standalone: false,
 })
-export class SwisscoveryComponent {
+export class SwisscoveryComponent implements OnInit {
 
   private spinner: NgxSpinnerService = inject(NgxSpinnerService);
   private apiService: ApiService = inject(ApiService);
@@ -37,7 +37,7 @@ export class SwisscoveryComponent {
   /** Swisscovery result */
   scResult = signal(null);
   data = output<any>();
-  types = signal([
+  types = signal<{name:string, code:string}[]>([
       {
         name: this.translateService.instant('Everywhere'),
         code: 'all_for_ui',
@@ -61,13 +61,13 @@ export class SwisscoveryComponent {
     ]);
 
   searchTerms = signal('');
-  scType = signal({
-    name: 'Everywhere',
-    code: 'all_for_ui',
-  });
+  scType = signal<{name:string, code:string}>(undefined);
 
   hasSwisscoveryResult = computed(() => this.scResult() && Object.keys(this.scResult()).length > 0);
 
+  ngOnInit(): void {
+    this.scType.set(this.types()[0]);
+  }
   /**
    * Search record in swisscovery
    *
