@@ -275,6 +275,9 @@ export class AppRoutingModule {
         aggregationsOrder: this._documentAggregationsOrder(),
         editorSettings: {
           longMode: true,
+          getHeaders: {
+            Accept: 'application/rero+json'
+          }
         },
         files: {...fileConfig,
           filterList: (item: any) => {
