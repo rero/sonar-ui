@@ -62,15 +62,16 @@ export class OtherFilesComponent {
 
   // Get the string used to display the search result number.
   getResultsText = computed(() => {
-    const total = this.filteredFiles().length;
-    if (total == this.files.length) {
-      return this.translateService.stream('{{ total }} results', { total });
+    const remoteTotal = this.files().length;
+    const totalFiltered = this.filteredFiles().length;
+    if (totalFiltered === remoteTotal) {
+      return this.translateService.stream('{{ total }} results', { total: remoteTotal });
     }
-    return total === 0
+    return totalFiltered === 0
       ? this.translateService.stream('no result')
       : this.translateService.stream('{{ total }} results of {{ remoteTotal }}', {
-          total,
-          remoteTotal: this.files.length,
+          total: totalFiltered,
+          remoteTotal: remoteTotal,
         });
   });
 
