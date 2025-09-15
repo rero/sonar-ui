@@ -1,6 +1,6 @@
 <!--
   SONAR User Interface
-  Copyright (C) 2021 RERO
+  Copyright (C) 2021-2025 RERO
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -14,30 +14,29 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if (statsWithLabel()) {
-  @if(statsWithLabel()['record-view']) {
+@if (statistics()) {
+  @if(statistics()['record-view']) {
     <dl class="metadata">
       <dt translate>Document views</dt>
-      <dd>{{ statsWithLabel()['record-view'].count }}</dd>
+      <dd>{{ statistics()['record-view'].count }}</dd>
     </dl>
     <p-divider />
   }
-  @if(statsWithLabel()['file-download']) {
+  @if(statistics()['file-download']) {
     <h6 translate>File downloads</h6>
     <dl class="metadata">
-      @for (key of filteredKeys(); track $index) {
+      @for (file of filteredFiles(); track $index) {
         <dt>
-          @if(statsWithLabel()['file-download'][key]?.label) {
-            <span [pTooltip]="key" tooltipPosition="top">
-              {{ statsWithLabel()['file-download'][key]?.label }}
+          @if (file.label) {
+            <span [pTooltip]="file.key" tooltipPosition="top">
+              {{ file.label }}
             </span>
-          }
-          @else {
-            {{ key }}
+          } @else {
+            {{ file.key }}
           }
         </dt>
         <dd>
-          {{ statistics()['file-download'][key]?.count ?? 0 }}
+          {{ statistics()['file-download'][file.key]?.count ?? 0 }}
         </dd>
       }
     </dl>

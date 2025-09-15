@@ -45,8 +45,6 @@ export class DetailComponent implements OnDestroy, OnInit {
 
   filteredFiles = computed(() => this.getFilteredFiles());
 
-  filteredKeys = computed(() => this.filteredFiles().map((file) => file.key));
-
   mainFile = computed(() => this.filteredFiles().length === 0 ? null : this.filteredFiles()[0]);
 
   // Subscription to observables, used to unsubscribe to all at the same time.

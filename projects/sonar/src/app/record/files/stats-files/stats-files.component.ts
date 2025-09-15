@@ -19,7 +19,6 @@ import { HttpClient } from '@angular/common/http';
 import {
   Component,
   OnInit,
-  computed,
   inject,
   input,
   signal,
@@ -50,30 +49,7 @@ export class StatsFilesComponent implements OnInit {
 
   record = input.required<any>();
 
-  statsWithLabel = computed(() => {
-    const stats = this.statistics();
-    const files = this.record()['_files'] ?? [];
-    if (!stats['file-download']) {
-      return stats;
-    }
-    const keyLabel = Object.fromEntries(
-      files.map((file) => [file.key, file.label ?? file.key])
-    );
-    return {
-      ...stats,
-      'file-download': Object.fromEntries(
-        Object.entries(stats['file-download'] as Record<string, FileEntry> ).map(([fileName, entry]) => [
-          fileName,
-          {
-            ...entry,
-            label: keyLabel[fileName] ?? entry.label,
-          },
-        ])
-      ),
-    };
-  });
-
-  filteredKeys = input.required<string[]>();
+  filteredFiles = input.required<any[]>();
 
   ngOnInit(): void {
     this.getStats();
@@ -106,7 +82,7 @@ export class StatsFilesComponent implements OnInit {
           'record-view': { count: 0 },
           'file-download': {},
         };
-        if (results['file-download']) {
+        if (results['file-download']?.buckets) {
           results['file-download'].buckets.map(
             (res) =>
               (statistics['file-download'][res.key] = {
