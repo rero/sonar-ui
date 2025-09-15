@@ -81,7 +81,7 @@ export class DetailComponent implements OnDestroy, OnInit {
   updateFiles(): void {
     this.recordService
       .getRecord('documents', this.record().pid, 1)
-      .pipe(map((doc) => (this.record()._files = doc.metadata._files)))
+      .pipe(map((doc) => (this.record.set({...this.record(), _files: doc.metadata._files }))))
       .subscribe();
   }
 
