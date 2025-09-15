@@ -132,6 +132,7 @@ export class UploadFilesComponent {
       (item) => item.key === file.key
     );
     if (indexToUpdate >= 0) {
+      this.record._files[indexToUpdate] = metadata;
       this.httpClient
         .put(`/api/${this.recordType()}/${this.pid()}`, this.record)
         .subscribe((record: any) => {
