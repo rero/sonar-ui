@@ -64,16 +64,11 @@ export class MetadataComponent implements OnInit {
         tap((params) => {
           this.currentStep.set(params.step);
         }),
-        switchMap((params) => {
-          return combineLatest([
-            this.depositService.get(params.id),
-            this.depositService.getFiles(params.id),
-          ]);
-        })
+        switchMap((params) => this.depositService.get(params.id))
       )
       .subscribe({
         next: (result) => {
-          this.deposit.set(result[0].metadata);
+          this.deposit.set(result.metadata);
 
           // TODO: solve this
           if (this.depositService.canAccessDeposit(this.deposit()) === false) {
@@ -83,8 +78,9 @@ export class MetadataComponent implements OnInit {
               'confirmation',
             ]);
           }
-          result[1].sort((a, b) => a.order - b.order);
-          this.files.set(result[1]);
+          const files = [...result.metadata._files || []];
+          files.sort((a, b) => a.order - b.order);
+          this.files.set(files);
         },
         error: () => {
           this.messageService.add({
