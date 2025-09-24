@@ -77,6 +77,10 @@ export class FileItemEditorComponent implements OnInit{
   }
 
   save() {
+    if(this.model.embargoDate === null) {
+      delete this.model.embargoDate;
+      delete this.model.exceptInOrganization;
+    }
     this.dynamicDialogRef.close(this.model);
   }
 }

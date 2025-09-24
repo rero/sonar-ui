@@ -149,52 +149,6 @@ export class DepositService implements OnDestroy {
   }
 
   /**
-   * Upload a file and put it in the bucket.
-   * @param id ID of deposit
-   * @param name File name
-   * @param type Type of the file
-   * @param file Binary data of the file
-   */
-  uploadFile(id: string, name: string, type: string, file: File): Observable<any> {
-    return this.httpClient.post(
-      `${this.apiService.getEndpointByType(
-        'deposits',
-        true
-      )}/${id}/custom-files?key=${name}&type=${type}`,
-      file
-    );
-  }
-
-  /**
-   * Update file metadata
-   * @param id ID of deposit
-   * @param data File data
-   */
-  updateFile(id: string, data: any): Observable<any> {
-    return this.httpClient
-      .put(
-        `${this.apiService.getEndpointByType('deposits', true)}/${id}/custom-files/${data.key}`,
-        {
-          label: data.label || data.key,
-          embargo: data.embargo || false,
-          embargoDate: data.embargoDate || null,
-          exceptInOrganisation: data.exceptInOrganisation || false
-        }
-      )
-      .pipe(
-        catchError(() => {
-          this.messageService.add({
-              severity: 'error',
-              detail: this.translateService.instant('File could not be updated, please try again'),
-              sticky: true,
-              closable: true,
-            });
-          return of(null);
-        })
-      );
-  }
-
-  /**
    * Remove file from bucket
    * @param id Deposit id
    * @param name File key
@@ -208,16 +162,6 @@ export class DepositService implements OnDestroy {
         }`
       )
       .pipe(catchError(() => of(null)));
-  }
-
-  /**
-   * Get files stored in deposit
-   * @param id Deposit id
-   */
-  getFiles(id: string): Observable<any> {
-    return this.httpClient.get(
-      `${this.apiService.getEndpointByType('deposits', true)}/${id}/custom-files`
-    );
   }
 
   /**
