@@ -42,6 +42,7 @@ _('step_metadata');
 _('step_contributors');
 _('step_projects');
 _('step_diffusion');
+_('step_files');
 
 // Masked values
 _('not_masked');

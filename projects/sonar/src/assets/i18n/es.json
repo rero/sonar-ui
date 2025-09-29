@@ -199,6 +199,7 @@
   "step_contributors": "step_contributors",
   "step_create": "step_create",
   "step_diffusion": "step_diffusion",
+  "step_files": "step_files",
   "step_metadata": "step_metadata",
   "step_projects": "step_projects",
   "subject": "subject",
