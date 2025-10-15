@@ -574,9 +574,14 @@ export class AppRoutingModule {
    * @param record Record dict.
    * @return Observable
    */
-  private _can(resource: string, action: string, record: any = null): Observable<ActionStatus> {
+  private _can(resource: string, action: string, record: any = null): Observable<ActionStatus | null> {
     if (resource === 'deposits' && ['add', 'update'].includes(action)) {
       return of({ can: false, message: '' });
+    }
+
+    // the delete button should be hidden not only disabled
+    if (resource === 'documents' && ['delete'].includes(action) && record.metadata.permissions[action] === false) {
+      return of(null);
     }
 
     if (record) {

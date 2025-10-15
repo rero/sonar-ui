@@ -353,28 +353,32 @@
 </section>
 
 <!-- TABS -->
-<p-tabs value="edit">
+<p-tabs [value]="record().permissions.update ? 'edit' : 'stats'">
   <p-tablist>
-    <p-tab value="edit">
-      {{ 'Edit Files' | translate }}
-    </p-tab>
+    @if(record().permissions.update) {
+      <p-tab value="edit">
+        {{ 'Edit Files' | translate }}
+      </p-tab>
+    }
     <p-tab value="stats">
       {{ 'Statistics' | translate }}
     </p-tab>
     <p-tab value="others" [disabled]="filteredFiles().length > 1? false: true">
-      {{ 'Other files' | translate}}
+      {{ 'Other files' | translate }}
     </p-tab>
   </p-tablist>
   <p-tabpanels>
-    <p-tabpanel #editFile value="edit">
-      @if(editFile.active()) {
-        <sonar-upload-files
-          recordType="documents"
-          [pid]="record().pid"
-          (filesChanged)="updateFiles()"
-        />
-      }
-    </p-tabpanel>
+    @if(record().permissions.update) {
+      <p-tabpanel #editFile value="edit">
+        @if(editFile.active()) {
+          <sonar-upload-files
+            recordType="documents"
+            [pid]="record().pid"
+            (filesChanged)="updateFiles()"
+          />
+        }
+      </p-tabpanel>
+    }
     <p-tabpanel #stats value="stats">
       @if(stats.active()) {
         <sonar-stats-files
