@@ -1,5 +1,15 @@
 # Changelog
 
+## [v19.0.1](https://github.com/rero/sonar-ui/tree/v19.0.0) (2025-10-16)
+
+**Fixes:**
+
+- fix: hide "edit files" tabs if the user does not have the right permissions [#424](https://github.com/rero/sonar-ui/pull/424) (by @jma, @Garfield-fr, @PascalRepond)
+
+**Other:**
+
+- chore(actions): auto-assign PR author [#422](https://github.com/rero/sonar-ui/pull/422) (by @PascalRepond)
+
 ## [v19.0.0](https://github.com/rero/sonar-ui/tree/v19.0.0) (2025-10-08)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v14.0.1...v19.0.0)
