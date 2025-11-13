@@ -38,8 +38,8 @@ export class UIAutocompleteService {
       return of([]);
     }
     let url = `/api/${queryOptions.type}/?q=${queryOptions.field}:${query}`;
-    if(queryOptions.type === 'documents') {
-      url = `/api/suggestions/completion?resource=${queryOptions.type}&field=${queryOptions.field}&q=${query}`;
+    if (queryOptions.suggest) {
+      url = `${queryOptions.suggest}?resource=${queryOptions.type}&field=${queryOptions.field}&q=${query}`;
     }
     return this.httpClient.get(url).pipe(
         map((results: any) => {
