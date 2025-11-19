@@ -1,6 +1,20 @@
 # Changelog
 
-## [v19.0.1](https://github.com/rero/sonar-ui/tree/v19.0.0) (2025-10-16)
+## [v19.0.2](https://github.com/rero/sonar-ui/tree/v19.0.2) (2025-11-19)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v19.0.1...v19.0.2)
+
+**Fixes:**
+
+- fix: the autocomplete does not work on editor [#427](https://github.com/rero/sonar-ui/pull/427) (by @jma)
+
+**Other changes:**
+
+- chore: update dependencies [#421](https://github.com/rero/sonar-ui/pull/421) (by @PascalRepond)
+
+## [v19.0.1](https://github.com/rero/sonar-ui/tree/v19.0.1) (2025-10-16)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v19.0.0...v19.0.1)
 
 **Fixes:**
 
