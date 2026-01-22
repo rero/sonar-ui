@@ -1,5 +1,14 @@
 # Changelog
 
+## [v19.0.3](https://github.com/rero/sonar-ui/tree/v19.0.3) (2026-02-10)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v19.0.2...v19.0.3)
+
+**Fixes:**
+
+- fix(validation): restore ValidationComponent accidentally deleted [#444](https://github.com/rero/sonar-ui/pull/444) (by @PascalRepond)
+- fix: incorrect label for HEPVs project detail view [#437](https://github.com/rero/sonar-ui/pull/437) (by @PascalRepond)
+
 ## [v19.0.2](https://github.com/rero/sonar-ui/tree/v19.0.2) (2025-11-19)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v19.0.1...v19.0.2)
