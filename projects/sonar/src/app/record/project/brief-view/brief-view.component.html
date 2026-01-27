@@ -21,8 +21,8 @@
   </h5>
   <div class="ui:flex ui:gap-1">
     <p-tag [value]="record.metadata.organisation.name" />
-    @if(record.metadata?.validation?.status !== validationStatus.VALIDATED) {
-      <p-tag severity="warn" [value]="'This record is not published' | translate" />
+    @if(validationSeverity) {
+      <p-tag [severity]="validationSeverity" [value]="record.metadata.validation.status | translate" />
     }
   </div>
   <span>

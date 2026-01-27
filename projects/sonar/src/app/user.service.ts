@@ -135,6 +135,10 @@ export class UserService {
       && this._user.organisation.isDedicated;
   }
 
+  currentUser(): any {
+    return this._user;
+  }
+
   /**
    * Return the link to public interface, depending on user's organisation.
    * @returns Link to public interface.
