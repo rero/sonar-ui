@@ -62,22 +62,8 @@
       @if(!record.metadata.logs || record.metadata.logs.length === 1) {
         <p-tag severity="contrast" [value]="'New' | translate" />
       }
-      @switch(record.metadata.status) {
-        @case('in_progress') {
-          <p-tag severity="primary" [value]="('deposit_status_' + record.metadata.status) | translate" />
-        }
-        @case('to_validate') {
-          <p-tag severity="info" [value]="('deposit_status_' + record.metadata.status) | translate" />
-        }
-        @case('ask_for_changes') {
-          <p-tag severity="warn" [value]="('deposit_status_' + record.metadata.status) | translate" />
-        }
-        @case('validated') {
-          <p-tag severity="success" [value]="('deposit_status_' + record.metadata.status) | translate" />
-        }
-        @case('rejected') {
-          <p-tag severity="danger" [value]="('deposit_status_' + record.metadata.status) | translate" />
-        }
+      @if(statusSeverity) {
+        <p-tag [severity]="statusSeverity" [value]="('deposit_status_' + record.metadata.status) | translate" />
       }
     </div>
 

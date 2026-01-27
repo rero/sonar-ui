@@ -16,16 +16,13 @@
  */
 import { Component } from '@angular/core';
 import { ResultItem } from '@rero/ng-core';
-import { validation_status } from '../../../enum/validation';
+import { VALIDATION_STATUS_SEVERITY } from '../../../enum/validation';
 
 @Component({
     templateUrl: './brief-view.component.html',
     standalone: false
 })
 export class BriefViewComponent implements ResultItem {
-  // Constant for validation status.
-  readonly validationStatus = validation_status;
-
   // Record data.
   record: any;
 
@@ -34,4 +31,10 @@ export class BriefViewComponent implements ResultItem {
 
   // Detail URL object.
   detailUrl: { link: string, external: boolean };
+
+  get validationSeverity(): string | null {
+    return this.record?.metadata?.validation?.status
+      ? VALIDATION_STATUS_SEVERITY[this.record.metadata.validation.status]
+      : null;
+  }
 }

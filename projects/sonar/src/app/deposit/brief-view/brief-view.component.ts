@@ -16,6 +16,7 @@
  */
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { VALIDATION_STATUS_SEVERITY } from '../../enum/validation';
 import { UserService } from '../../user.service';
 
 @Component({
@@ -47,6 +48,12 @@ export class BriefViewComponent implements OnInit, OnDestroy {
   canAccessToDocumentRedirect = computed(() =>
     this.userService.hasRole(['moderator', 'admin', 'superuser'])
   );
+
+  get statusSeverity(): string | null {
+    return this.record?.metadata?.status
+      ? VALIDATION_STATUS_SEVERITY[this.record.metadata.status]
+      : null;
+  }
 
   private subscription: Subscription = new Subscription();
 

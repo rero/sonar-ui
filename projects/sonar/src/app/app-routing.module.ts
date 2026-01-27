@@ -156,7 +156,7 @@ export const typeResolver: ResolveFn<string> = (route) => {
 export class AppRoutingModule {
 
   private translateService: TranslateService = inject(TranslateService);
-  private router: Router= inject(Router);
+  private router: Router = inject(Router);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private userService: UserService = inject(UserService);
   private httpClient: HttpClient = inject(HttpClient);
@@ -279,7 +279,8 @@ export class AppRoutingModule {
             Accept: 'application/rero+json'
           }
         },
-        files: {...fileConfig,
+        files: {
+          ...fileConfig,
           filterList: (item: any) => {
             return (
               item.metadata &&
@@ -396,6 +397,29 @@ export class AppRoutingModule {
         editorSettings: {
           longMode: true,
         },
+        preCreateRecord: (record: any) => {
+          const user = this.userService.currentUser();
+          // add organisation reference to the new record
+          const organisationCode = user.organisation.code;
+          if (organisationCode) {
+            record.metadata.organisation = {
+              $ref: this.apiService.getRefEndpoint(
+                'organisations',
+                organisationCode
+              )
+            };
+          }
+          const userPid = user.pid;
+          if (userPid) {
+            record.metadata.user = {
+              $ref: this.apiService.getRefEndpoint(
+                'users',
+                userPid
+              )
+            };
+          }
+          return record;
+        },
         exportFormats: [
           {
             label: 'CSV',
@@ -474,8 +498,8 @@ export class AppRoutingModule {
       if (user) {
         /** Removes collections and subdivisions routes on the organisation shared */
         if (!('isDedicated' in user.organisation) || !(user.organisation.isDedicated)) {
-          recordsRoutesConfiguration =  recordsRoutesConfiguration
-          .filter(route => !(['collections', 'subdivisions'].includes(route.type)));
+          recordsRoutesConfiguration = recordsRoutesConfiguration
+            .filter(route => !(['collections', 'subdivisions'].includes(route.type)));
         }
 
         recordsRoutesConfiguration.forEach((config: any) => {
@@ -521,6 +545,7 @@ export class AppRoutingModule {
                   recordResource: config.recordResource || null,
                   exportFormats: config.exportFormats || null,
                   sortOptions: config.sortOptions || null,
+                  preCreateRecord: config.preCreateRecord || null,
                   canAdd: () => this._can(config.type, 'add'),
                   canUpdate: (record: any) => this._can(config.type, 'update', record),
                   canDelete: (record: any) => this._can(config.type, 'delete', record),
@@ -634,7 +659,7 @@ export class AppRoutingModule {
   private _documentAggregationsOrder(): Observable<any> {
     return of(null).pipe(
       switchMap(() => {
-        const {view} = this.route.snapshot.children[0].params;
+        const { view } = this.route.snapshot.children[0].params;
 
         let params = new HttpParams();
         if (view) {

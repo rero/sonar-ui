@@ -30,3 +30,11 @@ export enum validation_action {
   'REJECT' = 'reject',
   'ASK_FOR_CHANGES' = 'ask_for_changes'
 }
+
+export const VALIDATION_STATUS_SEVERITY: Record<string, string> = {
+  [validation_status.IN_PROGRESS]: 'primary',
+  [validation_status.TO_VALIDATE]: 'info',
+  [validation_status.ASK_FOR_CHANGES]: 'warn',
+  [validation_status.VALIDATED]: 'success',
+  [validation_status.REJECTED]: 'danger'
+};
