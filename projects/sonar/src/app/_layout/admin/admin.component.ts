@@ -104,28 +104,27 @@ export class AdminComponent {
     if (!user) {
       return;
     }
-    const t = (key: string) => this.translateService.instant(key);
     const isDedicated = this.store.isDedicatedOrganisation();
 
     this.items.set([
       {
-        label: t('SONAR Administration'),
+        label: this.translateService.instant('SONAR Administration'),
         visible: user.is_admin,
         items: [
-          { label: t('Collections'), routerLink: ['/records/collections'], visible: isDedicated },
-          { label: t('Organisations'), routerLink: ['/records/organisations'] },
-          { label: t('Subdivisions'), routerLink: ['/records/subdivisions'], visible: isDedicated },
-          { label: t('Users'), routerLink: ['/records/users'] },
+          { label: this.translateService.instant('Collections'), routerLink: ['/records/collections'], visible: isDedicated },
+          { label: this.translateService.instant('Organisations'), routerLink: ['/records/organisations'] },
+          { label: this.translateService.instant('Subdivisions'), routerLink: ['/records/subdivisions'], visible: isDedicated },
+          { label: this.translateService.instant('Users'), routerLink: ['/records/users'] },
         ],
       },
-      { label: t('Documents'), routerLink: ['/records', 'documents'], visible: user.is_moderator },
-      { label: t('Research projects'), routerLink: ['/records', 'projects'], visible: user.is_submitter },
+      { label: this.translateService.instant('Documents'), routerLink: ['/records', 'documents'], visible: user.is_moderator },
+      { label: this.translateService.instant('Research projects'), routerLink: ['/records', 'projects'], visible: user.is_submitter },
       {
-        label: t('Deposits'),
+        label: this.translateService.instant('Deposits'),
         visible: user.is_submitter,
         items: [
-          { label: t('Deposit a publication'), routerLink: ['/deposit', 'create'] },
-          { label: t('Deposits'), routerLink: ['/records', 'deposits'] },
+          { label: this.translateService.instant('Deposit a publication'), routerLink: ['/deposit', 'create'] },
+          { label: this.translateService.instant('Deposits'), routerLink: ['/records', 'deposits'] },
         ],
       },
       { separator: true },
@@ -135,10 +134,10 @@ export class AdminComponent {
       {
         label: `${user.last_name}, ${user.first_name}`,
         items: [
-          { label: t('Public interface'), url: this.store.getPublicInterfaceLink(), target: 'public' },
-          { label: t('Profile'), url: '/users/profile', target: '_self' },
-          { label: t('Super administration'), url: '/admin', visible: user.is_superuser, target: 'admin' },
-          { label: t('Logout'), url: '/logout', target: '_self' },
+          { label: this.translateService.instant('Public interface'), url: this.store.getPublicInterfaceLink(), target: 'public' },
+          { label: this.translateService.instant('Profile'), url: '/users/profile', target: '_self' },
+          { label: this.translateService.instant('Super administration'), url: '/admin', visible: user.is_superuser, target: 'admin' },
+          { label: this.translateService.instant('Logout'), url: '/logout', target: '_self' },
         ],
       },
       {
