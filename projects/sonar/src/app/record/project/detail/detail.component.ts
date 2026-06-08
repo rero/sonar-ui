@@ -14,28 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, inject, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { UserService } from '../../../user.service';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { RecordData } from '@rero/ng-core';
+import { AppStore, AppStoreType } from '../../../store/app.store';
+import { FieldDescriptionComponent } from '../../../core/field-description/field-description.component';
+import { PrimeTemplate } from 'primeng/api';
+import { IdentifierComponent } from '../../identifier/identifier.component';
+import { Tooltip } from 'primeng/tooltip';
+import { TranslateDirective, TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import { DateTranslatePipe, Nl2brPipe } from '@rero/ng-core';
+import { JoinPipe } from '../../../core/join.pipe';
+import { LanguageValuePipe } from '../../../pipe/language-value.pipe';
 
 @Component({
-  templateUrl: './detail.component.html',
-  standalone: false
+    templateUrl: './detail.component.html',
+    imports: [FieldDescriptionComponent, PrimeTemplate, IdentifierComponent, Tooltip, TranslateDirective, RouterLink, AsyncPipe, TranslatePipe, DateTranslatePipe, Nl2brPipe, JoinPipe, LanguageValuePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent {
 
-  private userService: UserService = inject(UserService);
+  private store = inject(AppStore) as AppStoreType;
 
-  /** Observable resolving record data */
-  record$: Observable<any>;
+  record = input.required<RecordData>();
+  type = input.required<string>();
 
-  /** Resolve logged user */
-  user$: Observable<any>;
-
-  /** Type of resource. */
-  type: string;
-
-  ngOnInit(): void {
-    this.user$ = this.userService.user$;
-  }
+  user = this.store.user;
 }

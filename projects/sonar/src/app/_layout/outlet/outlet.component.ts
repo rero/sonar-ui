@@ -14,19 +14,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
-import { UserService } from './user.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
-describe('UserService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    imports: [],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}));
-
-  it('should be created', () => {
-    const service: UserService = TestBed.inject(UserService);
-    expect(service).toBeTruthy();
-  });
-});
+@Component({
+  template: '<router-outlet />',
+  imports: [RouterOutlet],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class OutletComponent {}

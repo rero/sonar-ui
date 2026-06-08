@@ -15,83 +15,86 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { DatePipe } from '@angular/common';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FormlyModule } from '@ngx-formly/core';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, FilesizePipe, RecordModule, TranslateLoader } from '@rero/ng-core';
+import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
+import { AppConfigService } from '../../app-config.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
-import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
-import { of } from 'rxjs';
-import { FileLinkPipe } from '../../core/file-link.pipe';
-import { HighlightJsonPipe } from '../../core/highlight-json.pipe';
-import { JoinPipe } from '../../core/join.pipe';
-import { StepComponent } from '../../core/step/step.component';
-import { UserService } from '../../user.service';
+import { depositTestingService } from 'projects/sonar/tests/utils';
+import { EMPTY, of } from 'rxjs';
+import { AppStore } from '../../store/app.store';
 import { DepositService } from '../deposit.service';
-import { ReviewComponent } from '../review/review.component';
+import { DepositStore } from '../deposit.store';
 import { EditorComponent } from './editor.component';
-import { SwisscoveryComponent } from './swisscovery/swisscovery.component';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const depositStoreMock: any = {
+  deposit: signal(null),
+  schema: signal(null),
+  isLoading: signal(false),
+  error: signal(null),
+  canAccess: () => false,
+  mainFile: () => null,
+  additionalFiles: () => [],
+  maxStep: () => 'metadata',
+  load: vi.fn().mockReturnValue(EMPTY),
+  loadSchema: vi.fn().mockReturnValue(of({})),
+  update: vi.fn().mockReturnValue(EMPTY),
+  publish: vi.fn().mockReturnValue(EMPTY),
+  reviewDeposit: vi.fn().mockReturnValue(EMPTY),
+  extractPDFMetadata: vi.fn().mockReturnValue(EMPTY),
+  mergeDeposit: vi.fn(),
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const appStoreMock: any = {
+  user: signal(null),
+  hasRole: vi.fn().mockReturnValue(false),
+  checkUserReference: vi.fn().mockReturnValue(false),
+};
 
 describe('EditorComponent', () => {
   let component: EditorComponent;
   let fixture: ComponentFixture<EditorComponent>;
 
-  const route = {
-    params: of({ step: 'metadata' }),
-    snapshot: {
-      params: {
-        id: '0'
-      }
-    }
-  };
-
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-    declarations: [
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        RouterModule.forRoot([]),
+        TranslateModule.forRoot({
+          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
+        }),
+        FormsModule,
+        FormlyModule.forRoot({}),
+        DialogModule,
         EditorComponent,
-        StepComponent,
-        ReviewComponent,
-        SwisscoveryComponent,
-        JoinPipe,
-        FileLinkPipe,
-        FilesizePipe,
-        HighlightJsonPipe
-    ],
-    imports: [BrowserAnimationsModule,
-      ReactiveFormsModule,
-      RecordModule,
-      RouterModule.forRoot([]),
-      TranslateModule.forRoot({
-        loader: {
-          provide: BaseTranslateLoader,
-          useClass: TranslateLoader,
-          deps: [CoreConfigService, HttpClient]
-        }
-      }),
-      FormsModule,
-      FormlyModule,
-      DialogModule
-    ],
-    providers: [
-      DatePipe,
-      { provide: ActivatedRoute, useValue: route },
-      { provide: UserService, useValue: userTestingService },
-      { provide: DepositService, useValue: depositTestingService },
-      provideHttpClient(withInterceptorsFromDi())
-    ]
-}).compileComponents();
-  }));
+      ],
+      providers: [
+        { provide: CoreConfigService, useClass: AppConfigService },
+        MessageService,
+        ConfirmationService,
+        DatePipe,
+        { provide: DepositService, useValue: depositTestingService },
+        { provide: DepositStore, useValue: depositStoreMock },
+        { provide: AppStore, useValue: appStoreMock },
+        provideHttpClient(withInterceptorsFromDi()),
+      ],
+    }).compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditorComponent);
-    fixture.componentRef.setInput('deposit', {});
     fixture.componentRef.setInput('steps', []);
     fixture.componentRef.setInput('currentStep', 'metadata');
-    fixture.componentRef.setInput('mainFile', {});
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TranslateDirective } from '@ngx-translate/core';
 
 /**
  * Dashboard page
@@ -22,6 +23,7 @@ import { Component } from '@angular/core';
 @Component({
     selector: 'sonar-dashboard',
     templateUrl: './dashboard.component.html',
-    standalone: false
+    imports: [TranslateDirective],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {}

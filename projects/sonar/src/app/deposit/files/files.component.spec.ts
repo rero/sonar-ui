@@ -16,7 +16,6 @@
  */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { RecordModule } from '@rero/ng-core';
 import { FileLinkPipe } from '../../core/file-link.pipe';
 import { FilesComponent } from './files.component';
 import { DialogModule } from 'primeng/dialog';
@@ -27,16 +26,13 @@ describe('FilesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
+    imports: [
+        TranslateModule.forRoot(),
+        DialogModule,
         FilesComponent,
         FileLinkPipe
-      ],
-      imports: [
-        TranslateModule.forRoot(),
-        RecordModule,
-        DialogModule
-      ],
-    }).compileComponents();
+    ],
+}).compileComponents();
 
     fixture = TestBed.createComponent(FilesComponent);
     fixture.componentRef.setInput('mainFile', {});

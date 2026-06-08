@@ -14,37 +14,39 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { ResultItem } from '@rero/ng-core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, OnDestroy, signal } from '@angular/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { DetailUrl, KatexDirective, ReadMoreComponent, Nl2brPipe, RecordData } from '@rero/ng-core';
 import { Subscription } from 'rxjs';
 import { AppConfigService } from '../../app-config.service';
 import { DocumentFile } from './document.interface';
+import { FileComponent } from './file/file.component';
+import { RouterLink } from '@angular/router';
+import { Bind } from 'primeng/bind';
+import { Tag } from 'primeng/tag';
+import { ContributionComponent } from './contribution/contribution.component';
+import { AsyncPipe, SlicePipe, KeyValuePipe } from '@angular/common';
+import { LanguageValuePipe } from '../../pipe/language-value.pipe';
+import { PublicationPipe } from './publication.pipe';
+import { ContributorsPipe } from '../../pipe/contributors.pipe';
 
 const SORT_CONTRIBUTOR_PRIORITY = ['cre', 'ctb', 'dgs', 'edt', 'prt'];
 
 @Component({
     templateUrl: './document.component.html',
-    standalone: false
+    imports: [FileComponent, RouterLink, Bind, Tag, ContributionComponent, KatexDirective, ReadMoreComponent, AsyncPipe, SlicePipe, KeyValuePipe, TranslatePipe, Nl2brPipe, LanguageValuePipe, PublicationPipe, ContributorsPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
+export class DocumentComponent implements OnDestroy {
 
   private configService: AppConfigService = inject(AppConfigService);
   private translateService: TranslateService = inject(TranslateService);
 
-  // Record object
-  record: any;
+  record = input.required<RecordData>();
+  type = input.required<string>();
+  detailUrl = input<DetailUrl>();
 
-  // Type of resource
-  type: string;
-
-  // Detail URL object
-  detailUrl: { link: string; external: boolean };
-
-  // Abstract corresponding to current language.
-  abstract: string;
-
-  contributorsLength = signal<number>(5);
+  abstract = signal<string>('');
 
   showMore = signal<boolean>(true);
 
@@ -53,24 +55,38 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
 
   view = computed(() => this.configService.view);
 
-  // Subscription to observables, used to unsubscribe to all at the same time.
+  mainFile = computed<DocumentFile | null>(() => {
+    const files = (this.record().metadata as Record<string, unknown>)._files as Record<string, unknown>[];
+    if (!files?.length) {
+      return null;
+    }
+    const file = files.find((f) => f['type'] === 'file');
+    return file ? file as unknown as DocumentFile : null;
+  });
+
+  sortedContributions = computed(() => {
+    const meta = this.record().metadata as Record<string, unknown>;
+    const contributions = (meta.contribution as Record<string, unknown>[]) ?? [];
+    return [...contributions].sort((a, b) => {
+      const aIndex = SORT_CONTRIBUTOR_PRIORITY.findIndex((role) => (a['role'] as unknown[])[0] === role);
+      const bIndex = SORT_CONTRIBUTOR_PRIORITY.findIndex((role) => (b['role'] as unknown[])[0] === role);
+      return aIndex === bIndex ? 0 : aIndex < bIndex ? -1 : 1;
+    });
+  });
+
+  contributorsLength = computed(() =>
+    this.showMore() ? 5 : this.sortedContributions().length
+  );
+
   private subscription: Subscription = new Subscription();
 
-  ngOnInit(): void {
-    // Initialize and sort contributors
-    if (!this.record.metadata.contribution) {
-      this.record.metadata.contribution = [];
-    }
-    this._sortContributors();
-
-    // Load abstract
-    this.storeAbstract();
-
-    // When language change, abstracts are sorted and first one is displayed.
+  constructor() {
+    effect(() => {
+      this.record();
+      this._updateAbstract();
+    });
     this.subscription.add(
-      this.translateService.onLangChange.subscribe(() => {
-        this.storeAbstract();
-      })
+      this.translateService.onLangChange.subscribe(() => this._updateAbstract())
     );
   }
 
@@ -78,63 +94,20 @@ export class DocumentComponent implements ResultItem, OnDestroy, OnInit {
     this.subscription.unsubscribe();
   }
 
-  /**
-   * Return the main file of the record.
-   */
-  get mainFile(): DocumentFile {
-    if (!this.record.metadata._files || this.record.metadata._files.length === 0) {
-      return null;
-    }
-
-    const files = this.record.metadata._files.filter((file: any) => file.type === 'file');
-
-    return files.length === 0 ? null : files[0];
-  }
-
-  showMoreContributors(event: any, contributorsLength: number): void {
+  showMoreContributors(event: MouseEvent): void {
     event.preventDefault();
     this.showMore.set(false);
-    this.contributorsLength.set(contributorsLength);
   }
 
-  /**
-   * Sort contributors by given priorities array constant.
-   */
-  private _sortContributors(): void {
-    this.record.metadata.contribution = this.record.metadata.contribution.sort(
-      (a: any, b: any) => {
-        const aIndex = SORT_CONTRIBUTOR_PRIORITY.findIndex(
-          (role) => a.role[0] === role
-        );
-        const bIndex = SORT_CONTRIBUTOR_PRIORITY.findIndex(
-          (role) => b.role[0] === role
-        );
-        if (aIndex === bIndex) {
-          return 0;
-        }
-        return aIndex < bIndex ? -1 : 1;
-      }
-    );
-  }
-
-  private storeAbstract(): void {
-    if (
-      !this.record.metadata.abstracts ||
-      this.record.metadata.abstracts.length === 0
-    ) {
-      return null;
+  private _updateAbstract(): void {
+    const abstracts = (this.record().metadata as Record<string, unknown>).abstracts as Record<string, unknown>[];
+    if (!abstracts?.length) {
+      return;
     }
-
-    const currentLang = this.configService.languagesMap.find(
-      (item) => item.code === this.translateService.currentLang
-    );
-
-    const abstract = this.record.metadata.abstracts.find(
-      (item: any) => item.language === currentLang.bibCode
-    );
-
-    this.abstract = abstract
-      ? abstract.value
-      : this.record.metadata.abstracts[0].value;
+    const currentBibCode = this.configService.languagesMap.find(
+      (item) => item.code === this.translateService.getCurrentLang()
+    )?.bibCode;
+    const abstract = abstracts.find((item) => item['language'] === currentBibCode);
+    this.abstract.set(abstract ? abstract['value'] as string : abstracts[0]['value'] as string);
   }
 }

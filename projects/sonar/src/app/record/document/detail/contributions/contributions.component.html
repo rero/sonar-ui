@@ -22,7 +22,7 @@
         <li><sonar-contribution [contributor]="contributor" viewType="detail" /></li>
       }
     </ul>
-    @if(showMore && contributors.length > contributorsLength()) {
+    @if(showMore() && contributors.length > contributorsLength()) {
     <a href="#" (click)="showMoreContributors($event)">
       {{ 'Show more' | translate }}&hellip;
     </a>

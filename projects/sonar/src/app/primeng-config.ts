@@ -1,5 +1,5 @@
-import { definePreset } from "@primeng/themes";
-import Aura from "@primeng/themes/aura";
+import { definePreset } from "@primeuix/themes";
+import Aura from "@primeuix/themes/aura";
 
 export const primeNGSonarConfig = {
   theme: {
@@ -716,13 +716,9 @@ export const primeNGSonarConfig = {
           }
         },
         steps: {
-          item: {
-            number: {
-              active: {
-                background: "{primary.500}",
-                color: "{surface.0}"
-              }
-            }
+          itemNumber: {
+            activeBackground: "{primary.500}",
+            activeColor: "{surface.0}"
           }
         },
         tabs: {

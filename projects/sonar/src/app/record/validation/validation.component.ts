@@ -14,111 +14,115 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { CONFIG, RecordService } from '@rero/ng-core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, inject, input, signal, viewChild } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, startWith } from 'rxjs/operators';
+import { TranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
+import { CONFIG, RecordData, RecordService, DateTranslatePipe, Nl2brPipe } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { UserService } from '../../user.service';
+import { AppStore, AppStoreType } from '../../store/app.store';
+
 import { validation_action, validation_status } from '../../enum/validation';
+import { Bind } from 'primeng/bind';
+import { Panel } from 'primeng/panel';
+import { Message } from 'primeng/message';
+import { Textarea } from 'primeng/textarea';
+import { ButtonGroup } from 'primeng/buttongroup';
+import { Button } from 'primeng/button';
+import { TableModule } from 'primeng/table';
 
-/**
- * Component to manage validation on a record.
- */
 @Component({
-  selector: 'sonar-record-validation',
-  templateUrl: './validation.component.html',
-  standalone: false,
+    selector: 'sonar-record-validation',
+    templateUrl: './validation.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        Bind,
+        Panel,
+        Message,
+        TranslateDirective,
+        Textarea,
+        ButtonGroup,
+        Button,
+        TableModule,
+        TranslatePipe,
+        DateTranslatePipe,
+        Nl2brPipe,
+    ],
 })
-export class ValidationComponent implements OnInit {
+export class ValidationComponent {
 
-  private userService: UserService = inject(UserService);
-  private recordService: RecordService = inject(RecordService);
-  private translateService: TranslateService = inject(TranslateService);
-  private messageService: MessageService = inject(MessageService);
-  private confirmationService: ConfirmationService = inject(ConfirmationService);
-  private spinner: NgxSpinnerService = inject(NgxSpinnerService);
+  private readonly store = inject(AppStore) as AppStoreType;
+  private readonly recordService = inject(RecordService);
+  private readonly translateService = inject(TranslateService);
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly spinner = inject(NgxSpinnerService);
 
-  // Constant for validation status.
   readonly validationStatus = validation_status;
-
-  // Constant for validation actions.
   readonly validationAction = validation_action;
 
-  // Record object.
-  @Input() record: any;
+  record = input.required<RecordData>();
+  type = input.required<string>();
 
-  // Resource type.
-  @Input() type: string;
+  user = this.store.user;
+  validation = signal<Record<string, unknown> | null>(null);
+  showLogs = signal(false);
 
-  // Current logged user.
-  user: any;
+  comment = viewChild<ElementRef>('comment');
 
-  // Validation metadata of the record.
-  validation: any;
+  isModerator = computed(() => this.user()?.is_moderator ?? false);
+  status = computed(() => this.validation()?.['status'] as validation_status | undefined);
+  logs = computed(() => this.validation()?.['logs'] as Record<string, unknown>[] | undefined);
 
-  // Whether to show logs table or not.
-  showLogs = false;
+  private currentLang = toSignal(
+    this.translateService.onLangChange.pipe(
+      map(e => e.lang),
+      startWith(this.translateService.getCurrentLang())
+    )
+  );
 
-  /** Used to retrieve value for the comment */
-  @ViewChild('comment') comment: ElementRef;
+  translatedStatusMessage = computed(() => {
+    this.currentLang();
+    const translatedStatus = this.status() ? this.translateService.instant(this.status()!) : '';
+    return this.translateService.instant(
+      'The record is currently in status "{{ status }}".',
+      { status: translatedStatus }
+    );
+  });
+  isOwner = computed(() =>
+    this.store.getUserRefEndpoint() === (this.validation()?.['user'] as Record<string, unknown>)?.['$ref']
+  );
 
-  ngOnInit(): void {
-    this.validation = this.record.metadata.validation;
-
-    this.userService.user$.subscribe((user) => {
-      this.user = user;
+  constructor() {
+    effect(() => {
+      this.validation.set(this.record().metadata.validation as Record<string, unknown>);
     });
   }
 
-  /**
-   * Check if current user is the creator of the record.
-   *
-   * @returns True if current user is the creator of the record.
-   */
-  isOwner(): boolean {
-    return this.userService.getUserRefEndpoint() === this.validation.user.$ref;
-  }
-
-  /**
-   * Check if current user is moderator.
-   *
-   * @returns True if current user is moderator.
-   */
-  isModerator(): boolean {
-    return this.user?.is_moderator ?? false;
-  }
-
-  /**
-   * Update the validation, depending on the action.
-   *
-   * @param action Action done.
-   */
   updateValidation(action: string): void {
     this.confirmationService.confirm({
       header: this.translateService.instant('validation_action_' + action),
-      message: this.translateService.instant(
-        'Do you really want to do this action?'
-      ),
+      message: this.translateService.instant('Do you really want to do this action?'),
       closable: false,
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
         this.spinner.show();
 
-        this.validation.action = action;
-
-        // Store the comment
-        if (this.comment && this.comment.nativeElement.value) {
-          this.validation.comment = this.comment.nativeElement.value;
+        const updated: Record<string, unknown> = { ...this.validation()!, action };
+        const commentValue = this.comment()?.nativeElement?.value;
+        if (commentValue) {
+          updated['comment'] = commentValue;
         } else {
-          delete this.validation.comment;
+          delete updated['comment'];
         }
+        this.validation.set(updated);
 
         this.recordService
-          .update(this.type, this.record.id, this.record)
+          .update(this.type(), this.record().id, this.record())
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .subscribe((record: any) => {
-            this.record = record;
-            this.validation = this.record.metadata.validation;
+            this.validation.set(record.metadata['validation'] as Record<string, unknown>);
             this.spinner.hide();
             this.messageService.add({
               severity: 'success',

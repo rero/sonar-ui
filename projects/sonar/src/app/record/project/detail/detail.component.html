@@ -14,7 +14,7 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if (record$ | async; as record) {
+@if (record(); as record) {
   <h1>{{ record.metadata.name }}</h1>
   <div class="ui:flex-col ui:flex ui:gap-2">
     <sonar-field-description [label]="'Description' | translate" [field]="record.metadata.description">
@@ -23,9 +23,9 @@
       </ng-template>
     </sonar-field-description>
 
-    <sonar-field-description [label]="'Start date' | translate" [field]="record.metadata.startDate | dateTranslate: 'longDate' "/>
+    <sonar-field-description [label]="'Start date' | translate" [field]="$any(record.metadata.startDate) | dateTranslate: 'longDate' "/>
 
-    <sonar-field-description [label]="'End date' | translate" [field]="record.metadata.endDate | dateTranslate: 'longDate' "/>
+    <sonar-field-description [label]="'End date' | translate" [field]="$any(record.metadata.endDate) | dateTranslate: 'longDate' "/>
 
     <sonar-field-description [label]="'Identifier' | translate" [field]="record.metadata.identifiedBy">
       <ng-template let-identifiedBy pTemplate="template">
@@ -71,7 +71,7 @@
 
   <h4 translate>Linked documents</h4>
   <ul class="ui:list-none">
-    @for (document of record.metadata.documents; track $index) {
+    @for (document of $any(record.metadata.documents); track $index) {
       <li>
         <a [routerLink]="['/', 'records', 'documents', 'detail', document.pid]">
           {{ document.title[0].mainTitle | languageValue | async }}

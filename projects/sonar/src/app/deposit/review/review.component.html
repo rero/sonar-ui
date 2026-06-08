@@ -14,7 +14,7 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if(user && deposit() && deposit().status === 'to_validate' && user.is_moderator) {
+@if(user() && deposit() && deposit().status === 'to_validate' && user()!.is_moderator) {
   <p-panel [header]="'Deposit review' | translate">
     <div class="ui:flex ui:justify-center">
       <textarea
@@ -22,7 +22,7 @@
         pTextarea
         [autoResize]="true"
         [placeholder]="'Leave a comment for the user...' | translate"
-        [(ngModel)]="comment"
+        [ngModel]="comment()" (ngModelChange)="comment.set($event)"
       ></textarea>
     </div>
     <ng-template #footer>

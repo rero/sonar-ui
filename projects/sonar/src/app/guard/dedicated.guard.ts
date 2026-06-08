@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2022 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,19 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { UserService } from './user.service';
+import { inject } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs/operators';
+import { AppStore } from '../store/app.store';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AppInitializerService {
-
-  private userService: UserService = inject(UserService);
-
-  /** Function called when launching the application */
-  load(): Observable<any> {
-    return this.userService.loadLoggedUser();
-  }
-}
+/** Allow access only for users whose organisation is dedicated. */
+export const dedicatedGuard = () => {
+  const store = inject(AppStore);
+  return toObservable(store.user).pipe(
+    filter(user => user !== null),
+    map(() => store.isDedicatedOrganisation())
+  );
+};

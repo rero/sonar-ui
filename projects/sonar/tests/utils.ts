@@ -16,46 +16,22 @@
  */
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { CoreConfigService } from '@rero/ng-core';
 import { of } from 'rxjs';
-import { AppModule } from '../src/app/app.module';
+import { AppConfigService } from '../src/app/app-config.service';
 import { DepositService } from '../src/app/deposit/deposit.service';
-import { UserService } from '../src/app/user.service';
 
-export const userTestingService = jasmine.createSpyObj('UserService', [
-  'loadLoggedUser',
-  'isDedicatedOrganisation',
-  'getPublicInterfaceLink'
-]);
-userTestingService.loadLoggedUser.and.returnValue(of({}));
-userTestingService.isDedicatedOrganisation.and.returnValue(false);
-userTestingService.getPublicInterfaceLink.and.returnValue('http://foo.com');
-// userTestingService.user$ = of({});
-userTestingService.user$ = of({
-  organisation: {
-    documentsCustomField1: { includeInFacets: false, label: [
-      { language: 'fre', value: 'Custom fre 1' },
-      { language: 'eng', value: 'Custom eng 1' }
-    ]},
-    documentsCustomField2: { includeInFacets: false },
-    documentsCustomField3: { includeInFacets: false }
-  }
-});
-
-export const depositTestingService = jasmine.createSpyObj('DepositService', [
-  'getJsonSchema',
-  'getFiles',
-  'get',
-]);
-depositTestingService.getJsonSchema.and.returnValue(of({}));
-depositTestingService.getFiles.and.returnValue(of({}));
-depositTestingService.get.and.returnValue(of({}));
+export const depositTestingService = {
+  getJsonSchema: vi.fn().mockReturnValue(of({ type: 'object', properties: {} })),
+  getFiles: vi.fn().mockReturnValue(of({})),
+  get: vi.fn().mockReturnValue(of({})),
+};
 
 export const mockedConfiguration = {
-  imports: [AppModule],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     provideHttpClientTesting(),
-    { provide: UserService, useValue: userTestingService },
     { provide: DepositService, useValue: depositTestingService },
+    { provide: CoreConfigService, useClass: AppConfigService },
   ],
 };

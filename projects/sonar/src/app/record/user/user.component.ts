@@ -14,20 +14,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
-import { ResultItem } from '@rero/ng-core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { DetailUrl, RecordData } from '@rero/ng-core';
+import { Bind } from 'primeng/bind';
+import { Tag } from 'primeng/tag';
+import { AsyncPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageValuePipe } from '../../pipe/language-value.pipe';
 
 @Component({
-  templateUrl: './user.component.html',
-  standalone: false
+    templateUrl: './user.component.html',
+    imports: [Bind, Tag, AsyncPipe, TranslatePipe, LanguageValuePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserComponent implements ResultItem {
-  // Record data.
-  record: any;
-
-  // Resource type.
-  type: string;
-
-  // Detail URL object.
-  detailUrl: { link: string, external: boolean };
+export class UserComponent {
+  record = input.required<RecordData>();
+  type = input.required<string>();
+  detailUrl = input<DetailUrl>();
 }

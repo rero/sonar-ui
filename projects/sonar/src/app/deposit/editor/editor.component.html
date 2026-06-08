@@ -29,9 +29,9 @@
   }
 </div>
 <!-- metadata editor -->
-<formly-form [form]="form" [model]="model" [fields]="fields" [class]="'step-' + currentStep" />
+<formly-form [form]="form()" [model]="model()" [fields]="fields()" [class]="'step-' + currentStep" />
 
 <p-dialog [header]="'Import from swisscovery' | translate" [modal]="true" [(visible)]="importModalIsVisible"
-  styleClass="ui:w-[40lvw]">
+  class="ui:w-[40lvw]">
   <sonar-deposit-editor-swisscovery (data)="mapSwisscoveryRecord($event)" />
 </p-dialog>

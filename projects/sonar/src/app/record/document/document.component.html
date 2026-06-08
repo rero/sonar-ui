@@ -16,73 +16,73 @@
 -->
 <div class="ui:grid ui:grid-cols-12 ui:gap-4">
   <div class="ui:col-span-2 ui:hidden ui:lg:block ui:text-center">
-    @if(detailUrl) {
+    @if(detailUrl()) {
       <sonar-document-file
-        [file]="mainFile"
+        [file]="mainFile()"
         [showPreview]="false"
         [showDownload]="false"
         [showStatistics]="false"
         [showExternalLink]="false"
-        [link]="detailUrl.link"
-        [inRouter]="!detailUrl.external"
+        [link]="detailUrl()?.link"
+        [inRouter]="!detailUrl()?.external"
       />
     }
     @else {
       <sonar-document-file
-        [file]="mainFile"
+        [file]="mainFile()"
         [showPreview]="false"
         [showDownload]="false"
         [showStatistics]="false"
         [showExternalLink]="false"
       />
     }
-    @if(record.metadata.documentType) {
+    @if(record().metadata.documentType) {
       <p class="ui:my-2">
-        <small>{{ ('document_type_' + record.metadata.documentType) | translate }}</small>
+        <small>{{ ('document_type_' + record().metadata.documentType) | translate }}</small>
       </p>
     }
   </div>
   <div class="ui:col-span-12 ui:md:col-span-10 ui:flex ui:flex-col ui:gap-1">
     <h4>
-      @if(detailUrl) {
-        @if(detailUrl.external) {
-          <a [href]="detailUrl.link">
-            <span katex [innerHTML]="record.metadata.title[0].mainTitle | languageValue | async | nl2br"></span>
-            @if(record.metadata.title[0].subtitle) {
-              :&nbsp;<span katex [innerHTML]="record.metadata.title[0].subtitle | languageValue | async"></span>
+      @if(detailUrl()) {
+        @if(detailUrl()?.external) {
+          <a [href]="detailUrl()?.link">
+            <span katex [innerHTML]="record().metadata.title[0].mainTitle | languageValue | async | nl2br"></span>
+            @if(record().metadata.title[0].subtitle) {
+              :&nbsp;<span katex [innerHTML]="record().metadata.title[0].subtitle | languageValue | async"></span>
             }
           </a>
         } @else {
-          <a [routerLink]="detailUrl.link">
-            <span katex [innerHTML]="record.metadata.title[0].mainTitle | languageValue | async | nl2br"></span>
-            @if(record.metadata.title[0].subtitle) {
-              :&nbsp;<span katex [innerHTML]="record.metadata.title[0].subtitle | languageValue | async"></span>
+          <a [routerLink]="detailUrl()?.link">
+            <span katex [innerHTML]="record().metadata.title[0].mainTitle | languageValue | async | nl2br"></span>
+            @if(record().metadata.title[0].subtitle) {
+              :&nbsp;<span katex [innerHTML]="record().metadata.title[0].subtitle | languageValue | async"></span>
             }
           </a>
         }
       } @else {
-        <span katex [innerHTML]="record.metadata.title[0].mainTitle | languageValue | async | nl2br"></span>
-        @if(record.metadata.title[0].subtitle) {
-          :&nbsp;<span katex [innerHTML]="record.metadata.title[0].subtitle | languageValue | async"></span>
+        <span katex [innerHTML]="record().metadata.title[0].mainTitle | languageValue | async | nl2br"></span>
+        @if(record().metadata.title[0].subtitle) {
+          :&nbsp;<span katex [innerHTML]="record().metadata.title[0].subtitle | languageValue | async"></span>
         }
       }
     </h4>
-    @if(record.metadata.organisation || record.metadata.subdivisions) {
+    @if(record().metadata.organisation || record().metadata.subdivisions) {
       <div class="ui:flex ui:gap-1">
-        @if(isGlobalView() && record.metadata.organisation) {
-          @for(organisation of record.metadata.organisation; track $index) {
+        @if(isGlobalView() && record().metadata.organisation) {
+          @for(organisation of $any(record().metadata.organisation); track $index) {
             <p-tag severity="secondary" [value]="organisation.name" />
           }
         }
-        @if(record.metadata.subdivisions) {
-          @for(subdivision of record.metadata.subdivisions; track $index) {
+        @if(record().metadata.subdivisions) {
+          @for(subdivision of $any(record().metadata.subdivisions); track $index) {
             <p-tag severity="secondary" [value]="subdivision.name | languageValue | async" />
           }
         }
       </div>
     }
-    @if (record.metadata.contribution) {
-      @let contributors = record.metadata.contribution|contributors;
+    @if (record().metadata.contribution) {
+      @let contributors = $any(record().metadata.contribution)|contributors;
       <div class="ui:flex ui:flex-wrap ui:gap-1">
         @for (contributor of contributors|slice:0:contributorsLength(); track $index; let last=$last) {
           <sonar-contribution [view]="view()" [contributor]="contributor" />
@@ -91,21 +91,21 @@
           }
         }
         @if(showMore() && contributors.length > contributorsLength()) {
-          <a class="ui:ml-2" href="#" (click)="showMoreContributors($event, contributors.length)">
+          <a class="ui:ml-2" href="#" (click)="showMoreContributors($event)">
             {{ 'Show more' | translate }}&hellip;
           </a>
         }
       </div>
     }
-    @if(record.metadata.partOf && record.metadata.partOf.length > 0) {
-      <span>{{ record.metadata.partOf[0] | publication }}</span>
+    @if(record().metadata.partOf && $any(record().metadata.partOf).length > 0) {
+      <span>{{ $any(record().metadata.partOf)[0] | publication }}</span>
     }
-    @if(record.metadata.dissertation) {
-      <span>{{ record.metadata.dissertation.text }}</span>
+    @if(record().metadata.dissertation) {
+      <span>{{ $any(record().metadata.dissertation).text }}</span>
     }
-    @if(record.metadata?.provisionActivity?.length > 0) {
+    @if($any(record().metadata?.provisionActivity)?.length > 0) {
       <ul class="ui:list-none">
-      @for(statement of record.metadata.provisionActivity; track $index) {
+      @for(statement of $any(record().metadata.provisionActivity); track $index) {
         @if(statement.text && statement.text.default) {
           @for(item of statement.text | keyvalue; track $index) {
             <li>{{ item.value }}</li>
@@ -114,8 +114,8 @@
       }
     </ul>
     }
-    @if(abstract) {
-      <ng-core-read-more [text]="abstract" [katex]="true" />
+    @if(abstract()) {
+      <ng-core-read-more [text]="abstract()" [katex]="true" />
     }
   </div>
 </div>

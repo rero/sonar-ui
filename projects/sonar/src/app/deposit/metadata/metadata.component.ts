@@ -14,87 +14,61 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CONFIG } from '@rero/ng-core';
 import { MessageService } from 'primeng/api';
-import { combineLatest } from 'rxjs';
+import { Bind } from 'primeng/bind';
+import { Ripple } from 'primeng/ripple';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { switchMap, tap } from 'rxjs/operators';
-import { DepositService } from '../deposit.service';
+import { HighlightJsonPipe } from '../../core/highlight-json.pipe';
+import { StepComponent } from '../../core/step/step.component';
+import { DepositStore, DepositStoreType } from '../deposit.store';
+import { EditorComponent } from '../editor/editor.component';
+import { FilesComponent } from '../files/files.component';
+import { ReviewComponent } from '../review/review.component';
+import { JsonPipe } from '@angular/common';
 
 @Component({
-  selector: 'sonar-deposit-metadata',
-  templateUrl: './metadata.component.html',
-  standalone: false
+    selector: 'sonar-deposit-metadata',
+    templateUrl: './metadata.component.html',
+    imports: [StepComponent, ReviewComponent, Bind, Tabs, TabList, Ripple, Tab, TabPanels, TabPanel, EditorComponent, FilesComponent, JsonPipe, TranslatePipe, HighlightJsonPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MetadataComponent implements OnInit {
+export class MetadataComponent {
 
-  private messageService: MessageService = inject(MessageService);
-  private depositService: DepositService = inject(DepositService);
-  private router: Router = inject(Router);
-  private route: ActivatedRoute = inject(ActivatedRoute);
-  private translateService: TranslateService = inject(TranslateService);
+  private messageService = inject(MessageService);
+  private router = inject(Router);
+  private translateService = inject(TranslateService);
 
-  /** Deposit object */
-  deposit = signal<any>(null);
-
-  /** Current form to show */
+  store = inject(DepositStore) as DepositStoreType;
   currentStep = signal<string>('metadata');
+  steps = signal<string[]>(['files', 'metadata', 'contributors', 'projects', 'diffusion']);
 
-  /** Deposit steps */
-  steps = signal<string[]>([
-    'files',
-    'metadata',
-    'contributors',
-    'projects',
-    'diffusion',
-  ]);
-
-  /** Store files associated with deposit */
-  private files = signal<any[]>([]);
-  mainFile = computed(() => this.files().length > 0? this.files()[0]: null);
-  /** Return additional files list */
-  additionalFiles = computed(() => this.files().slice(1));
-  maxStep = computed(() => this.deposit() ? this.deposit().step : 'metadata');
-
-  ngOnInit(): void {
-    this.route.params
+  constructor() {
+    inject(ActivatedRoute).params
       .pipe(
-        tap((params) => {
-          this.currentStep.set(params.step);
-        }),
-        switchMap((params) => this.depositService.get(params.id))
+        tap((params) => this.currentStep.set(params['step'])),
+        switchMap((params) => this.store.load(params['id'])),
+        takeUntilDestroyed()
       )
       .subscribe({
-        next: (result) => {
-          this.deposit.set(result.metadata);
-
-          // TODO: solve this
-          if (this.depositService.canAccessDeposit(this.deposit()) === false) {
-            this.router.navigate([
-              'deposit',
-              this.deposit().pid,
-              'confirmation',
-            ]);
+        next: () => {
+          if (!this.store.canAccess()) {
+            this.router.navigate(['deposit', this.store.deposit()!.pid, 'confirmation']);
           }
-          const files = [...result.metadata._files || []];
-          files.sort((a, b) => a.order - b.order);
-          this.files.set(files);
         },
         error: () => {
           this.messageService.add({
-            severity: 'success',
+            severity: 'error',
             detail: this.translateService.instant('Deposit not found'),
             life: CONFIG.MESSAGE_LIFE,
           });
           this.router.navigate(['records', 'deposits']);
-        }
-      }
-      );
+        },
+      });
   }
-  updateDeposit(value) {
-    this.deposit.set(value);
-  }
-
 }

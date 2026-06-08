@@ -14,51 +14,48 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { RecordService } from '@rero/ng-core';
-import { combineLatest, Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import { RecordData, RecordService, MarkdownPipe, Nl2brPipe, UpperCaseFirstPipe } from '@rero/ng-core';
+import { combineLatest } from 'rxjs';
+import { FieldDescriptionComponent } from '../../../core/field-description/field-description.component';
+import { PrimeTemplate } from 'primeng/api';
+import { RouterLink } from '@angular/router';
+import { UploadFilesComponent } from '../../files/upload-files/upload-files.component';
+import { AsyncPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageValuePipe } from '../../../pipe/language-value.pipe';
 
 @Component({
-  templateUrl: './detail.component.html',
-  standalone: false
+    templateUrl: './detail.component.html',
+    imports: [FieldDescriptionComponent, PrimeTemplate, RouterLink, UploadFilesComponent, AsyncPipe, TranslatePipe, MarkdownPipe, Nl2brPipe, UpperCaseFirstPipe, LanguageValuePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent {
 
   private recordService: RecordService = inject(RecordService);
 
-  /** Observable resolving record data */
-  record$: Observable<any>;
+  record = input.required<RecordData>();
 
-  /** Organisation record. */
-  record = signal(null);
+  /** Type of resource. */
+  type = input<string>();
 
   /** Subdivisions list. */
-  subdivisions = signal([]);
+  subdivisions = signal<unknown[]>([]);
 
   /** Collections list. */
-  collections = signal([]);
+  collections = signal<unknown[]>([]);
 
-  ngOnInit(): void {
-    this.record$
-      .pipe(
-        switchMap((record: any) => {
-          this.record.set(record);
-          return combineLatest([
-            this.recordService.getRecords(
-              'subdivisions',
-              `organisation.pid:${record.id}`
-            ),
-            this.recordService.getRecords(
-              'collections',
-              `organisation.pid:${record.id}`
-            ),
-          ]);
-        })
-      )
-      .subscribe(([subdivisions, collections]: any) => {
-        this.subdivisions.set(subdivisions.hits.hits);
-        this.collections.set(collections.hits.hits);
+  constructor() {
+    effect(() => {
+      const record = this.record();
+      if (!record) return;
+      combineLatest([
+        this.recordService.getRecords('subdivisions', { query: `organisation.pid:${record.id}` }),
+        this.recordService.getRecords('collections', { query: `organisation.pid:${record.id}` }),
+      ]).subscribe((results: { hits: { hits: unknown[] } }[]) => {
+        this.subdivisions.set(results[0].hits.hits);
+        this.collections.set(results[1].hits.hits);
       });
+    });
   }
 }

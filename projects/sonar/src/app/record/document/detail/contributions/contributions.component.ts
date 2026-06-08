@@ -14,15 +14,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { IContribution } from '../../contribution.interface';
+import { ContributionComponent } from '../../contribution/contribution.component';
+import { TranslateDirective, TranslatePipe } from '@ngx-translate/core';
+import { SlicePipe } from '@angular/common';
+import { ContributorsPipe } from '../../../../pipe/contributors.pipe';
 
 @Component({
     selector: 'sonar-contributions',
     templateUrl: './contributions.component.html',
-    standalone: false
+    imports: [ContributionComponent, TranslateDirective, SlicePipe, TranslatePipe, ContributorsPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContributionsComponent implements OnInit {
+export class ContributionsComponent {
 
   contributions = input.required<IContribution[]>();
 
@@ -30,27 +35,14 @@ export class ContributionsComponent implements OnInit {
 
   additionalInfosFields = input<boolean>(false);
 
-  contributorsLength = signal<number>(5);
-
   showMore = signal<boolean>(true);
 
-  /** OnInit Hook */
-  ngOnInit(): void {
-    if (this.meeting()) {
-      this.contributorsLength.set(this.contributions()?.length || 0);
-    }
-  }
+  contributorsLength = computed(() =>
+    !this.showMore() || this.meeting() ? this.contributions().length : 5
+  );
 
-  /**
-   * Show all contributors when clicking on the show more link.
-   *
-   * @param event DOM event triggered.
-   */
-  showMoreContributors(event: any): void {
+  showMoreContributors(event: MouseEvent): void {
     event.preventDefault();
     this.showMore.set(false);
-    this.contributorsLength.set(this.contributions()
-      ? this.contributions().length
-      : 0);
   }
 }

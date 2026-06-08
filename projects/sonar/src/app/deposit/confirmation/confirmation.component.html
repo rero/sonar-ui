@@ -14,26 +14,23 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if(deposit$ | async; as deposit) {
+@if(deposit(); as deposit) {
   <div class="ui:flex ui:flex-col ui:gap-3">
     <p-message
-      [text]="'Thank you for submitting a publication!' | translate"
       severity="success"
-      showTransitionOptions="0ms"
-    />
+     
+    >{{ 'Thank you for submitting a publication!' | translate }}</p-message>
     @if(deposit.status === 'to_validate') {
       <p-message
-        [text]="'This deposit will be reviewed and published shortly.' | translate"
         severity="warn"
-        showTransitionOptions="0ms"
-      />
+       
+      >{{ 'This deposit will be reviewed and published shortly.' | translate }}</p-message>
     }
     @if(deposit.status === 'validated') {
       <p-message
-        [text]="'This deposit will be published shortly.' | translate"
-        severity="danger"
-        showTransitionOptions="0ms"
-      />
+        severity="error"
+       
+      >{{ 'This deposit will be published shortly.' | translate }}</p-message>
     }
     @if(isSubmitter) {
       <div class="ui:flex ui:mt-4">

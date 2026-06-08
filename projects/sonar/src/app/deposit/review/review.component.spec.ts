@@ -1,6 +1,6 @@
 /*
  * SONAR User Interface
- * Copyright (C) 2021 RERO
+ * Copyright (C) 2021-2025 RERO
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,43 +14,55 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
-import { UserService } from '../../user.service';
-import { DepositService } from '../deposit.service';
+import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
+import { AppConfigService } from '../../app-config.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { EMPTY } from 'rxjs';
+import { AppStore } from '../../store/app.store';
+import { DepositStore } from '../deposit.store';
 import { ReviewComponent } from './review.component';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const depositStoreMock: any = {
+  deposit: signal(null),
+  reviewDeposit: vi.fn().mockReturnValue(EMPTY),
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const appStoreMock: any = {
+  user: signal(null),
+};
 
 describe('ReviewComponent', () => {
   let component: ReviewComponent;
   let fixture: ComponentFixture<ReviewComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-    declarations: [ReviewComponent],
-    imports: [
-      TranslateModule.forRoot({
-        loader: {
-          provide: BaseTranslateLoader,
-          useClass: TranslateLoader,
-          deps: [CoreConfigService, HttpClient]
-        }
-      }),
-      RecordModule,
-      RouterModule.forRoot([])
-    ],
-    providers: [
-        { provide: UserService, useValue: userTestingService },
-        { provide: DepositService, useValue: depositTestingService },
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        TranslateModule.forRoot({
+          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
+        }),
+        RouterModule.forRoot([]),
+        ReviewComponent,
+      ],
+      providers: [
+        { provide: CoreConfigService, useClass: AppConfigService },
+        ConfirmationService,
+        MessageService,
+        { provide: DepositStore, useValue: depositStoreMock },
+        { provide: AppStore, useValue: appStoreMock },
         provideHttpClientTesting(),
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-}).compileComponents();
-  }));
+        provideHttpClient(withInterceptorsFromDi()),
+      ],
+    }).compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ReviewComponent);

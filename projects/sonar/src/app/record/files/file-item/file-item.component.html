@@ -25,14 +25,14 @@
   <ng-template pTemplate="icons">
     <p-button
       [title]="'edit' | translate"
-      [text]="true"
+      variant="text"
       icon="fa fa-edit"
       class="p-panel-header-icon p-link"
       (onClick)="showEditor()"
     />
     <p-button
       [title]="'remove' | translate"
-      [text]="true"
+      variant="text"
       icon="fa fa-trash"
       class="p-panel-header-icon p-link"
       (onClick)="deleteFile()"
@@ -49,16 +49,16 @@
     @if(file().size) {
       <sonar-field-description
           [label]="'File Size' | translate"
-          [field]="file().size | filesize"
+          [field]="$any(file().size) | filesize"
         />
     }
     @if(file().updated) {
       <sonar-field-description
           [label]="'Updated at' | translate"
-          [field]="file().updated | dateTranslate: 'fullDate'"
+          [field]="$any(file().updated) | dateTranslate: 'fullDate'"
         />
     }
-    @let data = file().metadata;
+    @let data = $any(file().metadata);
     @if(data.access) {
       <sonar-field-description
           [label]="'Access' | translate"
@@ -81,7 +81,7 @@
 
     @if (file().versions) {
       <ul>
-        @for (version of file()?.versions; track $index) {
+        @for (version of $any(file()?.versions); track $index) {
         <li>
           <ng-container
             [ngTemplateOutlet]="fileLink"
@@ -100,7 +100,7 @@
           mode="basic"
           [chooseLabel]="'A new version' | translate"
           chooseIcon="fa fa-upload"
-          [accept]="file().metadata.mimetype"
+          [accept]="$any(file().metadata).mimetype"
           fileLimit="1"
           [auto]="true"
           [maxFileSize]="maxFileSize()"
@@ -117,11 +117,11 @@
     pButton
     iconPos="right"
     tabindex="-1"
-    [pTooltip]="(file.size | filesize) + ' / ' + (file.updated | dateTranslate : 'medium')"
+    [pTooltip]="($any(file.size) | filesize) + ' / ' + ($any(file.updated) | dateTranslate : 'medium')"
     [title]="'download' | translate"
     [href]="downloadURL(file)"
     icon="fa fa-download"
-    [text]="true"
+    text
     download
     [label]="name"
     ></a>

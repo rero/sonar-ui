@@ -20,8 +20,9 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { RecordModule } from '@rero/ng-core';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import { CoreConfigService } from '@rero/ng-core';
+import { AppConfigService } from '../../../app-config.service';
+import { MessageService } from 'primeng/api';
 import { SwisscoveryComponent } from './swisscovery.component';
 
 describe('SwisscoveryComponent', () => {
@@ -30,18 +31,17 @@ describe('SwisscoveryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SwisscoveryComponent],
-      imports: [
+    imports: [
         TranslateModule.forRoot(),
-        RecordModule,
-        NgxSpinnerModule,
-        FormsModule
-      ],
-      providers: [
+        FormsModule,
+        SwisscoveryComponent
+    ],
+    providers: [
+        { provide: CoreConfigService, useClass: AppConfigService }, MessageService,
         provideHttpClientTesting(),
         provideHttpClient(withInterceptorsFromDi())
-      ]
-    })
+    ]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(SwisscoveryComponent);

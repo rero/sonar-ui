@@ -98,6 +98,6 @@
         </ng-template>
       </sonar-field-description>
     }
-    <sonar-upload-files recordType="organisations" [pid]="record().metadata.pid" />
+    <sonar-upload-files recordType="organisations" [pid]="$any(record().metadata.pid)" />
   </div>
 }

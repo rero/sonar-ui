@@ -14,22 +14,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, computed, inject, input } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { AppConfigService } from '../../app-config.service';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Identifier } from '../../type/documentType';
+import { AppStore, AppStoreType } from '../../store/app.store';
+import { Bind } from 'primeng/bind';
+import { Tag } from 'primeng/tag';
+import { UpperCasePipe } from '@angular/common';
 
 /**
  * Component that display an identifier.
  */
 @Component({
-  selector: 'sonar-record-identifier',
-  templateUrl: './identifier.component.html',
-  standalone: false
+    selector: 'sonar-record-identifier',
+    templateUrl: './identifier.component.html',
+    imports: [Bind, Tag, UpperCasePipe, TranslatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdentifierComponent {
 
-  private appConfigService: AppConfigService = inject(AppConfigService);
+  private store = inject(AppStore) as AppStoreType;
   private translateService: TranslateService = inject(TranslateService);
 
   /** Type of field (agent, identifiedBy) */
@@ -47,17 +51,18 @@ export class IdentifierComponent {
 
   /** Process data */
   private processData(): Identifier {
-    const settings = this.appConfigService.settings.document_identifier_link;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const identifierLink = (this.store.settings()?.document_identifier_link ?? {}) as Record<string, Record<string, string>>;
     const identifier: Identifier = {
       field: this.type(),
       type: this.data().type,
       value: this.data().value
     };
-    if (this.data().type in settings) {
-      const source = this.data().source ? this.data().source.toLowerCase() : 'default';
+    if (this.data().type in identifierLink) {
+      const source = this.data().source ? this.data().source!.toLowerCase() : 'default';
       identifier.source = this.data().source;
-      if (source in settings[this.data().type]) {
-        identifier.link = settings[this.data().type][source]
+      if (source in identifierLink[this.data().type]) {
+        identifier.link = identifierLink[this.data().type][source]
           .replace('_identifier_', this.data().value);
       }
     }

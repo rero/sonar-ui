@@ -17,8 +17,7 @@
 @if (loading()) {
   <i class="fa fa-spinner fa-spin"></i>
 } @else {
-@if (files()?.length > 0) {
-  @if(files().length > 0) {
+  @if (files()?.length > 0) {
     <div class="ui:flex ui:flex-col ui:gap-2">
       <p-inputgroup>
         <input
@@ -32,83 +31,81 @@
           <i class="fa fa-filter"></i>
         </p-inputgroup-addon>
       </p-inputgroup>
-      <small>
-        {{ getResultsText() | async }}
-      </small>
+      <small>{{ resultsText() }}</small>
     </div>
-  }
 
-  @if (filteredFiles().length > 0) {
-    <div class="ui:border ui:border-surface ui:rounded-border ui:text-center ui:py-4 ui:px-1 ui:mt-2">
-      <p-carousel
-        [showIndicators]="false"
-        [showNavigators]="false"
-        [value]="filteredFiles()"
-        [numVisible]="numVisible()"
-        [page]="page()"
-        [numScroll]="numVisible()"
-        [circular]="false"
-      >
-        <ng-template let-file #item>
-          <div class="ui:px-1 ui:flex ui:flex-col">
-            @if (file.thumbnail) {
-              <div class="ui:flex ui:justify-center">
-                <img
-                  (click)="preview(file); $event.preventDefault()"
-                  [src]="file.thumbnail"
-                  [alt]="file.label"
-                  class="ui:shadow-sm ui:border-surface-300 ui:dark:border-surface-500 ui:border ui:mb-1 ui:max-w-20 ui:cursor-zoom-in"
-                  loading="lazy"
-                />
-              </div>
-            } @else {
-              <div>
-                <i class="fa fa-4x" [ngClass]="file.mimetype | faIconClass: 'file'"></i>
-              </div>
-            }
-            <div class="ui:flex ui:items-center ui:justify-center">
-              @if (file.preview) {
-                <p-button [text]="true" icon="fa fa-eye" (onClick)="preview(file)" />
-              } @if (file.download) {
-                <a pButton [text]="true" [href]="file.download"><i class="fa fa-download"></i></a>
+    @if (filteredFiles().length > 0) {
+      <div class="ui:border ui:border-surface ui:rounded-border ui:text-center ui:py-4 ui:px-1 ui:mt-2">
+        <p-carousel
+          [showIndicators]="false"
+          [showNavigators]="false"
+          [value]="filteredFiles()"
+          [numVisible]="numVisible()"
+          [page]="page()"
+          [numScroll]="numVisible()"
+          [circular]="false"
+        >
+          <ng-template let-file #item>
+            <div class="ui:px-1 ui:flex ui:flex-col">
+              @if (file.thumbnail) {
+                <div class="ui:flex ui:justify-center">
+                  <img
+                    tabindex="0"
+                    (click)="preview(file); $event.preventDefault()"
+                    (keyup.enter)="preview(file); $event.preventDefault()"
+                    [src]="file.thumbnail"
+                    [alt]="file.label"
+                    class="ui:shadow-sm ui:border-surface-300 ui:dark:border-surface-500 ui:border ui:mb-1 ui:max-w-20 ui:cursor-zoom-in"
+                    loading="lazy"
+                  />
+                </div>
+              } @else {
+                <div>
+                  <i class="fa fa-4x" [ngClass]="file.mimetype | faIconClass: 'file'"></i>
+                </div>
               }
+              <div class="ui:flex ui:items-center ui:justify-center">
+                @if (file.preview) {
+                  <p-button variant="text" icon="fa fa-eye" (onClick)="preview(file)" />
+                }
+                @if (file.download) {
+                  <a pButton text [href]="file.download"><i class="fa fa-download"></i></a>
+                }
+              </div>
+              <small>{{ file.label }}</small>
             </div>
-            <small>{{ file.label }}</small>
-          </div>
-        </ng-template>
-      </p-carousel>
-    </div>
-    @if(files().length > numVisible()) {
-      <p-paginator
-        (onPageChange)="onPageChange($event)"
-        [first]="1"
-        [rows]="numVisible()"
-        [totalRecords]="filteredFiles().length"
-        [showJumpToPageInput]="false"
-        [pageLinkSize]="3"
-      />
+          </ng-template>
+        </p-carousel>
+      </div>
+      @if (files().length > numVisible()) {
+        <p-paginator
+          (onPageChange)="onPageChange($event)"
+          [first]="1"
+          [rows]="numVisible()"
+          [totalRecords]="filteredFiles().length"
+          [showJumpToPageInput]="false"
+          [pageLinkSize]="3"
+        />
+      }
     }
   }
-}
 
-@if(previewFile()) {
-  <p-dialog
-    [modal]="true"
-    [(visible)]="isShowPreview"
-    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-    [style]="{ width: '50vw' }"
-    styleClass="ui:transform-none"
+  @if (previewFile()) {
+    <p-dialog
+      [modal]="true"
+      [(visible)]="isShowPreview"
+      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+      [style]="{ width: '50vw' }"
+      class="ui:transform-none"
     >
-    <ng-template #header>
-      <h4>
-        {{ previewFile()?.label? previewFile().label : "Preview" | translate }}
-      </h4>
-    </ng-template>
-    <iframe
-      id="preview-iframe"
-      [style]="{ width: '100%', height: '800px', border: 'none' }"
-      [src]="previewFile().url"
-    ></iframe>
-  </p-dialog>
+      <ng-template #header>
+        <h4>{{ previewFile()?.label ?? ('Preview' | translate) }}</h4>
+      </ng-template>
+      <iframe
+        id="preview-iframe"
+        [style]="{ width: '100%', height: '800px', border: 'none' }"
+        [src]="previewFile().url"
+      ></iframe>
+    </p-dialog>
   }
 }

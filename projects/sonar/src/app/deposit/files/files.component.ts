@@ -14,17 +14,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { TranslateDirective } from '@ngx-translate/core';
+import { DepositFile } from '../../models';
+import { Bind } from 'primeng/bind';
+import { Button, ButtonDirective } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { FilesizePipe } from '@rero/ng-core';
+import { FileLinkPipe } from '../../core/file-link.pipe';
 
 @Component({
-  selector: 'sonar-deposit-files',
-  templateUrl: './files.component.html',
-  standalone: false
+    selector: 'sonar-deposit-files',
+    templateUrl: './files.component.html',
+    imports: [TranslateDirective, Bind, Button, ButtonDirective, Dialog, FilesizePipe, FileLinkPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilesComponent {
-  mainFile = input.required<any>();
+  mainFile = input.required<DepositFile>();
   depositPid = input.required<string>();
-  additionalFiles = input<any>();
+  additionalFiles = input<DepositFile[]>();
   /** File key to preview */
   previewFileKey = signal<string>('');
   isShowPreview = signal<boolean>(false);

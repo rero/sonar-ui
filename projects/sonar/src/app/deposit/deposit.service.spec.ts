@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
-import { UserService } from '../user.service';
+import { CoreTranslateLoader } from '@rero/ng-core';
+import { depositTestingService } from 'projects/sonar/tests/utils';
 import { DepositService } from './deposit.service';
 
 describe('DepositService', () => {
@@ -29,14 +28,11 @@ describe('DepositService', () => {
       TranslateModule.forRoot({
         loader: {
           provide: BaseTranslateLoader,
-          useClass: TranslateLoader,
-          deps: [CoreConfigService, HttpClient]
+          useClass: CoreTranslateLoader,
         }
-      }),
-      RecordModule
+      })
     ],
     providers: [
-      { provide: UserService, useValue: userTestingService },
       { provide: DepositService, useValue: depositTestingService },
       provideHttpClient(withInterceptorsFromDi())
     ]

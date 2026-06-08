@@ -14,31 +14,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, inject, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { TranslateService, TranslateDirective } from '@ngx-translate/core';
 import { AppConfigService } from './app-config.service';
+import { RouterOutlet } from '@angular/router';
+import { NgxSpinnerComponent } from 'ngx-spinner';
+import { Bind } from 'primeng/bind';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Toast } from 'primeng/toast';
 
 @Component({
     selector: 'sonar-root',
     templateUrl: './app.component.html',
-    standalone: false
+    imports: [TranslateDirective, RouterOutlet, Bind, ConfirmDialog, NgxSpinnerComponent, Toast],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
-  private translateService: TranslateService = inject(TranslateService);
-  private appConfigService: AppConfigService = inject(AppConfigService);
+  private readonly translateService = inject(TranslateService);
+  private readonly appConfigService = inject(AppConfigService);
 
-  ngOnInit() {
+  constructor() {
     // Ex: <html lang="en" data-view="global">
     this.appConfigService.view = document.querySelector('html').getAttribute('data-view');
-    let language = document.documentElement.lang || 'en';
-    if (language == null) {
-      const browserLang = this.translateService.getBrowserLang();
-      language = browserLang.match(this.appConfigService.languages.join('|')) ?
-        browserLang : this.appConfigService.defaultLanguage;
-    }
-
-    return this.translateService.use(language);
+    const language = document.documentElement.lang || this.appConfigService.defaultLanguage;
+    this.translateService.use(language);
   }
-
 }

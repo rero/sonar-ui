@@ -14,28 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { inject, TestBed } from '@angular/core/testing';
-import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
-import { DepositService } from '../deposit/deposit.service';
-import { UserService } from '../user.service';
-import { RoleGuard } from './role.guard';
+import { TestBed } from '@angular/core/testing';
+import { roleGuard } from './role.guard';
 
-describe('RoleGuard', () => {
+describe('roleGuard', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
-    providers: [
-      RoleGuard,
-      { provide: UserService, useValue: userTestingService },
-      { provide: DepositService, useValue: depositTestingService },
-      provideHttpClient(withInterceptorsFromDi()),
-      provideHttpClientTesting()
-    ]
-});
+    TestBed.configureTestingModule({});
   });
 
-  it('should create role guard', inject([RoleGuard], (guard: RoleGuard) => {
-    expect(guard).toBeTruthy();
-  }));
+  it('should be a function', () => {
+    expect(roleGuard).toBeTruthy();
+    expect(typeof roleGuard).toBe('function');
+  });
 });

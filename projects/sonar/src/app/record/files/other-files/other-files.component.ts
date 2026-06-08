@@ -16,66 +16,69 @@
  */
 
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, computed, inject, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { RecordService } from '@rero/ng-core';
-import { PaginatorState } from 'primeng/paginator';
+import { PaginatorState, Paginator } from 'primeng/paginator';
 import { Observable, map, switchMap, tap } from 'rxjs';
 import { File, previewFile } from '../../../type/fileType';
+import { Bind } from 'primeng/bind';
+import { InputGroup } from 'primeng/inputgroup';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { InputText } from 'primeng/inputtext';
+import { InputGroupAddon } from 'primeng/inputgroupaddon';
+import { Carousel } from 'primeng/carousel';
+import { NgClass } from '@angular/common';
+import { Button, ButtonDirective } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { FaIconClassPipe } from '../../../pipe/fa-icon-class.pipe';
 
-// Component itself
 @Component({
     selector: 'sonar-other-files',
     templateUrl: './other-files.component.html',
-    standalone: false
+    imports: [Bind, InputGroup, ReactiveFormsModule, InputText, FormsModule, InputGroupAddon, Carousel, NgClass, Button, ButtonDirective, Paginator, Dialog, TranslatePipe, FaIconClassPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OtherFilesComponent {
 
-  private translateService: TranslateService = inject(TranslateService);
-  private recordService: RecordService = inject(RecordService);
-  private sanitizer: DomSanitizer = inject(DomSanitizer);
-  private breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+  private readonly translateService = inject(TranslateService);
+  private readonly recordService = inject(RecordService);
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly breakpointObserver = inject(BreakpointObserver);
 
-  // input document pid
   documentPid = input.required<string>();
 
-  // list of files
   files = toSignal(toObservable(this.documentPid).pipe(switchMap(() => this.getFiles())));
 
-  breakpointState = toSignal(
+  private readonly breakpointState = toSignal(
     this.breakpointObserver
         .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
   );
 
-  // filtered array of files
   filteredFiles = computed(() => {
-    if (this.filterText().length > 0) {
-      return this.files().filter((value) =>
-        value.label.toLowerCase().includes(this.filterText().toLowerCase()
-    ));
-    } else {
-      return this.files();
+    const text = this.filterText().toLowerCase();
+    if (text.length > 0) {
+      return this.files()?.filter((value) => value.label.toLowerCase().includes(text)) ?? [];
     }
+    return this.files() ?? [];
   });
 
-  // Get the string used to display the search result number.
-  getResultsText = computed(() => {
-    const remoteTotal = this.files().length;
+  resultsText = computed(() => {
+    const remoteTotal = this.files()?.length ?? 0;
     const totalFiltered = this.filteredFiles().length;
     if (totalFiltered === remoteTotal) {
-      return this.translateService.stream('{{ total }} results', { total: remoteTotal });
+      return this.translateService.instant('{{ total }} results', { total: remoteTotal });
     }
     return totalFiltered === 0
-      ? this.translateService.stream('no result')
-      : this.translateService.stream('{{ total }} results of {{ remoteTotal }}', {
+      ? this.translateService.instant('no result')
+      : this.translateService.instant('{{ total }} results of {{ remoteTotal }}', {
           total: totalFiltered,
-          remoteTotal: remoteTotal,
+          remoteTotal,
         });
   });
 
-  // Changes the number of items in the carousel.
   numVisible = computed(() => {
     this.breakpointState();
     switch (true) {
@@ -90,49 +93,42 @@ export class OtherFilesComponent {
     }
   });
 
-  // input text filter
   filterText = model('');
-
-  // current page for the carousel
   page = signal(0);
-
   loading = signal(false);
-
-  // file to preview
-  previewFile = signal<previewFile|null>(null);
-
-  isShowPreview = signal(false);
+  previewFile = signal<previewFile | null>(null);
+  isShowPreview = model(false);
 
   /**
    * Retrieves the files information from the backend.
    */
-  getFiles(): Observable<any> {
+  getFiles(): Observable<File[]> {
     // retrieve all records files linked to a given document pid
     this.loading.set(true);
     return this.recordService
-      .getRecord('documents', this.documentPid(), 1)
+      .getRecord('documents', this.documentPid(), { resolve: 1 })
       .pipe(
         tap(() => (this.loading.set(false))),
-        map(res => res?.metadata?._files? res.metadata._files : []),
-        map((res: any[]) => {
-          const files = [];
-            const data = {};
+        map((res: { metadata?: { _files?: Record<string, unknown>[] } }) => res?.metadata?._files ?? []),
+        map((res: Record<string, unknown>[]) => {
+          const files: File[] = [];
+            const data: Record<string, File> = {};
             // retrieve main files
             res.map((entry) => {
               // main file (such as pdf) and avoid the first
-              if (entry.type == 'file' && entry?.order != '1') {
-                const dataFile: any = {
-                  label: entry?.label ? entry.label : entry.key,
-                  mimetype: entry.mimetype,
-                  download: entry.links.download,
+              if (entry['type'] == 'file' && entry?.['order'] != '1') {
+                const links = entry['links'] as Record<string, string>;
+                const dataFile: Partial<File> & { mimetype?: string } = {
+                  label: entry?.['label'] ? entry['label'] as string : entry['key'] as string,
+                  download: links['download'],
                 };
-                if (entry?.links?.preview) {
-                  dataFile.preview = entry.links.preview;
+                if (links?.['preview']) {
+                  dataFile.preview = links['preview'];
                 }
-                if (entry?.thumbnail) {
-                  dataFile.thumbnail = entry.thumbnail;
+                if (entry?.['thumbnail']) {
+                  dataFile.thumbnail = entry['thumbnail'] as string;
                 }
-                data[entry.key] = dataFile;
+                data[entry['key'] as string] = dataFile as File;
               }
             });
             Object.values(data).map((d: File) => files.push(d));
@@ -148,7 +144,7 @@ export class OtherFilesComponent {
    * @param $event - standard event.
    */
   onPageChange(event: PaginatorState): void {
-    this.page.set(event.page);
+    this.page.set(event.page ?? 0);
   }
 
   /** Open the file preview in a modal container.
@@ -156,6 +152,9 @@ export class OtherFilesComponent {
    * @param file - the file to preview.
    */
   preview(file: File): void {
+    if (!file.preview) {
+      return;
+    }
     this.previewFile.set({
       label: file.label,
       url: this.sanitizer.bypassSecurityTrustResourceUrl(file.preview),

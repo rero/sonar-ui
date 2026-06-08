@@ -14,23 +14,23 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if (record$ | async; as record) {
+@if (record(); as record) {
   <div class="ui:flex ui:flex-col ui:gap-2">
   <h1>{{ record.metadata.name }}</h1>
-  <sonar-record-validation [record]="record" [type]="type" />
+  <sonar-record-validation [record]="record" [type]="type()" />
 
   @if(record.metadata?.keywords) {
-    <div>
-      @for(keyword of record.metadata.keywords; track $index) {
+    <div class="ui:flex ui:gap-1">
+      @for(keyword of $any(record.metadata.keywords); track $index) {
         <p-tag [value]="keyword" severity="secondary" />
       }
     </div>
   }
   <span>
     <i class="fa fa-calendar"></i>&nbsp;
-    {{ record.metadata.startDate | dateTranslate: 'mediumDate' }} -
+    {{ $any(record.metadata.startDate) | dateTranslate: 'mediumDate' }} -
     @if(record.metadata?.endDate) {
-      {{ record.metadata.endDate | dateTranslate: 'mediumDate' }}
+      {{ $any(record.metadata.endDate) | dateTranslate: 'mediumDate' }}
     }
     @else {
       ?
@@ -40,7 +40,7 @@
   <p>{{ record.metadata.projectSponsor }} ({{ 'Project sponsor' | translate }}, {{ record.metadata.statusHep }})</p>
   <div class="ui:flex-col ui:flex ui:gap-2">
     <!-- Internal research associates -->
-    <sonar-field-description [label]="'Internal research associates' | translate" [field]="record.metadata.innerSearcher | join:', ' "/>
+    <sonar-field-description [label]="'Internal research associates' | translate" [field]="$any(record.metadata.innerSearcher) | join:', ' "/>
 
     <!-- Main team -->
     <sonar-field-description [label]="'Main team' | translate" [field]="record.metadata.mainTeam"/>
@@ -49,10 +49,10 @@
     <sonar-field-description [label]="'Secondary team' | translate" [field]="record.metadata.secondaryTeam"/>
 
     <!-- External partners -->
-    @if (record.metadata.externalPartners.choice) {
+    @if ($any(record.metadata.externalPartners).choice) {
       <sonar-field-description [label]="'External partners' | translate" [field]="record.metadata.externalPartners">
       <ng-template let-externalPartner pTemplate="template">
-        @for (partner of record.metadata.externalPartners.list; track $index; let last=$last) {
+        @for (partner of $any(record.metadata.externalPartners).list; track $index; let last=$last) {
           {{ partner.searcherName }}
           @if(partner.institution) {
             <i class="ui:text-muted-color ui:ml-1">{{ partner.institution }}</i>
@@ -73,13 +73,13 @@
     </sonar-field-description>
 
     <!-- Date of approval by the Team Leader -->
-    <sonar-field-description [label]="'Date of approval by the Team Leader' | translate" [field]="record.metadata.approvalDate | dateTranslate: 'longDate' "/>
+    <sonar-field-description [label]="'Date of approval by the Team Leader' | translate" [field]="$any(record.metadata.approvalDate) | dateTranslate: 'longDate' "/>
 
     <!-- Realization framework -->
-    <sonar-field-description [label]="'Realization framework' | translate" [field]="record.metadata.realizationFramework | join:', ' "/>
+    <sonar-field-description [label]="'Realization framework' | translate" [field]="$any(record.metadata.realizationFramework) | join:', ' "/>
 
     <!-- Funding -->
-    @if (record.metadata.funding.choice) {
+    @if ($any(record.metadata.funding).choice) {
       <sonar-field-description [label]="'Funding' | translate" [field]="record.metadata.funding">
       <ng-template let-funding pTemplate="template">
         @if (funding?.funder?.number) {
@@ -92,10 +92,10 @@
         }
         @if (funding.funder.type !== 'Other (free field)') {
           <i class="ui:text-muted-color ui:ml-1">
-            {{ record.metadata.funding.funder.type }}
+            {{ $any(record.metadata.funding).funder.type }}
           </i>
         }
-        @if (['​Swiss National Science Foundation', 'Swissuniversities'].includes(funding.funder.type)) {
+        @if (['Swiss National Science Foundation', 'Swissuniversities'].includes(funding.funder.type)) {
           {{ funding.funder.type }}
         }
         <i class="ui:ml-2 fa"
@@ -143,12 +143,12 @@
     </sonar-field-description>
 
     <!-- Promote innovation -->
-    @if (record.metadata.promoteInnovation?.choice) {
-    <sonar-field-description [label]="'Why this project promote pedagogical or technological innovation?' | translate" [field]="record.metadata.promoteInnovation.reason"/>
+    @if ($any(record.metadata.promoteInnovation)?.choice) {
+    <sonar-field-description [label]="'Why this project promote pedagogical or technological innovation?' | translate" [field]="$any(record.metadata.promoteInnovation).reason"/>
     }
 
     <!-- Related to mandate -->
-    @if (record.metadata.relatedToMandate?.choice) {
+    @if ($any(record.metadata.relatedToMandate)?.choice) {
       <sonar-field-description [label]="'Mandate' | translate" [field]="record.metadata.relatedToMandate">
         <ng-template let-relatedToMandate pTemplate="template">
           {{ relatedToMandate.mandate }}
@@ -158,7 +158,7 @@
         </ng-template>
       </sonar-field-description>
 
-      <sonar-field-description [label]="'Brief description of the mandate' | translate" [field]="record.metadata.relatedToMandate.briefDescription">
+      <sonar-field-description [label]="'Brief description of the mandate' | translate" [field]="$any(record.metadata.relatedToMandate).briefDescription">
         <ng-template let-briefDescription pTemplate="template">
           <ng-core-read-more [text]="briefDescription" />
         </ng-template>
@@ -166,8 +166,8 @@
     }
 
     <!-- Educational document -->
-    @if (record.metadata.educationalDocument?.choice) {
-      <sonar-field-description [label]="'Brief description of the report' | translate" [field]="record.metadata.educationalDocument.briefDescription">
+    @if ($any(record.metadata.educationalDocument)?.choice) {
+      <sonar-field-description [label]="'Brief description of the report' | translate" [field]="$any(record.metadata.educationalDocument).briefDescription">
         <ng-template let-briefDescription pTemplate="template">
           <ng-core-read-more [text]="briefDescription" />
         </ng-template>
@@ -183,11 +183,11 @@
   </div>
 
 
-  @if (user$ | async; as user) {
-    @if (record.metadata.documents && record.metadata.documents.length > 0 && user.is_moderator) {
+  @if (user(); as user) {
+    @if (record.metadata.documents && $any(record.metadata.documents).length > 0 && user.is_moderator) {
       <h4 translate>Linked documents</h4>
       <ul class="ui:list-none">
-        @for (document of record.metadata.documents; track $index) {
+        @for (document of $any(record.metadata.documents); track $index) {
           <li>
             <a katex [routerLink]="['/', 'records', 'documents', 'detail', document.pid]">
               {{ document.title[0].mainTitle | languageValue | async }}

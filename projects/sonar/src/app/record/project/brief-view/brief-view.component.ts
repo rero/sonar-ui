@@ -14,27 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
-import { ResultItem } from '@rero/ng-core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { DetailUrl, DateTranslatePipe, RecordData } from '@rero/ng-core';
 import { VALIDATION_STATUS_SEVERITY } from '../../../enum/validation';
+import { TagSeverity } from '../../../type/tagSeverityType';
+import { RouterLink } from '@angular/router';
+import { Bind } from 'primeng/bind';
+import { Tag } from 'primeng/tag';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
     templateUrl: './brief-view.component.html',
-    standalone: false
+    imports: [RouterLink, Bind, Tag, TranslatePipe, DateTranslatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BriefViewComponent implements ResultItem {
-  // Record data.
-  record: any;
+export class BriefViewComponent {
+  record = input.required<RecordData>();
+  type = input.required<string>();
+  detailUrl = input<DetailUrl>();
 
-  // Resource type.
-  type: string;
-
-  // Detail URL object.
-  detailUrl: { link: string, external: boolean };
-
-  get validationSeverity(): string | null {
-    return this.record?.metadata?.validation?.status
-      ? VALIDATION_STATUS_SEVERITY[this.record.metadata.validation.status]
+  get validationSeverity(): TagSeverity {
+    const meta = this.record()?.metadata as Record<string, unknown>;
+    const validation = meta?.validation as Record<string, unknown>;
+    const severity = validation?.status
+      ? VALIDATION_STATUS_SEVERITY[validation.status as string]
       : null;
+    return severity as TagSeverity;
   }
 }

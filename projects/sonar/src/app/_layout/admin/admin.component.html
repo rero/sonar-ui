@@ -15,46 +15,50 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 @if (ready()) {
-  @if(user) {
-    <div class="ui:bg-primary-600">
-      <div class="container ui:py-4 ui:px-8 ui:mb-2 ui:text-lg">
-        <a class="ui:text-white ui:no-underline" routerLink="">
-          SONAR <span class="ui:text-orange-400" translate>administration</span>
-        </a>
+  @if(user()) {
+    @if (!hideHeader()) {
+      <div class="ui:bg-primary-600">
+        <div class="container ui:py-4 ui:px-8 ui:mb-2 ui:text-lg">
+          <a class="ui:text-white ui:no-underline" routerLink="">
+            SONAR <span class="ui:text-orange-400" translate>administration</span>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="container ui:px-8 ui:mb-2">
-      <div class="ui:flex ui:justify-between">
-        <p-menubar [model]="items()" class="ui:z-20"></p-menubar>
-        <p-menubar [model]="userItems()" class="ui:z-20"></p-menubar>
+      <div class="container ui:px-8 ui:mb-2">
+        <div class="ui:flex ui:justify-between">
+          <p-menubar [model]="items()" class="ui:z-20"></p-menubar>
+          <p-menubar [model]="userItems()" class="ui:z-20"></p-menubar>
+        </div>
       </div>
-    </div>
+    }
     <div class="container ui:px-8 ui:mb-2">
       <router-outlet></router-outlet>
     </div>
-    <footer id="footer" class="ui:bg-surface-100 ui:mt-5">
-      <div class="container ui:px-8 ui:py-6">
-        <div class="ui:flex ui:gap-2 ui:justify-between">
-          <div>
-            <div class="ui:flex ui:gap-2">
-              <div>
+    @if (!hideHeader()) {
+      <footer id="footer" class="ui:bg-surface-100 ui:mt-5">
+        <div class="container ui:px-8 ui:py-6">
+          <div class="ui:flex ui:gap-2 ui:justify-between">
+            <div>
+              <div class="ui:flex ui:gap-2">
+                <div>
                   <a href="/help/" translate>Help</a>
-              </div>
-              <div>
+                </div>
+                <div>
                   <a href="https://sonar.ch" target="_blank" translate>Project and contact</a>
+                </div>
               </div>
             </div>
-          </div>
-          <div>
-            Powered by <a href="https://www.rero.ch" target="_blank">RERO</a>
+            <div>
+              Powered by <a href="https://www.rero.ch" target="_blank">RERO</a>
+            </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    }
   }
   @else {
     <div class="container ui:px-8 ui:mb-2">
-      <p-message class="ui:w-full" severity="error" showTransitionOptions="0ms">
+      <p-message class="ui:w-full" severity="error">
         {{ 'An error occurred, application cannot be loaded.' | translate }}
       </p-message>
     </div>

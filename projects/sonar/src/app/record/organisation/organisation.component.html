@@ -17,13 +17,13 @@
 
 <div class="ui:flex ui:flex-col ui:gap-2">
   <h4>
-    <a [routerLink]="detailUrl.link">{{ record.metadata.name }}</a>
+    <a [routerLink]="detailUrl()?.link">{{ record().metadata.name }}</a>
   </h4>
   <div>
-    <p-tag [value]="record.metadata.code" />
+    <p-tag [value]="$any(record().metadata.code)" />
   </div>
-  @if(record.metadata.description) {
-    @for(desc of record.metadata.description; track $index) {
+  @if(record().metadata.description) {
+    @for(desc of $any(record().metadata.description); track $index) {
       <p>
         <span class="ui:font-bold">{{ 'lang_' + desc.language | translate | ucfirst }}</span>
         <span [innerHtml]="desc.value | markdown"></span>

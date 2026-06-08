@@ -14,13 +14,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { DocumentFile } from '../document.interface';
+import { RouterLink } from '@angular/router';
+import { NgTemplateOutlet } from '@angular/common';
+import { Bind } from 'primeng/bind';
+import { Tag } from 'primeng/tag';
+import { ButtonDirective, Button } from 'primeng/button';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  selector: 'sonar-document-file',
-  templateUrl: './file.component.html',
-  standalone: false
+    selector: 'sonar-document-file',
+    templateUrl: './file.component.html',
+    imports: [RouterLink, NgTemplateOutlet, Bind, Tag, ButtonDirective, Button, TranslatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileComponent {
 
@@ -31,6 +38,10 @@ export class FileComponent {
   showDownload = input<boolean>(true);
 
   showExternalLink = input<boolean>(true);
+
+  showStatistics = input<boolean>(true);
+
+  statistics = input<unknown>();
 
   link? = input<string>();
 
