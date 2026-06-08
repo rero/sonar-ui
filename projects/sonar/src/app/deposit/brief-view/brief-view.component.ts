@@ -14,56 +14,57 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { TranslateDirective, TranslatePipe } from '@ngx-translate/core';
+import { DateTranslatePipe, DetailUrl, Nl2brPipe, RecordData, TruncateTextPipe } from '@rero/ng-core';
+import { TagSeverity } from '../../type/tagSeverityType';
+import { Bind } from 'primeng/bind';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { TableModule } from 'primeng/table';
+import { Tag } from 'primeng/tag';
 import { VALIDATION_STATUS_SEVERITY } from '../../enum/validation';
-import { UserService } from '../../user.service';
+import { AppStore, AppStoreType } from '../../store/app.store';
 
 @Component({
-  selector: 'sonar-deposit-brief-view',
-  templateUrl: './brief-view.component.html',
-  standalone: false
+    selector: 'sonar-deposit-brief-view',
+    templateUrl: './brief-view.component.html',
+    imports: [Bind, Button, Dialog, TableModule, TranslateDirective, Tag, RouterLink, TranslatePipe, DateTranslatePipe, Nl2brPipe, TruncateTextPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BriefViewComponent implements OnInit, OnDestroy {
+export class BriefViewComponent {
 
-  private userService: UserService = inject(UserService);
+  private store = inject(AppStore) as AppStoreType;
 
-  record: any;
-  user: any;
+  record = input.required<RecordData>();
+  type = input.required<string>();
+  detailUrl = input<DetailUrl>();
+
+  user = this.store.user;
 
   historyDialogVisible = signal(false);
 
+  private depositMetadata = computed(() => this.record().metadata as Record<string, unknown>);
+
   canContinueProcess = computed(() => {
-    if((['in_progress', 'ask_for_changes'].includes(this.record.metadata.status))) {
-      return this.userService.checkUserPid(this.record.metadata.user.pid);
-    };
+    const meta = this.depositMetadata();
+    if (['in_progress', 'ask_for_changes'].includes(meta.status as string)) {
+      return this.store.checkUserPid((meta.user as Record<string, unknown>).pid as string);
+    }
     return false;
   });
 
-  canReview = computed(() => this.record.metadata.status !== 'to_validate'
-    ? false
-    : this.user && this.user.is_moderator
+  canReview = computed(() =>
+    this.depositMetadata().status === 'to_validate' && !!this.user()?.is_moderator
   );
 
   canAccessToDocumentRedirect = computed(() =>
-    this.userService.hasRole(['moderator', 'admin', 'superuser'])
+    this.store.hasRole(['moderator', 'admin', 'superuser'])
   );
 
-  get statusSeverity(): string | null {
-    return this.record?.metadata?.status
-      ? VALIDATION_STATUS_SEVERITY[this.record.metadata.status]
-      : null;
-  }
-
-  private subscription: Subscription = new Subscription();
-
-  ngOnInit(): void {
-    this.subscription.add(this.userService.user$.subscribe((user) => {
-      this.user = user;
-    }));
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
+  statusSeverity = computed(() => {
+    const status = this.depositMetadata()?.status as string | undefined;
+    return (status ? VALIDATION_STATUS_SEVERITY[status] : null) as TagSeverity;
+  });
 }

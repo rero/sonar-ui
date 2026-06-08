@@ -22,15 +22,12 @@ import { map, startWith } from 'rxjs/operators';
 /**
  * Return the value of source array, corresponding of given language.
  */
-@Pipe({
-    name: 'languageValue',
-    standalone: false
-})
+@Pipe({ name: 'languageValue' })
 export class LanguageValuePipe implements PipeTransform {
 
   private translateService: TranslateService = inject(TranslateService);
 
-  transform(value: any[], ...args: any[]): Observable<string> {
+  transform(value: Record<string, string>[], ...args: string[]): Observable<string> {
     if (!value || value.length === 0) {
       return of('');
     }

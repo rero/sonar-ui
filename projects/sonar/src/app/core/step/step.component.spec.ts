@@ -14,45 +14,43 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
+import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
+import { AppConfigService } from '../../app-config.service';
 import { StepsModule } from 'primeng/steps';
-import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
+import { depositTestingService } from 'projects/sonar/tests/utils';
 import { DepositService } from '../../deposit/deposit.service';
-import { UserService } from '../../user.service';
 import { StepComponent } from './step.component';
 
 describe('StepComponent', () => {
   let component: StepComponent;
   let fixture: ComponentFixture<StepComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-    declarations: [StepComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
     imports: [
-      RouterModule.forRoot([]),
-      TranslateModule.forRoot({
-        loader: {
-          provide: BaseTranslateLoader,
-          useClass: TranslateLoader,
-          deps: [CoreConfigService, HttpClient]
-        }
-      }),
-      RecordModule,
-      StepsModule
+        RouterModule.forRoot([]),
+        TranslateModule.forRoot({
+            loader: {
+                provide: BaseTranslateLoader,
+                useClass: CoreTranslateLoader,
+            }
+        }),
+        StepsModule,
+        StepComponent
     ],
     providers: [
-      { provide: UserService, useValue: userTestingService },
-      { provide: DepositService, useValue: depositTestingService },
-      provideHttpClientTesting(),
-      provideHttpClient(withInterceptorsFromDi())
+        { provide: CoreConfigService, useClass: AppConfigService },
+        { provide: DepositService, useValue: depositTestingService },
+        provideHttpClientTesting(),
+        provideHttpClient(withInterceptorsFromDi())
     ]
 }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(StepComponent);

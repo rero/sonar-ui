@@ -24,7 +24,7 @@ export const environment = {
   globalViewName: 'global',
   languages: ['fr', 'de', 'it', 'en'],
   translationsURLs: [
-    'static/sonar-ui/browser/assets/i18n/${lang}.json',
+    '/static/node_modules/@rero/sonar-ui/dist/sonar/browser/assets/i18n/${lang}.json',
     '/api/translations/${lang}.json'
   ]
 };

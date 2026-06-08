@@ -17,19 +17,19 @@
 
 <div class="ui:flex ui:flex-col ui:gap-2">
   <h5>
-    <a [routerLink]="detailUrl.link">{{ record.metadata.name }}</a>
+    <a [routerLink]="detailUrl()?.link">{{ record().metadata.name }}</a>
   </h5>
   <div class="ui:flex ui:gap-1">
-    <p-tag [value]="record.metadata.organisation.name" />
+    <p-tag [value]="$any(record().metadata.organisation).name" />
     @if(validationSeverity) {
-      <p-tag [severity]="validationSeverity" [value]="record.metadata.validation.status | translate" />
+      <p-tag [severity]="validationSeverity" [value]="$any(record().metadata.validation).status | translate" />
     }
   </div>
   <span>
     <i class="fa fa-calendar"></i>&nbsp;
-    {{ record.metadata.startDate | dateTranslate: 'mediumDate' }} -
-    @if(record.metadata?.endDate) {
-      {{ record.metadata.endDate | dateTranslate: 'mediumDate' }}
+    {{ $any(record().metadata.startDate) | dateTranslate: 'mediumDate' }} -
+    @if(record().metadata?.endDate) {
+      {{ $any(record().metadata.endDate) | dateTranslate: 'mediumDate' }}
     } @else {
       ?
     }

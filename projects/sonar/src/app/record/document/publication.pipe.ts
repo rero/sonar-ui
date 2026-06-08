@@ -17,13 +17,18 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
+type PartOf = {
+  document?: { title?: string };
+  numberingYear?: string;
+  numberingVolume?: string;
+  numberingIssue?: string;
+  numberingPages?: string;
+}
+
 /**
  * Pipe for displaying publication for a document
  */
-@Pipe({
-    name: 'publication',
-    standalone: false
-})
+@Pipe({ name: 'publication' })
 export class PublicationPipe implements PipeTransform {
 
   private translateService: TranslateService = inject(TranslateService);
@@ -34,7 +39,7 @@ export class PublicationPipe implements PipeTransform {
    * @param value `partOf` object.
    * @returns Text representing the publication.
    */
-  transform(value: any): string {
+  transform(value: PartOf): string {
     const journal: string[] = [];
 
     if (value.document && value.document.title) {

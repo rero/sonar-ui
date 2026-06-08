@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CoreConfigService, TranslateLoader } from '@rero/ng-core';
+import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { CoreTranslateLoader } from '@rero/ng-core';
 import { PublicationPipe } from './publication.pipe';
 
 let pipe: PublicationPipe;
@@ -26,23 +24,12 @@ let pipe: PublicationPipe;
 describe('PublicationPipe', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PublicationPipe],
-      providers: [
-        PublicationPipe,
-        TranslateService,
-        provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
-      ],
+      providers: [PublicationPipe],
       imports: [
         TranslateModule.forRoot({
-          loader: {
-            provide: BaseTranslateLoader,
-            useClass: TranslateLoader,
-            deps: [CoreConfigService, HttpClient]
-          },
-          isolate: false
-        })
-      ]
+          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
+        }),
+      ],
     });
 
     pipe = TestBed.inject(PublicationPipe);

@@ -15,5 +15,5 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <h5>
-  <a [routerLink]="detailUrl.link">{{ record.metadata.name | languageValue | async }}</a>
+  <a [routerLink]="detailUrl()?.link">{{ $any(record().metadata.name) | languageValue | async }}</a>
 </h5>

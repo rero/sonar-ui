@@ -15,12 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { inject, Injectable } from '@angular/core';
-import { TranslateLoader as NgCoreTranslateLoader } from '@rero/ng-core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { CoreTranslateLoader as NgCoreTranslateLoader } from '@rero/ng-core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppConfigService } from './app-config.service';
-import { UserService } from './user.service';
-import { HttpClient } from '@angular/common/http';
+import { AppStore } from './store/app.store';
+import { UserOrganisation } from './models';
 
 @Injectable({
   providedIn: 'root',
@@ -28,34 +29,28 @@ import { HttpClient } from '@angular/common/http';
 export class AppTranslateLoader extends NgCoreTranslateLoader {
 
   protected coreConfigService: AppConfigService = inject(AppConfigService);
-  protected userService: UserService = inject(UserService);
-  protected http: HttpClient = inject(HttpClient);
+  private readonly store = inject(AppStore);
+  private readonly organisation$ = toObservable(this.store.organisation);
 
-  /**
-   * Get Translation
-   * @param lang - current language string
-   * @returns Object translation
-   */
-  getTranslation(lang: string): Observable<any> {
-    return combineLatest([this.userService.user$, super.getTranslation(lang)]).pipe(
-      map(([user, translation]) => {
-        if (user) {
+  getTranslation(lang: string): Observable<Record<string, string>> {
+    const sources: [Observable<UserOrganisation | null>, Observable<Record<string, string>>] = [
+      this.organisation$,
+      super.getTranslation(lang) as Observable<Record<string, string>>,
+    ];
+    return combineLatest(sources).pipe(
+      map(([organisation, translation]) => {
+        if (organisation) {
           const bibLanguage = this.coreConfigService.languagesMap.find(
             (mapping: {code: string, bibCode: string}) => mapping.code === lang
-          ).bibCode;
+          )?.bibCode;
           [1, 2, 3].forEach((id: number) => {
             const key = `documentsCustomField${id}`;
-            if ((key in user.organisation) && ('label' in user.organisation[key])) {
-              const { label } = user.organisation[key];
-              const entry = label.find((lab: any) => lab.language === bibLanguage);
-              const customKey = `Custom field ${id}`;
-              if (entry) {
-                translation[customKey] = entry.value;
-              } else {
-                // If we do not have a value for the selected language,
-                // we take the first value in the array.
-                translation[customKey] = label[0].value;
-              }
+            if ((key in organisation) && ('label' in (organisation[key] as Record<string, unknown>))) {
+              const { label } = organisation[key] as { label: { language: string; value: string }[] };
+              const entry = label.find((lab) => lab.language === bibLanguage);
+              const value = entry ? entry.value : label[0].value;
+              translation[`Custom field ${id}`] = value;
+              translation[`customField${id}`] = value;
             }
           });
         }

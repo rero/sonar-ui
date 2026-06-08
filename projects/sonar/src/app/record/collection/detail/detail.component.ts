@@ -14,14 +14,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { RecordData } from '@rero/ng-core';
+import { TranslateDirective } from '@ngx-translate/core';
+import { UploadFilesComponent } from '../../files/upload-files/upload-files.component';
+import { AsyncPipe } from '@angular/common';
+import { MarkdownPipe } from '@rero/ng-core';
+import { LanguageValuePipe } from '../../../pipe/language-value.pipe';
 
 @Component({
-  templateUrl: './detail.component.html',
-  standalone: false
+    templateUrl: './detail.component.html',
+    imports: [TranslateDirective, UploadFilesComponent, AsyncPipe, MarkdownPipe, LanguageValuePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailComponent {
-  /** Observable resolving record data */
-  record$: Observable<any>;
+  record = input.required<RecordData>();
+  type = input<string>();
 }

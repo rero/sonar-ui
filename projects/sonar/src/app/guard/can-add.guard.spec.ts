@@ -14,28 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { inject, TestBed } from '@angular/core/testing';
-import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
-import { DepositService } from '../deposit/deposit.service';
-import { UserService } from '../user.service';
-import { CanAddGuard } from './can-add.guard';
+import { canAddGuard } from './can-add.guard';
 
-describe('CanAddGuard', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-    providers: [
-      CanAddGuard,
-      { provide: UserService, useValue: userTestingService },
-      { provide: DepositService, useValue: depositTestingService },
-      provideHttpClient(withInterceptorsFromDi()),
-      provideHttpClientTesting()
-    ]
-});
+describe('canAddGuard', () => {
+  it('should be a function', () => {
+    expect(canAddGuard).toBeTruthy();
+    expect(typeof canAddGuard).toBe('function');
   });
-
-  it('should create can add guard', inject([CanAddGuard], (guard: CanAddGuard) => {
-    expect(guard).toBeTruthy();
-  }));
 });

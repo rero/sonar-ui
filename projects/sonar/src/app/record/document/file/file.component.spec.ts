@@ -1,4 +1,4 @@
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 /*
  * SONAR User Interface
  * Copyright (C) 2021 RERO
@@ -15,10 +15,10 @@ import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
+import { CoreTranslateLoader } from '@rero/ng-core';
 import { FileComponent } from './file.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
@@ -26,26 +26,24 @@ describe('FileComponent', () => {
   let component: FileComponent;
   let fixture: ComponentFixture<FileComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-    declarations: [FileComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
     imports: [
-      RouterModule.forRoot([]),
-      TranslateModule.forRoot({
-        loader: {
-          provide: BaseTranslateLoader,
-          useClass: TranslateLoader,
-          deps: [CoreConfigService, HttpClient]
-        },
-      }),
-      RecordModule
+        RouterModule.forRoot([]),
+        TranslateModule.forRoot({
+            loader: {
+                provide: BaseTranslateLoader,
+                useClass: CoreTranslateLoader,
+            },
+        }),
+        FileComponent
     ],
     providers: [
-      provideHttpClient(withInterceptorsFromDi()),
-      provideHttpClientTesting()
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
     ]
 }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FileComponent);

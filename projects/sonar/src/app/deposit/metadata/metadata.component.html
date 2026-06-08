@@ -14,10 +14,10 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-@if(deposit()) {
-  <sonar-deposit-step [maxStep]="maxStep()" [(steps)]="steps" />
+@if(store.deposit()) {
+  <sonar-deposit-step [maxStep]="store.maxStep()" [steps]="steps()" />
   @if(currentStep() === 'diffusion') {
-    <sonar-deposit-review [deposit]="deposit()" />
+    <sonar-deposit-review [deposit]="store.deposit()!" />
   }
 
   <!--- form -->
@@ -29,7 +29,7 @@
       <p-tab value="json">
         {{ 'JSON' | translate }}
       </p-tab>
-      @if(mainFile()) {
+      @if(store.mainFile()) {
         <p-tab value="files">
           {{ 'Files' | translate }}
         </p-tab>
@@ -38,22 +38,19 @@
     <p-tabpanels>
       <p-tabpanel value="editor">
         <sonar-deposit-editor
-          [deposit]="deposit()"
           [currentStep]="currentStep()"
           [steps]="steps()"
-          [mainFile]="mainFile()"
-          (depositChanged)="updateDeposit($event)"
         />
       </p-tabpanel>
       <p-tabpanel value="json">
-        <pre class="p-3" [innerHTML]="deposit() | json | highlightJson"></pre>
+        <pre class="p-3" [innerHTML]="store.deposit() | json | highlightJson"></pre>
       </p-tabpanel>
-      @if(mainFile()) {
+      @if(store.mainFile()) {
         <p-tabpanel value="files">
           <sonar-deposit-files
-            [mainFile]="mainFile()"
-            [depositPid]="deposit().pid"
-            [additionalFiles]="additionalFiles()"
+            [mainFile]="store.mainFile()!"
+            [depositPid]="store.deposit()!.pid"
+            [additionalFiles]="store.additionalFiles()"
           />
         </p-tabpanel>
       }

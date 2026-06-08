@@ -58,10 +58,8 @@ class CustomEncoder implements HttpParameterCodec {
 
 @Injectable()
 export class HttpInterceptor implements BaseInterceptor {
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // encode URL parameters
     // angular does not do it by default,
     // see: https://github.com/angular/angular/issues/18261 for more details

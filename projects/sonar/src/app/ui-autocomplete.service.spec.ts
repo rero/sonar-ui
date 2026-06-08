@@ -18,6 +18,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreConfigService } from '@rero/ng-core';
+import { AppConfigService } from './app-config.service';
 import { UIAutocompleteService } from './ui-autocomplete.service';
 
 describe('UIAutocompleteService', () => {
@@ -30,7 +32,8 @@ describe('UIAutocompleteService', () => {
       ],
       providers: [
         provideHttpClientTesting(),
-        provideHttpClient()
+        provideHttpClient(),
+        { provide: CoreConfigService, useClass: AppConfigService },
       ]
     });
     service = TestBed.inject(UIAutocompleteService);

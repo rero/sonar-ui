@@ -14,19 +14,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { IContribution } from '../contribution.interface';
+import { NgClass } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { IdentifierComponent } from '../../identifier/identifier.component';
+import { Tooltip } from 'primeng/tooltip';
+import { TranslatePipe } from '@ngx-translate/core';
+import { JoinPipe } from '../../../core/join.pipe';
+import { FaIconClassPipe } from '../../../pipe/fa-icon-class.pipe';
+
+type MeetingField = 'number' | 'date' | 'place';
+const MEETING_FIELDS: MeetingField[] = ['number', 'date', 'place'];
 
 @Component({
-  selector: 'sonar-contribution',
-  templateUrl: './contribution.component.html',
-  standalone: false
+    selector: 'sonar-contribution',
+    templateUrl: './contribution.component.html',
+    imports: [NgClass, RouterLink, IdentifierComponent, Tooltip, TranslatePipe, JoinPipe, FaIconClassPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContributionComponent {
 
   contributor = input.required<IContribution>();
 
-  view? = input<string>();
+  view = input<string>();
 
   viewType = input<'brief' | 'detail'>('brief');
 
@@ -34,13 +45,10 @@ export class ContributionComponent {
 
   meetingInfo = computed(() => {
     const { agent } = this.contributor();
-    const meeting = [];
-    ['number', 'date', 'place'].forEach((key: string) => {
-      if (key in agent) {
-        meeting.push(agent[key]);
-      }
-    });
+    const parts = MEETING_FIELDS
+      .filter(key => agent[key] != null)
+      .map(key => agent[key] as string);
 
-    return meeting.length > 0 ? meeting.join(' : ') : null;
+    return parts.length > 0 ? parts.join(' : ') : null;
   });
 }

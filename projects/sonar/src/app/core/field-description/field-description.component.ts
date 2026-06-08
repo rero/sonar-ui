@@ -14,17 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, computed, contentChildren, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, contentChildren, input } from '@angular/core';
 import { PrimeTemplate } from 'primeng/api';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
-  selector: 'sonar-field-description',
-  templateUrl: './field-description.component.html',
-  standalone: false
+    selector: 'sonar-field-description',
+    templateUrl: './field-description.component.html',
+    imports: [NgTemplateOutlet],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FieldDescriptionComponent {
   label = input<string>();
-  field = input<any>();
+  field = input<unknown>();
   type = computed(() => this.getType());
 
   templates = contentChildren(PrimeTemplate);

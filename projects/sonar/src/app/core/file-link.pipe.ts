@@ -20,10 +20,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 /**
  * Generate a file link.
  */
-@Pipe({
-    name: 'fileLink',
-    standalone: false
-})
+@Pipe({ name: 'fileLink' })
 export class FileLinkPipe implements PipeTransform {
 
   public sanitizer: DomSanitizer = inject(DomSanitizer);
@@ -37,7 +34,7 @@ export class FileLinkPipe implements PipeTransform {
    * @param fileType If we want to have "files" or "preview"
    * @return Generated URL.
    */
-  transform(key: any, resourceType: string, resourceId: string, fileType = 'files'): SafeResourceUrl {
+  transform(key: string, resourceType: string, resourceId: string, fileType = 'files'): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(`${resourceType}/${resourceId}/${fileType}/${key}`);
   }
 }

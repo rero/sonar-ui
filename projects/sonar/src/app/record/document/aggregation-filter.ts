@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { TranslateService } from '@ngx-translate/core';
+import { Bucket } from '@rero/ng-core';
 import { Observable, Subscriber } from 'rxjs';
+
+type RawAggregations = Record<string, { buckets?: Bucket[] } & Record<string, unknown>>;
 
 export class AggregationFilter {
   static translateService: TranslateService;
@@ -29,8 +32,8 @@ export class AggregationFilter {
    * @param aggregations Object containing the aggregations.
    * @returns Observable resolving aggregations.
    */
-  static filter(aggregations: object): Observable<any> {
-    return new Observable((observer: Subscriber<any>): void => {
+  static filter(aggregations: RawAggregations): Observable<RawAggregations> {
+    return new Observable((observer: Subscriber<RawAggregations>): void => {
       observer.next(AggregationFilter.aggregationFilter(aggregations));
       AggregationFilter.translateService.onLangChange.subscribe(() => {
         observer.next(AggregationFilter.aggregationFilter(aggregations));
@@ -44,26 +47,26 @@ export class AggregationFilter {
    * @param aggregations Object containing the aggregations.
    * @returns Filtered aggregations.
    */
-  static aggregationFilter(aggregations: any) {
-    const aggs = {};
+  static aggregationFilter(aggregations: RawAggregations): RawAggregations {
+    const aggs: RawAggregations = {};
 
     Object.keys(aggregations).forEach(aggregation => {
       // Translate values for document type
       if (aggregation === 'document_type') {
-        aggregations[aggregation].buckets.forEach((bucket: any) => {
+        aggregations[aggregation].buckets?.forEach((bucket: Bucket) => {
           bucket.name = this.translateService.instant('document_type_' + bucket.key);
         });
       }
 
       if (aggregation === 'status') {
-        aggregations[aggregation].buckets.forEach((bucket: any) => {
+        aggregations[aggregation].buckets?.forEach((bucket: Bucket) => {
           bucket.name = this.translateService.instant('deposit_status_' + bucket.key);
         });
       }
 
       if (aggregation.indexOf('__') > -1) {
         const splitted = aggregation.split('__');
-        if (AggregationFilter.translateService.currentLang === splitted[1]) {
+        if (AggregationFilter.translateService.getCurrentLang() === splitted[1]) {
           aggs[aggregation] = aggregations[aggregation];
         }
       } else {

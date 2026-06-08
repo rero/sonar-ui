@@ -19,8 +19,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiService, RecordService } from '@rero/ng-core';
-import { ISuggestionItem } from '@rero/ng-core/lib/record/editor/formly/primeng/remote-autocomplete/remote-autocomplete.interface';
-import { IQueryOptions } from '@rero/ng-core/lib/record/editor/formly/primeng/remote-autocomplete/remote-autocomplete.interface';
+import type { IQueryOptions, ISuggestionItem } from '@rero/ng-core';
 import { catchError, map, Observable, of } from 'rxjs';
 
 @Injectable({
@@ -33,7 +32,7 @@ export class UIAutocompleteService {
   private apiService: ApiService = inject(ApiService);
   private recordService: RecordService = inject(RecordService);
 
-  public getSuggestions(query: string, queryOptions: IQueryOptions = {}, currentPid: string): Observable<ISuggestionItem[]> {
+  public getSuggestions(query: string, queryOptions: IQueryOptions = {}, _currentPid: string): Observable<ISuggestionItem[]> {
     if (!query) {
       return of([]);
     }
@@ -41,25 +40,25 @@ export class UIAutocompleteService {
     if (queryOptions.suggest) {
       url = `${queryOptions.suggest}?resource=${queryOptions.type}&field=${queryOptions.field}&q=${query}`;
     }
-    return this.httpClient.get(url).pipe(
-        map((results: any) => {
-          let toReturn = [];
-          if(results.hits) {
-            toReturn = results.hits.hits.map((hit: any) => {
+    return this.httpClient.get<{ hits?: { hits: { id: string; metadata: Record<string, unknown> }[] } } | string[]>(url).pipe(
+        map((results) => {
+          let toReturn: ISuggestionItem[] = [];
+          if ('hits' in results && results.hits) {
+            toReturn = results.hits.hits.map((hit) => {
               return {
-                label: hit.metadata[queryOptions.label],
+                label: hit.metadata[queryOptions.label] as string,
                 value: this.apiService.getRefEndpoint(queryOptions.type, hit.id)
               };
             });
-          } else {
-            toReturn = results.map((hit: any) => {
+          } else if (Array.isArray(results)) {
+            toReturn = (results as string[]).map((hit) => {
             return {
               label: hit,
              value: hit
             };
           });
           }
-          if(queryOptions.allowAdd == true && !results.includes(query)) {
+          if(queryOptions.allowAdd == true && (!Array.isArray(results) || results.length === 0)) {
             const label = `<span>${this.translateService.instant("New")}:</span>&nbsp;${query}`;
             toReturn.push({label: label, value: query});
           }
@@ -84,9 +83,9 @@ export class UIAutocompleteService {
     }
     const pid = url.pop();
     return this.recordService
-      .getRecord(queryOptions.type, pid, 1)
+      .getRecord(queryOptions.type, pid, { resolve: 1 })
       .pipe(
-        map((data: any) => this.formatValue(data.metadata[queryOptions.label]))
+        map((data: { metadata: Record<string, unknown> }) => this.formatValue(data.metadata[queryOptions.label] as string))
       );
   }
 

@@ -14,66 +14,65 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { tap } from 'rxjs/operators';
-import { DepositService } from '../deposit.service';
+import { Bind } from 'primeng/bind';
+import { Button } from 'primeng/button';
+import { StepComponent } from '../../core/step/step.component';
+import { UploadFilesComponent } from '../../record/files/upload-files/upload-files.component';
+import { DepositStore, DepositStoreType } from '../deposit.store';
 
 @Component({
     selector: 'sonar-deposit-upload',
     templateUrl: './upload.component.html',
-    standalone: false
+    imports: [StepComponent, Bind, Button, RouterLink, UploadFilesComponent, TranslatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UploadComponent implements OnInit {
+export class UploadComponent {
 
-  private depositService = inject(DepositService);
+  private store = inject(DepositStore) as DepositStoreType;
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private spinner = inject(NgxSpinnerService);
 
-  deposit = signal(null);
-  maxStep = computed(() => this.deposit() ? this.deposit().step : 'metadata');
+  deposit = this.store.deposit;
+  maxStep = this.store.maxStep;
 
-  ngOnInit(): void {
-    if (this.route.snapshot.routeConfig.path == 'deposit/create') {
+  constructor() {
+    const route = inject(ActivatedRoute);
+    if (route.snapshot.data['mode'] === 'create') {
       this.createEmptyDeposit();
-    } else if (this.route.snapshot?.params?.id) {
-      this.depositService
-        .get(this.route.snapshot.params.id)
-        .pipe(
-          tap((result) => {
-            this.spinner.show();
-            this.deposit.set(result.metadata);
-            if (this.depositService.canAccessDeposit(this.deposit()) === false) {
-              this.router.navigate([
-                'deposit',
-                this.deposit().pid,
-                'confirmation',
-              ]);
+    } else if (route.snapshot.params?.id) {
+      this.spinner.show();
+      this.store.load(route.snapshot.params.id)
+        .pipe(takeUntilDestroyed())
+        .subscribe({
+          next: () => {
+            this.spinner.hide();
+            if (!this.store.canAccess()) {
+              this.router.navigate(['deposit', this.store.deposit()!.pid, 'confirmation']);
             }
-          })
-        )
-        .subscribe(() => this.spinner.hide());
+          },
+          error: () => this.spinner.hide(),
+        });
     }
   }
 
-  /**
-   * Create a deposit without associated files.
-   * @param event - Event
-   */
   createEmptyDeposit(): void {
-    this.depositService.create().subscribe((deposit: any) => {
-      this.router.navigate(['deposit', deposit.id, 'files']);
-    });
+    this.store.create()
+      .pipe(takeUntilDestroyed())
+      .subscribe((result) => {
+        this.router.navigate(['deposit', result.metadata.pid, 'files']);
+      });
   }
 
-  /**
-   * Save files metadata and go to next step.
-   * @param event Dom event
-   */
   saveAndContinue(event: Event): void {
     event.preventDefault();
-    this.router.navigate(['deposit', this.deposit().pid, 'metadata']);
+    const deposit = this.deposit();
+    if (deposit) {
+      this.router.navigate(['deposit', deposit.pid, 'metadata']);
+    }
   }
 }

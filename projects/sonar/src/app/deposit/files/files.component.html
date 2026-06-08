@@ -15,11 +15,11 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <h4 translate>Main file</h4>
-{{ mainFile().key }} ({{ mainFile().size | filesize }})
+{{ mainFile().key }} ({{ $any(mainFile().size) | filesize }})
 <p-button
   href="#"
   icon="fa fa-eye"
-  [text]="true"
+  variant="text"
   (onClick)="
     $event.preventDefault();
     previewFileKey.set(mainFile().key);
@@ -30,7 +30,7 @@
   [href]="mainFile().key | fileLink : 'deposits' : depositPid() : 'files'"
   pButton
   target="_blank"
-  [text]="true"
+  text
 ><i class="fa fa-download"></i></a>
 
 @if(additionalFiles()?.length > 0) {
@@ -38,19 +38,19 @@
     <h4 translate>Additional files</h4>
     @for(file of additionalFiles(); track file.key) {
       <div>
-        {{ file.key }} ({{ file.size | filesize }})
+        {{ file.key }} ({{ $any(file.size) | filesize }})
         <p-button
           href="#"
           icon="fa fa-eye"
-          [text]="true"
+          variant="text"
           (onClick)="previewFileKey.set(file.key); isShowPreview.set(true)"
         />
-        <p-button
+        <a
           [href]="file.key | fileLink : 'deposits' : depositPid() : 'files'"
-          [text]="true"
+          pButton
+          text
           target="_blank"
-          icon="fa fa-download"
-        ></p-button>
+        ><i class="fa fa-download"></i></a>
       </div>
     }
   </div>

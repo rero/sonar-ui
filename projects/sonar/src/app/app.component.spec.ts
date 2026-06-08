@@ -14,33 +14,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { TestBed, waitForAsync } from '@angular/core/testing';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
+import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
+import { AppConfigService } from './app-config.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      imports: [
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+    imports: [
         RouterModule.forRoot([]),
-        RecordModule,
         TranslateModule.forRoot({
-          loader: {
-            provide: BaseTranslateLoader,
-            useClass: TranslateLoader,
-            deps: [CoreConfigService, HttpClient]
-          }
-        })
-      ],
-      providers: [
+            loader: {
+                provide: BaseTranslateLoader,
+                useClass: CoreTranslateLoader,
+            }
+        }),
+        AppComponent
+    ],
+    providers: [
+        { provide: CoreConfigService, useClass: AppConfigService }, MessageService, ConfirmationService,
         provideHttpClient(withInterceptorsFromDi())
-      ]
-    }).compileComponents();
-  }));
+    ]
+}).compileComponents();
+  });
 
   afterEach(() => {
     TestBed.resetTestingModule();

@@ -15,4 +15,4 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<h4>{{ record.metadata.name | languageValue | async }}</h4>
+<h4>{{ $any(record().metadata.name) | languageValue | async }}</h4>

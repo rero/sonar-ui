@@ -33,7 +33,7 @@
       </a>
     } @else {
       @if(showPreview() && file().links.preview) {
-        <div class="ui:hover:cursor-pointer" (click)="preview(file()); $event.preventDefault()">
+        <div class="ui:hover:cursor-pointer" tabindex="0" (click)="preview(file()); $event.preventDefault()" (keyup.enter)="preview(file()); $event.preventDefault()">
           <ng-container [ngTemplateOutlet]="thumbnail" />
         </div>
       } @else {
@@ -56,13 +56,13 @@
   }
   <div class="ui:flex ui:gap-1 ui:justify-center">
     @if(showExternalLink() && file().links.external) {
-      <a pButton [text]="true" [href]="file().links.external" target="_blank"><i class="fa fa-external-link"></i></a>
+      <a pButton text [href]="file().links.external" target="_blank"><i class="fa fa-external-link"></i></a>
     }
     @if(showPreview() && file().links.preview) {
-      <p-button [text]="true" icon="fa fa-eye" (onClick)="preview(file())" />
+      <p-button variant="text" icon="fa fa-eye" (onClick)="preview(file())" />
     }
     @if (showDownload() && file().links.download) {
-      <a pButton [text]="true" icon="fa fa-download" [href]="file().links.download" download>
+      <a pButton text icon="fa fa-download" [href]="file().links.download" download>
       </a>
     }
   </div>

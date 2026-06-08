@@ -51,7 +51,7 @@ export class AppConfigService extends CoreConfigService {
     },
   ];
 
-  settings: { document_identifier_link: any } | null;
+  settings: { document_identifier_link: unknown } | null;
 
   /**
    * Constructor.

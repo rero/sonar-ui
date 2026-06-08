@@ -15,22 +15,22 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <div class="ui:flex ui:flex-col ui:gap-2">
-  <h4>{{ record.metadata.first_name }} {{ record.metadata.last_name }}</h4>
+  <h4>{{ record().metadata.first_name }} {{ record().metadata.last_name }}</h4>
   <div>
-    <p-tag [value]="'role_' + record.metadata.role | translate" />
+    <p-tag [value]="'role_' + record().metadata.role | translate" />
   </div>
   <div class="ui:flex ui:gap-2">
-    <span>{{ record.metadata.email }}</span>
-    @if (record.metadata.organisation) {
-      <span>- {{ record.metadata.organisation.name }}</span>
+    <span>{{ record().metadata.email }}</span>
+    @if (record().metadata.organisation) {
+      <span>- {{ $any(record().metadata.organisation).name }}</span>
     } @else {
       <span class="text-info ui:ml-2">
         <i class="fa fa-info-circle"></i>
         {{ 'This user has no organisation' | translate }}
       </span>
     }
-    @if (record.metadata.subdivision) {
-      <span>- {{ record.metadata.subdivision.name | languageValue | async }}</span>
+    @if (record().metadata.subdivision) {
+      <span>- {{ $any(record().metadata.subdivision).name | languageValue | async }}</span>
     }
   </div>
 </div>

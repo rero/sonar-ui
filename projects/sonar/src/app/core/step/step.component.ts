@@ -14,15 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component, computed, inject, input, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { MenuItem } from 'primeng/api';
+import { Steps } from 'primeng/steps';
+import { Bind } from 'primeng/bind';
+import { Divider } from 'primeng/divider';
 
 @Component({
     selector: 'sonar-deposit-step',
     templateUrl: './step.component.html',
-    standalone: false
+    imports: [Steps, Bind, Divider],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StepComponent {
 

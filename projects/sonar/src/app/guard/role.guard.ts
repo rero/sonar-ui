@@ -14,42 +14,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
-import { UserService } from '../user.service';
+import { AppStore } from '../store/app.store';
 
-@Injectable({
-  providedIn: 'root'
-})
-/** This guard check if the current logged user has a specific role. The role to check should be passed
- *  using path.data.role (see below).
+/** Check if the current logged user has a specific role. The role to check should be passed
+ *  using route.data.role.
  *
  *  USAGE:
- *  { path: 'new',
- *    component: MyComponent,
- *    canActivate: [RoleGuard],
- *    data: {
- *      role: 'xxx'
- *    }
- *  }
+ *  { path: 'new', component: MyComponent, canActivate: [roleGuard], data: { role: 'xxx' } }
  */
-export class RoleGuard  {
-
-  private userService: UserService = inject(UserService);
-
-  /**
-   * Check if the current logged user as at least a specific role.
-   *
-   * @param next Activated route.
-   * @param state Router state.
-   * @return Observable emitting boolean.
-   */
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.userService.user$.pipe(
-      filter(user => user !== null), // Because we don't take care of first null value for taking the decision.
-      map(() => this.userService.is(next.data.role || 'user'))
-    );
-  }
-}
+export const roleGuard = (next: ActivatedRouteSnapshot) => {
+  const store = inject(AppStore);
+  return toObservable(store.user).pipe(
+    filter(user => user !== null),
+    map(() => store.is(next.data.role || 'user'))
+  );
+};

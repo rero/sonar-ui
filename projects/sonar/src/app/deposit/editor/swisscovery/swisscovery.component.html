@@ -17,9 +17,9 @@
 <div class="ui:flex ui:flex-col ui:gap-2">
   <p-select
     appendTo="body"
-    styleClass="ui:w-full"
+    class="ui:w-full"
     [options]="types()"
-    [(ngModel)]="scType"
+    [ngModel]="scType()" (ngModelChange)="scType.set($event)"
     optionLabel="name"
     [placeholder]="'Search in ...' | translate"
   />
@@ -27,7 +27,7 @@
     <input
       type="text"
       pAutoFocus
-      [(ngModel)]="searchTerms"
+      [ngModel]="searchTerms()" (ngModelChange)="searchTerms.set($event)"
       (keyup.enter)="searchSwisscovery()"
       pInputText
       placeholder="Keyword"
@@ -64,10 +64,9 @@
       </div>
     } @else {
       <p-message
-        [text]="'No result found' | translate"
         severity="warn"
-        showTransitionOptions="0ms"
-      />
+       
+      >{{ 'No result found' | translate }}</p-message>
     }
   }
 </div>

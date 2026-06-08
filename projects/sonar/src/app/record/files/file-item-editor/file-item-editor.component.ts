@@ -15,72 +15,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FormlyFormOptions } from '@ngx-formly/core';
+import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { FormlyJsonschema } from '@ngx-formly/core/json-schema';
 import { JSONSchemaService, processJsonSchema, resolve$ref } from '@rero/ng-core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { FormlyModule } from '@ngx-formly/core';
+import { Bind } from 'primeng/bind';
+import { Button } from 'primeng/button';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  selector: 'sonar-file-item-editor',
-  templateUrl: './file-item-editor.component.html',
-  standalone: false
+    selector: 'sonar-file-item-editor',
+    templateUrl: './file-item-editor.component.html',
+    imports: [FormlyModule, Bind, Button, TranslatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FileItemEditorComponent implements OnInit{
+export class FileItemEditorComponent {
 
-  formlyJSONSchema: FormlyJsonschema = inject(FormlyJsonschema);
-  jsonschemaService: JSONSchemaService = inject(JSONSchemaService);
-  dynamicDialogConfig: DynamicDialogConfig = inject(DynamicDialogConfig);
-  dynamicDialogRef: DynamicDialogRef = inject(DynamicDialogRef);
+  private readonly formlyJSONSchema = inject(FormlyJsonschema);
+  private readonly jsonschemaService = inject(JSONSchemaService);
+  private readonly dynamicDialogConfig = inject(DynamicDialogConfig);
+  private readonly dynamicDialogRef = inject(DynamicDialogRef);
 
- // editor JSONSchema
-  schema:any;
- // the formly form
-  form: FormGroup = new FormGroup({});
-  file: any;
-  // editor value
-  model: any = {};
-  // editor options
-  options: FormlyFormOptions = {};
-  // formly editor fields
-  fields = [];
+  readonly form = new FormGroup({});
+  readonly options: FormlyFormOptions = {};
+  readonly model = signal<Record<string, unknown>>(
+    this.dynamicDialogConfig.data.file.metadata as Record<string, unknown>
+  );
+  readonly fields = signal<FormlyFieldConfig[]>(this.createForm());
 
-  ngOnInit(): void {
-    this.schema = this.dynamicDialogConfig.data.schema;
-    this.file = this.dynamicDialogConfig.data.file;
-    this.model = this.file.metadata;
-    this.fields = this.createForm();
-  }
-  /**
-   * Create the form editor.
-   *
-   * @param schema editor JSONSchema
-   * @returns the formly fields.
-   */
-  private createForm() {
-    const schema = processJsonSchema(resolve$ref(this.schema, this.schema.properties));
-    // form configuration
-    const editorConfig = {
-      longMode: false,
-    };
+  private createForm(): FormlyFieldConfig[] {
+    const schema = this.dynamicDialogConfig.data.schema as Record<string, unknown>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const processedSchema = processJsonSchema(resolve$ref(schema as any, (schema.properties as any)));
+    const editorConfig = { longMode: false };
     return [
-      this.formlyJSONSchema.toFieldConfig(schema, {
-        map: (field: any, fieldSchema: any) => {
-          field = this.jsonschemaService.processField(field, fieldSchema);
-          field.props.editorConfig = editorConfig;
-          field.props.getRoot = () => this.fields[0];
+      this.formlyJSONSchema.toFieldConfig(processedSchema, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        map: (field: FormlyFieldConfig, fieldSchema: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          field = this.jsonschemaService.processField(field as any, fieldSchema) as unknown as FormlyFieldConfig;
+          field.props!.editorConfig = editorConfig;
+          field.props!.getRoot = () => this.fields()[0];
           return field;
         },
       }),
     ];
   }
 
-  save() {
-    if(this.model.embargoDate === null) {
-      delete this.model.embargoDate;
-      delete this.model.exceptInOrganization;
+  save(): void {
+    const model = this.model();
+    if (model.embargoDate === null) {
+      delete model.embargoDate;
+      delete model.exceptInOrganization;
     }
-    this.dynamicDialogRef.close(this.model);
+    this.dynamicDialogRef.close(model);
   }
 }

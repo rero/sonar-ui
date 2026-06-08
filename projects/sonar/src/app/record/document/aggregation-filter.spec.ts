@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CoreConfigService, TranslateLoader } from '@rero/ng-core';
-import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
+import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
+import { AppConfigService } from '../../app-config.service';
+import { depositTestingService } from 'projects/sonar/tests/utils';
 import { DepositService } from '../../deposit/deposit.service';
-import { UserService } from '../../user.service';
 import { AggregationFilter } from './aggregation-filter';
 
 const aggregations = {
@@ -64,15 +64,14 @@ describe('AggregationFilter', () => {
         TranslateModule.forRoot({
           loader: {
             provide: BaseTranslateLoader,
-            useClass: TranslateLoader,
-            deps: [CoreConfigService, HttpClient]
+            useClass: CoreTranslateLoader,
           },
           isolate: false
         })
       ],
       providers: [
+        { provide: CoreConfigService, useClass: AppConfigService },
         TranslateService,
-        { provide: UserService, useValue: userTestingService },
         { provide: DepositService, useValue: depositTestingService },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

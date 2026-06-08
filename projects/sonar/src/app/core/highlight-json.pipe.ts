@@ -15,15 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { inject, Pipe, PipeTransform } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /**
  * Highlight a JSON structure.
  */
-@Pipe({
-    name: 'highlightJson',
-    standalone: false
-})
+@Pipe({ name: 'highlightJson' })
 export class HighlightJsonPipe implements PipeTransform {
 
   private sanitizer: DomSanitizer = inject(DomSanitizer);
@@ -34,7 +31,7 @@ export class HighlightJsonPipe implements PipeTransform {
    * @param value Json structure.
    * @return Highlighted string.
    */
-  transform(value: string): any {
+  transform(value: string): SafeHtml {
     let json = value
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -42,7 +39,7 @@ export class HighlightJsonPipe implements PipeTransform {
 
     json = json.replace(
       /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
-      (match: any) => {
+      (match: string) => {
         let cls = 'ui:text-muted-color';
         if (/^"/.test(match)) {
           if (/:$/.test(match)) {

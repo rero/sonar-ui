@@ -21,9 +21,7 @@
               "base": "dist/sonar"
             },
             "index": "projects/sonar/src/index.html",
-            "polyfills": [
-              "projects/sonar/src/polyfills.ts"
-            ],
+            "polyfills": [],
             "tsConfig": "projects/sonar/tsconfig.app.json",
             "assets": [
               "projects/sonar/src/favicon.ico",
@@ -34,9 +32,13 @@
             ],
             "stylePreprocessorOptions": {
               "sass": {
-                "silenceDeprecations": ["import"]
+                "silenceDeprecations": [
+                  "import"
+                ]
               },
-              "includePaths": ["node_modules"]
+              "includePaths": [
+                "node_modules"
+              ]
             },
             "scripts": [],
             "preserveSymlinks": true,
@@ -56,10 +58,15 @@
                 }
               ],
               "outputHashing": "none",
-              "optimization": true,
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
+              "deployUrl": "/static/node_modules/@rero/sonar-ui/dist/sonar/browser/",
               "budgets": [
                 {
                   "type": "initial",
@@ -97,24 +104,7 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/sonar/src/test.ts",
-            "polyfills": "projects/sonar/src/polyfills.ts",
-            "tsConfig": "projects/sonar/tsconfig.spec.json",
-            "karmaConfig": "projects/sonar/karma.conf.js",
-            "assets": [
-              "projects/sonar/src/favicon.ico",
-              "projects/sonar/src/assets"
-            ],
-            "styles": [
-              "projects/sonar/src/styles.scss"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": ["node_modules"]
-            },
-            "scripts": []
-          }
+          "builder": "@analogjs/vitest-angular:test"
         },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
@@ -144,5 +134,31 @@
     "schematicCollections": [
       "@angular-eslint/schematics"
     ]
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }

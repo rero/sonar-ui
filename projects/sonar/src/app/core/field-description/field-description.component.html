@@ -20,7 +20,7 @@
     <dd>
       @if(type() === 'array') {
         <ul class="ui:list-none">
-          @for (value of field(); track $index; let last=$last; let index=$index) {
+          @for (value of $any(field()); track $index; let last=$last; let index=$index) {
             <li>
               @if (template()) {
                 <ng-container *ngTemplateOutlet="template(); context: { $implicit: value, last, index }"/>

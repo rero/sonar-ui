@@ -14,15 +14,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RecordModule } from '@rero/ng-core';
 
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    RecordModule
-  ]
-})
-export class RecordWrapperModule { }
+export type DepositStatus = 'in_progress' | 'ask_for_changes' | 'to_validate' | 'validated' | 'rejected';
+
+export type DepositFile = {
+  key: string;
+  version_id: string;
+  order?: number;
+  [key: string]: unknown;
+}
+
+export type JsonRef = { $ref: string };
+
+export type Deposit = {
+  pid: string;
+  status: DepositStatus;
+  step?: string;
+  user: JsonRef;
+  document?: JsonRef;
+  _files?: DepositFile[];
+  diffusion?: { license?: string; [key: string]: unknown };
+  [key: string]: unknown;
+}

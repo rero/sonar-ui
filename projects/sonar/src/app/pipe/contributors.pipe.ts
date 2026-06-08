@@ -17,10 +17,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { IContribution } from '../record/document/contribution.interface';
 
-@Pipe({
-    name: 'contributors',
-    standalone: false
-})
+@Pipe({ name: 'contributors' })
 export class ContributorsPipe implements PipeTransform {
 
   /** Sort priority */
@@ -33,7 +30,7 @@ export class ContributorsPipe implements PipeTransform {
    * @param meeting - true: extract only meeting, false: extract person and organization
    * @returns array of sorted contributors
    */
-  transform(contributors?: IContribution[], meeting = false): any[] {
+  transform(contributors?: IContribution[], meeting = false): IContribution[] {
     if (!contributors) {
       return [];
     }
@@ -47,7 +44,7 @@ export class ContributorsPipe implements PipeTransform {
     });
 
     return contributors.sort(
-      (a: any, b: any) => {
+      (a: IContribution, b: IContribution) => {
         const aIndex = this.SORT_CONTRIBUTOR_PRIORITY.findIndex(
           (role) => a.role[0] === role
         );

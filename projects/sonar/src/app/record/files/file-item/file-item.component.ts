@@ -15,17 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, computed, inject, input, output } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { RecordFile, RecordFileMeta } from '../upload-files/upload-files.component';
+import { TranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AppConfigService } from '../../../app-config.service';
 import { FileItemEditorComponent } from '../file-item-editor/file-item-editor.component';
-import { FileUploadHandlerEvent } from 'primeng/fileupload';
+import { FileUploadHandlerEvent, FileUpload } from 'primeng/fileupload';
+import { Bind } from 'primeng/bind';
+import { Panel } from 'primeng/panel';
+import { PrimeTemplate } from 'primeng/api';
+import { NgTemplateOutlet } from '@angular/common';
+import { Button, ButtonDirective } from 'primeng/button';
+import { FieldDescriptionComponent } from '../../../core/field-description/field-description.component';
+import { Divider } from 'primeng/divider';
+import { Tooltip } from 'primeng/tooltip';
+import { DateTranslatePipe, FilesizePipe } from '@rero/ng-core';
 
 @Component({
-  selector: 'sonar-file-item',
-  templateUrl: './file-item.component.html',
-  standalone: false
+    selector: 'sonar-file-item',
+    templateUrl: './file-item.component.html',
+    imports: [Bind, Panel, PrimeTemplate, NgTemplateOutlet, Button, FieldDescriptionComponent, Divider, TranslateDirective, FileUpload, ButtonDirective, Tooltip, TranslatePipe, DateTranslatePipe, FilesizePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileItemComponent {
 
@@ -34,16 +45,16 @@ export class FileItemComponent {
   translateService: TranslateService = inject(TranslateService);
 
   // file to display
-  file = input.required<any>();
+  file = input.required<RecordFile>();
 
-  schema = input.required<any>();
+  schema = input.required<Record<string, unknown>>();
 
   // event when a file should be deleted
-  delete = output<any>();
+  delete = output<RecordFile>();
   // event when the file metadata should be updated
-  update = output<any>();
+  update = output<RecordFileMeta>();
   // event when a new version of the file should be saved
-  upload = output<any>();
+  upload = output<{ file: RecordFile; fileUpload: globalThis.File }>();
 
   // maximum upload file size
   maxFileSize = computed(() => this.appConfigService.maxFileSize);
@@ -59,7 +70,7 @@ export class FileItemComponent {
         closable: true,
         width: '60vw'
       });
-    modalRef.onClose.subscribe(model => model ? this.update.emit(model): null);
+    modalRef?.onClose.subscribe(model => model ? this.update.emit(model): null);
   }
 
   /**
@@ -68,10 +79,11 @@ export class FileItemComponent {
    * @param file to generate the URL
    * @returns the URL as string
    */
-  downloadURL(file): string {
-    const urlObj = new URL(file.links.self);
+  downloadURL(file: RecordFile): string {
+    const links = file.links as Record<string, string>;
+    const urlObj = new URL(links['self']);
     const baseUrl = urlObj.pathname;
-    return `${baseUrl}/${file.key}?download&versionId=${file.version_id}`;
+    return `${baseUrl}/${file.key}?download&versionId=${file['version_id']}`;
   }
 
   /**

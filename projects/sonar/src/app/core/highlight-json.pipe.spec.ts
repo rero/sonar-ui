@@ -23,17 +23,17 @@ describe('HighlightJsonPipe', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [HighlightJsonPipe],
-      providers: [
+    imports: [HighlightJsonPipe],
+    providers: [
         HighlightJsonPipe,
         {
-          provide: DomSanitizer,
-          useValue: {
-            bypassSecurityTrustHtml: (val: string) => val
-          }
+            provide: DomSanitizer,
+            useValue: {
+                bypassSecurityTrustHtml: (val: string) => val
+            }
         }
-      ]
-    });
+    ]
+});
     pipe = TestBed.inject(HighlightJsonPipe);
   });
 

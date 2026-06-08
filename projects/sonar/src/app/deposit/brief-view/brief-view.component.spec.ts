@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreConfigService, RecordModule, TranslateLoader } from '@rero/ng-core';
-import { depositTestingService, userTestingService } from 'projects/sonar/tests/utils';
-import { UserService } from '../../user.service';
+import { CoreTranslateLoader } from '@rero/ng-core';
+import { depositTestingService } from 'projects/sonar/tests/utils';
 import { DepositService } from '../deposit.service';
 import { BriefViewComponent } from './brief-view.component';
 
@@ -29,32 +28,31 @@ describe('BriefViewComponent', () => {
   let component: BriefViewComponent;
   let fixture: ComponentFixture<BriefViewComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-    declarations: [BriefViewComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
     imports: [
-      RouterModule.forRoot([]),
-      RecordModule,
-      TranslateModule.forRoot({
-        loader: {
-          provide: BaseTranslateLoader,
-          useClass: TranslateLoader,
-          deps: [CoreConfigService, HttpClient]
-        }
-      })
+        RouterModule.forRoot([]),
+        TranslateModule.forRoot({
+            loader: {
+                provide: BaseTranslateLoader,
+                useClass: CoreTranslateLoader,
+            }
+        }),
+        BriefViewComponent
     ],
     providers: [
-        { provide: UserService, useValue: userTestingService },
         { provide: DepositService, useValue: depositTestingService },
         provideHttpClientTesting(),
         provideHttpClient(withInterceptorsFromDi())
     ]
 }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BriefViewComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('record', { metadata: { user: { first_name: '', last_name: '' } } });
+    fixture.componentRef.setInput('type', 'test');
     fixture.detectChanges();
   });
 

@@ -16,13 +16,13 @@
  */
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { IBucketNameService, RecordService } from '@rero/ng-core';
-import { map, Observable } from 'rxjs';
+import { Bucket, RecordService } from '@rero/ng-core';
+import { map, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BucketNameService implements IBucketNameService {
+export class BucketNameService {
 
   private translateService: TranslateService = inject(TranslateService);
   private recordService: RecordService = inject(RecordService);
@@ -34,24 +34,31 @@ export class BucketNameService implements IBucketNameService {
     it: 'ita',
   };
 
-  transform(aggregationKey: string, value: string): Observable<string> {
-    switch (aggregationKey) {
-      case 'language': return this.translateService.stream(`lang_${value}`);
-      case 'collection_view': return this.recordService.getRecord('collections', value).pipe(
-        map((record: any) => {
-          if (('name' in record.metadata) && Object.keys(this.languageMap).includes(this.translateService.currentLang)) {
-            const encodedLanguage = this.languageMap[this.translateService.currentLang];
-            const translatedLanguage = record.metadata.name.filter(
-              (langData: { language: string, value: string }) => langData.language === encodedLanguage
-            );
-            if (translatedLanguage.length === 1) {
-              return translatedLanguage[0].value;
-            }
-          }
-          return record.metadata.label;
-        })
-      );
-      default: return this.translateService.stream(value);
+  transform(bucket: Bucket): Observable<string> {
+    if(bucket.name) { return of(bucket.name); }
+    switch (bucket.aggregationKey) {
+      case 'language': return this.translateService.stream(`lang_${bucket.key}`);
+      case 'document_type': return this.translateService.stream(`document_type_${bucket.key}`);
+      case 'subdivision': return this.resolveRecordName('subdivisions', bucket.key);
+      case 'collection':
+      case 'collection_view': return this.resolveRecordName('collections', bucket.key);
+      default: return this.translateService.stream(bucket.key);
     }
+  }
+
+  private resolveRecordName(type: string, pid: string): Observable<string> {
+    return this.recordService.getRecord(type, pid).pipe(
+      map((record: { metadata: { name?: { language: string; value: string }[]; label?: string } }) => {
+        const currentLang = this.translateService.getCurrentLang();
+        if (record.metadata.name && (currentLang in this.languageMap)) {
+          const encodedLanguage = this.languageMap[currentLang as keyof typeof this.languageMap];
+          const match = record.metadata.name.find(
+            (langData: { language: string; value: string }) => langData.language === encodedLanguage
+          );
+          if (match) return match.value;
+        }
+        return record.metadata.label ?? pid;
+      })
+    );
   }
 }

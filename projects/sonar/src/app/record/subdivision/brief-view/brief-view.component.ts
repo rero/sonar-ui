@@ -14,20 +14,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { Component } from '@angular/core';
-import { ResultItem } from '@rero/ng-core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { DetailUrl, RecordData } from '@rero/ng-core';
+import { AsyncPipe } from '@angular/common';
+import { LanguageValuePipe } from '../../../pipe/language-value.pipe';
 
 @Component({
-  templateUrl: './brief-view.component.html',
-  standalone: false
+    templateUrl: './brief-view.component.html',
+    imports: [AsyncPipe, LanguageValuePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BriefViewComponent implements ResultItem {
-  // Record data.
-  record: any;
-
-  // Resource type.
-  type: string;
-
-  // Detail URL object.
-  detailUrl: { link: string, external: boolean };
+export class BriefViewComponent {
+  record = input.required<RecordData>();
+  type = input.required<string>();
+  detailUrl = input<DetailUrl>();
 }

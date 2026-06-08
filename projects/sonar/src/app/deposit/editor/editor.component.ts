@@ -15,21 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import {
+  ChangeDetectionStrategy,
   Component,
-  OnDestroy,
-  OnInit,
+  DestroyRef,
   computed,
+  effect,
   inject,
   input,
-  output,
   signal
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { FormlyJsonschema } from '@ngx-formly/core/json-schema';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   CONFIG,
   JSONSchemaService,
@@ -38,141 +38,124 @@ import {
 } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { UserService } from '../../user.service';
-import { DepositService } from '../deposit.service';
+import { tap } from 'rxjs/operators';
+import { AppStore, AppStoreType } from '../../store/app.store';
+import { DepositStore, DepositStoreType } from '../deposit.store';
+import { FormlyModule } from '@ngx-formly/core';
+import { Bind } from 'primeng/bind';
+import { SplitButton } from 'primeng/splitbutton';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { SwisscoveryComponent } from './swisscovery/swisscovery.component';
 
 @Component({
-  selector: 'sonar-deposit-editor',
-  templateUrl: './editor.component.html',
-  standalone: false,
+    selector: 'sonar-deposit-editor',
+    templateUrl: './editor.component.html',
+    imports: [
+        FormlyModule,
+        Bind,
+        SplitButton,
+        Button,
+        Dialog,
+        SwisscoveryComponent,
+        TranslatePipe,
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditorComponent implements OnInit, OnDestroy {
+export class EditorComponent {
   private messageService: MessageService = inject(MessageService);
-  private depositService = inject(DepositService);
   private router = inject(Router);
   private formlyJsonschema = inject(FormlyJsonschema);
   private translateService = inject(TranslateService);
-  private userService = inject(UserService);
+  private appStore = inject(AppStore) as AppStoreType;
   private spinner = inject(NgxSpinnerService);
   private jsonschemaService = inject(JSONSchemaService);
   private confirmationService = inject(ConfirmationService);
 
-  /** Deposit object */
-  deposit = input.required<any>();
-  private deposit$ = toObservable(this.deposit);
-  depositChanged = output<any>();
+  protected store = inject(DepositStore) as DepositStoreType;
+  private destroyRef = inject(DestroyRef);
 
   currentStep = input.required<string>();
+  steps = input.required<string[]>();
 
-  steps = input.required<any[]>();
-
-  mainFile = input.required<any>();
-
-  /** Form for current type */
-  form: UntypedFormGroup = new UntypedFormGroup({});
-
-  /** Model representing data for current type */
-  model: any;
-
-  /** Form fields for current type */
-  fields: any;
-
+  form = signal<UntypedFormGroup>(new UntypedFormGroup({}));
+  model = signal<Record<string, unknown>>({});
+  fields = signal<FormlyFieldConfig[]>([]);
   importModalIsVisible = signal(false);
 
-  importMenuItems = signal([]);
-
-  isAdminUser = computed(() => this.userService.hasRole(['superuser', 'admin', 'moderator']));
+  isAdminUser = computed(() => this.appStore.hasRole(['superuser', 'admin', 'moderator']));
 
   nextStep = computed(() => this.getNextStep());
 
-  canSubmit = computed(() =>
-    ['in_progress', 'ask_for_changes'].includes(this.deposit().status)
-    && this.currentStep() === 'diffusion'
-    && this.deposit().diffusion?.license !== undefined
-  );
+  canSubmit = computed(() => {
+    const deposit = this.store.deposit();
+    return deposit !== null
+      && ['in_progress', 'ask_for_changes'].includes(deposit.status)
+      && this.currentStep() === 'diffusion'
+      && deposit.diffusion?.license !== undefined;
+  });
 
-  private subscriptions = new Subscription();
-
-  ngOnInit(): void {
-    this.setImportMenu();
-    this.subscriptions.add(
-      this.depositService
-        .getJsonSchema('deposits')
-        .pipe(
-          map((schema) => this.getDepositFields(schema)),
-          switchMap((depositFields: any) => {
-            return this.deposit$.pipe(
-              tap(() => {
-                this.fields = this.getFormFields(
-                  depositFields.fieldGroup,
-                  this.currentStep()
-                );
-                const currentStepData = this.deposit()[this.currentStep()];
-                this.model = {};
-                if (currentStepData) {
-                  this.model[this.currentStep()] = currentStepData;
-                }
-              })
-            )
-          }
-          )
-        )
-        .subscribe()
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
-  }
-
-  setImportMenu(): void {
-    const items = [
+  importMenuItems = computed(() => {
+    const items: { label: string; command: () => void }[] = [
       {
         label: this.translateService.instant('Import from swisscovery'),
         command: () => this.importModalIsVisible.set(true),
       },
     ];
-    if (this.mainFile()) {
+    if (this.store.mainFile()) {
       items.push({
         label: this.translateService.instant('Analyze uploaded PDF'),
-        command: () => this.confirmPdfImport()
+        command: () => this.confirmPdfImport(),
       });
     }
-    this.importMenuItems.set(items);
+    return items;
+  });
+
+  constructor() {
+    this.store.loadSchema('deposits').pipe(takeUntilDestroyed()).subscribe();
+
+    effect(() => {
+      const schema = this.store.schema();
+      const deposit = this.store.deposit();
+      if (!schema || !deposit) return;
+
+      const depositFields = this.getDepositFields(schema);
+      this.fields.set(this.getFormFields(depositFields.fieldGroup ?? [], this.currentStep()));
+
+      const currentStepData = deposit[this.currentStep()];
+      const newModel: Record<string, unknown> = {};
+      if (currentStepData) {
+        newModel[this.currentStep()] = currentStepData;
+      }
+      this.model.set(newModel);
+    });
   }
 
-  /**
-   * Save current state on database with API call.
-   */
   save(): void {
-    this.form.updateValueAndValidity();
-
-    if (!this.form.valid) {
-      this.form.markAllAsTouched();
+    this.form().updateValueAndValidity();
+    if (!this.form().valid) {
+      this.form().markAllAsTouched();
       return;
     }
-    this.upgradeStep();
-    this.deposit()[this.currentStep()] = this.model[this.currentStep()];
-    this.depositService
-      .update(this.deposit().pid, this.deposit())
-      .subscribe((result: any) => {
+    const deposit = this.store.deposit()!;
+    const nextStep = this.nextStep();
+    const upgradedStep = this.getUpgradedStep(deposit.step, nextStep);
+    const updateData: Record<string, unknown> = {
+      ...deposit,
+      [this.currentStep()]: this.model()[this.currentStep()],
+      step: upgradedStep,
+    };
+    this.store.update(deposit.pid, updateData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
         if (result) {
           this.messageService.add({
             severity: 'success',
             detail: this.translateService.instant('Deposit saved'),
             life: CONFIG.MESSAGE_LIFE,
           });
-          // navigate to the next step
           if (this.currentStep() !== this.steps()[this.steps().length - 1]) {
-            this.router.navigate([
-              'deposit',
-              this.deposit().pid,
-              this.nextStep(),
-            ]);
-          } else {
-            this.depositChanged.emit({...this.deposit()});
+            this.router.navigate(['deposit', deposit.pid, nextStep]);
           }
         }
       });
@@ -180,7 +163,7 @@ export class EditorComponent implements OnInit, OnDestroy {
 
   confirmPublish(): void {
     this.confirmationService.confirm({
-      message: 'Do you really want to publish this document ?',
+      message: this.translateService.instant('Do you really want to publish this document ?'),
       header: this.translateService.instant('Confirmation'),
       rejectButtonStyleClass: 'p-button-text',
       closable: false,
@@ -190,16 +173,14 @@ export class EditorComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Publish a deposit after user confirmation. If user is a standard user, this will send an email
-   * to moderators to validate the deposit.
-   */
   publish(): void {
     this.spinner.show();
-    this.depositService.publish(this.deposit().pid).subscribe(() => {
-      this.spinner.hide();
-      this.router.navigate(['deposit', this.deposit().pid, 'confirmation']);
-    });
+    this.store.publish(this.store.deposit()!.pid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.spinner.hide();
+        this.router.navigate(['deposit', this.store.deposit()!.pid, 'confirmation']);
+      });
   }
 
   confirmPdfImport(): void {
@@ -214,49 +195,39 @@ export class EditorComponent implements OnInit, OnDestroy {
       },
     });
   }
-  /**
-   * Extract metadata from PDF and populate deposit.
-   */
+
   extractPdfMetadata(): void {
     this.spinner.show();
-    this.depositService
-      .extractPDFMetadata(this.deposit())
+    this.store
+      .extractPDFMetadata(this.store.deposit()!)
       .pipe(
-        tap((result: any) => {
-          if (result === false) {
-            return;
-          }
-          const metadata: any = {};
-          ['title', 'documentDate', 'publication', 'abstract', 'languages'].map(
-            (field) => {
-              if (result[field]) {
-                switch (field) {
-                  case 'abstract':
-                    metadata.abstracts = [
-                      {
-                        language: result?.languages[0] || 'eng',
-                        abstract: result.abstract,
-                      },
-                    ];
-                    break;
-                  case 'languages':
-                    metadata.language = result.languages[0];
-                    break;
-                  default:
-                    metadata[field] = result[field];
-                }
+        tap((result: Record<string, unknown> | false) => {
+          if (!result) return;
+          const metadata: Record<string, unknown> = {};
+          ['title', 'documentDate', 'publication', 'abstract', 'languages'].forEach((field) => {
+            if (result[field]) {
+              switch (field) {
+                case 'abstract':
+                  metadata['abstracts'] = [
+                    {
+                      language: (result['languages'] as string[])[0] || 'eng',
+                      abstract: result['abstract'],
+                    },
+                  ];
+                  break;
+                case 'languages':
+                  metadata['language'] = (result['languages'] as string[])[0];
+                  break;
+                default:
+                  metadata[field] = result[field];
               }
             }
-          );
-          const data = {};
-          if (metadata) {
-            data['metadata'] = metadata;
-          }
-          if (result.authors) {
-            data['contributors'] = result.authors;
-          }
-          if (data) {
-            this.depositChanged.emit({ ...this.deposit(), ...data });
+          });
+          const updates: Record<string, unknown> = {};
+          if (Object.keys(metadata).length) updates['metadata'] = metadata;
+          if (result['authors']) updates['contributors'] = result['authors'];
+          if (Object.keys(updates).length) {
+            this.store.mergeDeposit(updates);
           }
         })
       )
@@ -266,84 +237,66 @@ export class EditorComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Map the swisscovery record to the deposit data.
-   *
-   * @returns void
-   */
-  mapSwisscoveryRecord(data): void {
+  mapSwisscoveryRecord(data: Record<string, unknown> | null): void {
     this.importModalIsVisible.set(false);
-    if (!data) {
-      return;
-    }
-    this.depositChanged.emit({ ...this.deposit(), ...data });
+    if (!data) return;
+    this.store.mergeDeposit(data);
   }
 
-  /**
-   * Return next step key
-   */
   private getNextStep(): string {
-    const currentIndex = this.steps().findIndex(
-      (element) => element === this.currentStep()
-    );
-    if (!this.steps()[currentIndex + 1]) {
-      return this.steps()[currentIndex];
-    }
-    return this.steps()[currentIndex + 1];
+    const currentIndex = this.steps().findIndex((element) => element === this.currentStep());
+    return this.steps()[currentIndex + 1] ?? this.steps()[currentIndex];
   }
 
-  /**
-   * Create form by extracting section corresponding to current step from JSON schema.
-   * @param schema JSON schema
-   */
-  private getDepositFields(schema: any): any {
-    schema = processJsonSchema(resolve$ref(schema, schema.properties));
-    // form configuration
+  private getUpgradedStep(depositStep: string | undefined, nextStep: string): string {
+    const depositIndex = this.steps().findIndex((step) => step === depositStep);
+    const nextIndex = this.steps().findIndex((step) => step === nextStep);
+    return depositIndex < nextIndex ? nextStep : (depositStep ?? this.steps()[0]);
+  }
+
+  private getDepositFields(schema: object): FormlyFieldConfig {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    schema = processJsonSchema(resolve$ref(schema as any, (schema as any).properties));
     const editorConfig = {
-      pid: this.deposit().pid,
+      pid: this.store.deposit()!.pid,
       longMode: false,
       recordType: 'deposits',
     };
     return this.formlyJsonschema.toFieldConfig(schema, {
-      map: (field: any, fieldSchema: any) => {
-        field = this.jsonschemaService.processField(field, fieldSchema);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      map: (field: FormlyFieldConfig, fieldSchema: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        field = this.jsonschemaService.processField(field as any, fieldSchema) as unknown as FormlyFieldConfig;
+        field.props!.editorConfig = editorConfig;
+        field.props!.getRoot = () => this.fields()[0];
 
-        field.props.editorConfig = editorConfig;
-        field.props.getRoot = () => this.fields[0];
-
-        // Force validate `value` field when type is changed.
-        if (fieldSchema.key && fieldSchema.key === 'identified_by_type') {
-          field.props.change = (field: any) => {
-            if (field.parent.model.value) {
-              field.parent.formControl.controls.value.touched = true;
-              field.parent.formControl.controls.value.updateValueAndValidity();
+        if (fieldSchema['key'] && fieldSchema['key'] === 'identified_by_type') {
+          field.props!.change = (f: FormlyFieldConfig) => {
+            if (f.parent!.model.value) {
+              const parentControls = (f.parent!.formControl as UntypedFormGroup).controls;
+              parentControls['value'].markAsTouched();
+              parentControls['value'].updateValueAndValidity();
             }
           };
         }
 
-        // Add a validator depending on field `type`
-        if (fieldSchema.key && fieldSchema.key === 'identified_by_value') {
+        if (fieldSchema['key'] && fieldSchema['key'] === 'identified_by_value') {
           field.validators = {
             identifier: {
-              expression: (c: any) => {
+              expression: (c: { value: string; parent: { controls: { type: { value: string } } } }) => {
                 switch (c.parent.controls.type.value) {
-                  case 'bf:Doi': {
+                  case 'bf:Doi':
                     return /^10\..+\/.+$/.test(c.value);
-                  }
-                  case 'bf:Isbn': {
+                  case 'bf:Isbn':
                     return /^(97(8|9))?\d{9}(\d|X)$/.test(c.value);
-                  }
-                  case 'pmid': {
+                  case 'pmid':
                     return /^[1-3]\d{7}|[1-9]\d{0,6}$/.test(c.value);
-                  }
-                  case 'uri': {
+                  case 'uri':
                     return /^https?:\/\/.+\..+$/.test(c.value);
-                  }
                 }
-
                 return true;
               },
-              message: (error: any, field: FormlyFieldConfig) =>
+              message: (_error: unknown, _field: FormlyFieldConfig) =>
                 this.translateService.instant(
                   'The format is not valid for this type of identifier.'
                 ),
@@ -353,30 +306,11 @@ export class EditorComponent implements OnInit, OnDestroy {
         return field;
       },
     });
-
   }
 
-  /**
-   * Get only fields corresponding to current step.
-   * @param fieldGroup Array of fields extracted from JSON schema
-   * @param step Current step
-   */
-  private getFormFields(fieldGroup: any[], step: string): any[] {
+  private getFormFields(fieldGroup: FormlyFieldConfig[], step: string): FormlyFieldConfig[] {
     const fields = fieldGroup.filter((item) => item.key === step);
+    console.log(this.store.schema(), this.currentStep(), step, fields);
     return [fields[0]];
-  }
-
-  /**
-   * Upgrade step of the deposit only if current step is greater than deposit step.
-   */
-  private upgradeStep(): void {
-    const depositIndex = this.steps().findIndex(
-      (step) => step === this.deposit().step
-    );
-    const nextIndex = this.steps().findIndex((step) => step === this.nextStep());
-
-    if (depositIndex < nextIndex) {
-      this.deposit().step = this.nextStep();
-    }
   }
 }
