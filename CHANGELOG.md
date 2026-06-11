@@ -1,5 +1,18 @@
 # Changelog
 
+## [v21.0.0](https://github.com/rero/sonar-ui/tree/v21.0.0) (2026-06-11)
+
+[Full Changelog](https://github.com/rero/sonar-ui/compare/v19.0.3...v21.0.0)
+
+**Breaking change:**
+
+- chore: migrate to Angular 21 with NgRx Signal Store and zoneless change detection [#470](https://github.com/rero/sonar-ui/pull/470) (by @Garfield-fr & @jma)
+
+**Other changes:**
+
+- ci: fix build by dropping Node.js version matrix [#450](https://github.com/rero/sonar-ui/pull/450) (by @PascalRepond)
+- build: add workflow to publish releases to npm [#449](https://github.com/rero/sonar-ui/pull/449) (by @PascalRepond)
+
 ## [v19.0.3](https://github.com/rero/sonar-ui/tree/v19.0.3) (2026-02-10)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v19.0.2...v19.0.3)
