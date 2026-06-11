@@ -18,7 +18,7 @@
               "easymde"
             ],
             "outputPath": {
-              "base": "dist/sonar"
+              "base": "build/dist/sonar"
             },
             "index": "projects/sonar/src/index.html",
             "polyfills": [],
