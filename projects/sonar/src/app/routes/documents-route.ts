@@ -74,8 +74,10 @@ export const documentsRouteResolver: ResolveFn<Partial<RecordType>[]> = (route: 
         ...fileConfig,
         filterList: (item: NgCoreFile) => item.metadata?.type === 'file',
       },
-      searchFields: [{ label: _('Search in full-text'), path: 'fulltext' }],
-      searchFilters: [{ label: _('Open access'), filter: 'open_access', value: 'true' }],
+      searchFilters: [
+        { label: _('Search in full-text'), filter: 'fulltext', value: 'true' },
+        { label: _('Open access'), filter: 'open_access', value: 'true' },
+      ],
       showFacetsIfNoResults: true,
       exportFormats: [],
       sortOptions: [

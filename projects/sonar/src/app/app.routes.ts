@@ -143,8 +143,10 @@ export const routes: Routes = [
           aggregationsExpand: ['document_type', 'controlled_affiliation', 'year'],
           aggregationsBucketSize: 10,
           exportFormats: [],
-          searchFields: [{ label: _('Search in full-text'), path: 'fulltext' }],
-          searchFilters: [{ label: _('Open access'), filter: 'open_access', value: 'true' }],
+          searchFilters: [
+            { label: _('Search in full-text'), filter: 'fulltext', value: 'true' },
+            { label: _('Open access'), filter: 'open_access', value: 'true' },
+          ],
           sortOptions: [
             { label: _('Relevance'), value: 'relevance', icon: 'fa fa-sort-amount-desc', defaultQuery: true },
             { label: _('Date descending'), value: 'newest', icon: 'fa fa-sort-amount-desc', defaultNoQuery: true },
