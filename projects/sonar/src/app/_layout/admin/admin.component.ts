@@ -3,18 +3,16 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs/operators';
-import { TranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
-import { TranslateLanguageService } from '@rero/ng-core';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { TranslateDirective, TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MenuItem } from 'primeng/api';
-import { AppConfigService } from '../../app-config.service';
-import { AppStore, AppStoreType } from '../../store/app.store';
-import { User } from '../../models';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Bind } from 'primeng/bind';
 import { Menubar } from 'primeng/menubar';
 import { Message } from 'primeng/message';
+import { filter } from 'rxjs/operators';
+import { User } from '../../models';
+import { AppStore, AppStoreType } from '../../store/app.store';
 
 @Component({
     selector: 'sonar-layout-admin',
@@ -34,11 +32,8 @@ export class AdminComponent {
 
   private readonly spinner = inject(NgxSpinnerService);
   private readonly store = inject(AppStore) as AppStoreType;
-  private readonly configService = inject(AppConfigService);
   private readonly httpClient = inject(HttpClient);
   private readonly translateService = inject(TranslateService);
-  private readonly translateLanguageService = inject(TranslateLanguageService);
-
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
 
@@ -91,6 +86,7 @@ export class AdminComponent {
       return;
     }
     const isDedicated = this.store.isDedicatedOrganisation();
+    const availableLanguages = this.store.availableLanguages();
 
     this.items.set([
       {
@@ -123,7 +119,7 @@ export class AdminComponent {
         label: `${user.last_name}, ${user.first_name}`,
         icon: 'fa-solid fa-user',
         items: [
-          { label: this.translateService.instant('Public interface'), icon: 'fa-solid fa-users', url: this.store.getPublicInterfaceLink(), target: 'public' },
+          { label: this.translateService.instant('Public interface'), icon: 'fa-solid fa-users', url: this.store.publicInterfaceLink(), target: 'public' },
           { label: this.translateService.instant('Profile'), icon: 'fa-solid fa-address-card', url: '/users/profile', target: '_self' },
           { label: this.translateService.instant('Super administration'), icon: 'fa-solid fa-screwdriver-wrench', url: '/admin', visible: user.is_superuser, target: 'admin' },
           { label: this.translateService.instant('Logout'), icon: 'fa-solid fa-right-from-bracket', url: '/logout', target: '_self' },
@@ -132,8 +128,8 @@ export class AdminComponent {
       {
         label: this.translateService.getCurrentLang().toUpperCase(),
         icon: 'fa-solid fa-language',
-        items: this.configService.languagesMap.map((lang) => ({
-          label: this.translateLanguageService.translate(lang.bibCode),
+        items: availableLanguages.map((lang) => ({
+          label: this.translateService.instant(lang.name),
           command: () => this.changeLanguage(lang.code),
         })),
       },

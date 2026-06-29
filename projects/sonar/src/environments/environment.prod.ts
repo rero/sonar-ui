@@ -12,5 +12,6 @@ export const environment = {
   translationsURLs: [
     '/static/node_modules/@rero/sonar-ui/dist/sonar/browser/assets/i18n/${lang}.json',
     '/api/translations/${lang}.json'
-  ]
+  ],
+  ngCoreAssetsUrl: '/static/node_modules/@rero/sonar-ui/dist/sonar/browser'
 };

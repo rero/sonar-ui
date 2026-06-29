@@ -10,7 +10,7 @@ import { environment } from '../environments/environment';
 export class AppConfigService extends CoreConfigService {
 
   // Current view code
-  view: string | null;
+  view: string | null = null;
 
   globalviewName: string;
 
@@ -37,7 +37,7 @@ export class AppConfigService extends CoreConfigService {
     },
   ];
 
-  settings: { document_identifier_link: unknown } | null;
+  settings: { document_identifier_link: unknown } | null = null;
 
   /**
    * Constructor.
@@ -48,9 +48,9 @@ export class AppConfigService extends CoreConfigService {
     this.apiBaseUrl = environment.apiBaseUrl;
     this.$refPrefix = environment.$refPrefix;
     this.globalviewName = environment.globalViewName;
-    this.languages = environment.languages;
     this.projectTitle = environment.projectTitle;
     this.schemaFormEndpoint = '/schemas';
     this.translationsURLs = environment.translationsURLs;
+    this.ngCoreAssetsUrl = environment.ngCoreAssetsUrl ?? '';
   }
 }
