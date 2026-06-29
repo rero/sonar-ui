@@ -296,7 +296,6 @@ export class EditorComponent {
 
   private getFormFields(fieldGroup: FormlyFieldConfig[], step: string): FormlyFieldConfig[] {
     const fields = fieldGroup.filter((item) => item.key === step);
-    console.log(this.store.schema(), this.currentStep(), step, fields);
     return [fields[0]];
   }
 }
