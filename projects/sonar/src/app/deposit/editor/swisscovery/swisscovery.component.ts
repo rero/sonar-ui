@@ -1,12 +1,13 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateDirective, TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ApiService } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
 import { Bind } from 'primeng/bind';
 import { Button } from 'primeng/button';
 import { InputGroup } from 'primeng/inputgroup';
@@ -14,7 +15,7 @@ import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
-import { map } from 'rxjs';
+import { finalize, map } from 'rxjs';
 
 type ScType = { name: string; code: string };
 type ScResult = { metadata?: { title?: string }; contributors?: { name: string }[] };
@@ -43,6 +44,7 @@ export class SwisscoveryComponent {
   private apiService = inject(ApiService);
   private httpClient = inject(HttpClient);
   private translateService = inject(TranslateService);
+  private messageService = inject(MessageService);
 
   data = output<ScResult | null>();
 
@@ -62,11 +64,7 @@ export class SwisscoveryComponent {
     const result = this.scResult();
     return result !== null && Object.keys(result).length > 0;
   });
-  /**
-   * Search record in swisscovery
-   *
-   * @returns void
-   */
+
   searchSwisscovery(): void {
     if (!this.searchTerms()) {
       return;
@@ -87,19 +85,30 @@ export class SwisscoveryComponent {
       .pipe(
         map((response: HttpResponse<ScResult>) =>
           response.status === 200 ? response.body : null
-        )
+        ),
+        finalize(() => this.spinner.hide())
       )
-      .subscribe((data) => {
-        if (data === null) {
+      .subscribe({
+        next: (data) => {
+          if (data === null) {
+            this.scResult.set(null);
+          } else {
+            const result: ScResult = {};
+            if (data.metadata) { result.metadata = data.metadata; }
+            if (data.contributors) { result.contributors = data.contributors; }
+            this.scResult.set(result);
+          }
+        },
+        error: (err: HttpErrorResponse) => {
           this.scResult.set(null);
-        } else {
-          const result: ScResult = {};
-          if (data.metadata) { result.metadata = data.metadata; }
-          if (data.contributors) { result.contributors = data.contributors; }
-          this.scResult.set(result);
-        }
-
-        this.spinner.hide();
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translateService.instant('Error'),
+            detail: this.translateService.instant('Your request to the external server has failed. Try again later ({{ statusCode }})', { statusCode: err.status }),
+            sticky: true,
+            closable: true,
+          });
+        },
       });
   }
 
