@@ -8,13 +8,18 @@ import { EMPTY, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { User, UserOrganisation } from '../models';
 
-export type AppSettings = { document_identifier_link: unknown };
+export type language = { code: string, name: string }
+
+export type AppSettings = {
+  document_identifier_link: unknown,
+  availableLanguages: language[]
+};
 
 export type AppState = {
   user: User | null;
   organisation: UserOrganisation | null;
   permissions: Record<string, Record<string, boolean>> | null;
-  settings: AppSettings | null;
+  settings: AppSettings;
 };
 
 export type AppStoreType = InstanceType<typeof AppStore>;
@@ -25,10 +30,23 @@ export const AppStore = signalStore(
     user: null,
     organisation: null,
     permissions: null,
-    settings: null,
+    settings: {
+      document_identifier_link: {},
+      availableLanguages: []
+    },
   }),
-  withComputed((store) => ({
+  withComputed((store, apiService = inject(ApiService)) => ({
     isLogged: () => store.user() !== null,
+    availableLanguages: () => store.settings()?.availableLanguages ?? [],
+    isDedicatedOrganisation: () => {
+      const org = store.organisation();
+      return org != null && 'isDedicated' in org && !!org.isDedicated;
+    },
+    userRefEndpoint: () => apiService.getRefEndpoint('users', store.user()!.pid),
+    publicInterfaceLink: () => {
+      const org = store.organisation();
+      return org?.isDedicated ? `/${org.code}` : '/';
+    },
   })),
   withMethods((store, http = inject(HttpClient), apiService = inject(ApiService)) => ({
     load(): Observable<void> {
@@ -38,8 +56,10 @@ export const AppStore = signalStore(
         )
         .pipe(
           tap((response) => {
-            const settings = response.settings ?? null;
-            patchState(store, { settings });
+            const { settings } = response;
+            if (settings) {
+              patchState(store, { settings });
+            }
             if (response.metadata?.is_user) {
               const { organisation, permissions, ...rest } = response.metadata;
               patchState(store, {
@@ -72,18 +92,5 @@ export const AppStore = signalStore(
       return store.user()?.pid === pid;
     },
 
-    isDedicatedOrganisation(): boolean {
-      const org = store.organisation();
-      return org != null && 'isDedicated' in org && !!org.isDedicated;
-    },
-
-    getUserRefEndpoint(): string {
-      return apiService.getRefEndpoint('users', store.user()!.pid);
-    },
-
-    getPublicInterfaceLink(): string {
-      const org = store.organisation();
-      return org?.isDedicated ? `/${org.code}` : '/';
-    },
   }))
 );

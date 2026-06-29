@@ -16,6 +16,7 @@ export const environment = {
   translationsURLs: [
     '/assets/i18n/${lang}.json',
     '/api/translations/${lang}.json'
-  ]
+  ],
+  ngCoreAssetsUrl: ''
 };
 

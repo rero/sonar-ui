@@ -5,10 +5,11 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withRouterConfig } from '@angular/router';
 import { provideTranslateLoader, provideTranslateService } from '@ngx-translate/core';
-import { CoreConfigService, provideCore, RemoteAutocompleteService } from '@rero/ng-core';
+import { CoreConfigService, NgCoreTranslateService, provideCore, RemoteAutocompleteService } from '@rero/ng-core';
 import { providePrimeNG } from 'primeng/config';
 import { AppConfigService } from './app-config.service';
 import { AppTranslateLoader } from './app-translate-loader';
+import { AppTranslateService } from './app-translate.service';
 import { AppStore } from './store/app.store';
 import { HttpInterceptor } from './interceptor/http.interceptor';
 import { LanguageValuePipe } from './pipe/language-value.pipe';
@@ -24,6 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideTranslateService({
       loader: provideTranslateLoader(AppTranslateLoader),
     }),
+    { provide: NgCoreTranslateService, useExisting: AppTranslateService },
     providePrimeNG(primeNGSonarConfig),
     provideHttpClient(withInterceptorsFromDi()),
     {

@@ -25,7 +25,17 @@
             "tsConfig": "projects/sonar/tsconfig.app.json",
             "assets": [
               "projects/sonar/src/favicon.ico",
-              "projects/sonar/src/assets"
+              "projects/sonar/src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@rero/ng-core/src/lib/translate/i18n",
+                "output": "/assets/sonar-ui/ng-core/i18n"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@rero/ng-core/src/lib/translate/languages",
+                "output": "/assets/sonar-ui/ng-core/languages"
+              }
             ],
             "styles": [
               "projects/sonar/src/styles.scss"

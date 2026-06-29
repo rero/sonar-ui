@@ -57,6 +57,6 @@ export class ConfirmationComponent {
    * @returns Link to public interface.
    */
    get publicInterfaceLink(): string {
-    return this.store.getPublicInterfaceLink();
+    return this.store.publicInterfaceLink();
   }
 }

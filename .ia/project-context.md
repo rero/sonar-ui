@@ -25,3 +25,12 @@ This project is in active migration from Angular 19 to Angular 21 patterns:
 - Prefer pure functions for reusable logic.
 - Angular components should remain thin and focused on UI.
 
+## Git commit conventions
+
+Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+- Format: `type(scope): description`
+- **Title**: 50 characters maximum
+- **Body lines**: 72 characters maximum
+- **Body bullet points**: use `*` (asterisk), not `-` (dash)
+- Common types: `feat`, `fix`, `chore`, `refactor`, `test`, `docs`, `style`

@@ -77,7 +77,7 @@ export class ValidationComponent {
     );
   });
   isOwner = computed(() =>
-    this.store.getUserRefEndpoint() === (this.validation()?.['user'] as Record<string, unknown>)?.['$ref']
+    this.store.userRefEndpoint() === (this.validation()?.['user'] as Record<string, unknown>)?.['$ref']
   );
 
   constructor() {

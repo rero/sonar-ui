@@ -54,7 +54,7 @@ describe('AppStore', () => {
       expect(store.user()).toBeNull();
       expect(store.organisation()).toBeNull();
       expect(store.permissions()).toBeNull();
-      expect(store.settings()).toBeNull();
+      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [] });
     });
 
     it('isLogged should be false initially', () => {
@@ -81,7 +81,7 @@ describe('AppStore', () => {
       });
 
       expect(store.user()).toBeNull();
-      expect(store.settings()).toBeNull();
+      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [] });
     });
 
     it('should store settings even when user is not logged in', () => {
@@ -210,23 +210,23 @@ describe('AppStore', () => {
     });
   });
 
-  describe('getUserRefEndpoint()', () => {
+  describe('userRefEndpoint()', () => {
     it('should return the user ref endpoint', () => {
       store.load().subscribe();
       httpTesting.expectOne('/api/logged-user/?resolve=1').flush(loggedUserResponse);
-      expect(store.getUserRefEndpoint()).toBe('/api/users/1');
+      expect(store.userRefEndpoint()).toBe('/api/users/1');
     });
   });
 
-  describe('getPublicInterfaceLink()', () => {
+  describe('publicInterfaceLink()', () => {
     it('should return "/" when organisation is null', () => {
-      expect(store.getPublicInterfaceLink()).toBe('/');
+      expect(store.publicInterfaceLink()).toBe('/');
     });
 
     it('should return "/" when organisation is not dedicated', () => {
       store.load().subscribe();
       httpTesting.expectOne('/api/logged-user/?resolve=1').flush(loggedUserResponse);
-      expect(store.getPublicInterfaceLink()).toBe('/');
+      expect(store.publicInterfaceLink()).toBe('/');
     });
 
     it('should return "/<code>" when organisation is dedicated', () => {
@@ -238,7 +238,7 @@ describe('AppStore', () => {
           organisation: { code: 'myorg', isDedicated: true },
         },
       });
-      expect(store.getPublicInterfaceLink()).toBe('/myorg');
+      expect(store.publicInterfaceLink()).toBe('/myorg');
     });
   });
 });

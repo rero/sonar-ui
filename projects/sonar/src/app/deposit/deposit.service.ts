@@ -42,7 +42,7 @@ export class DepositService {
   create(): Observable<{ metadata: Deposit; [key: string]: unknown }> {
     return this.httpClient.post<{ metadata: Deposit; [key: string]: unknown }>(`${this.apiService.getEndpointByType('deposits', true)}/`, {
       user: {
-        $ref: this.store.getUserRefEndpoint()
+        $ref: this.store.userRefEndpoint()
       },
       step: 'metadata',
       status: 'in_progress'
@@ -111,7 +111,7 @@ export class DepositService {
     return this.httpClient
       .post(`${this.depositEndPoint}/${deposit.pid}/review`, {
         action,
-        user: { $ref: this.store.getUserRefEndpoint() },
+        user: { $ref: this.store.userRefEndpoint() },
         comment: comment || null
       })
       .pipe(catchError(err => this._handleError(err)));
