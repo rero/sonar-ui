@@ -30,6 +30,7 @@ import { FileComponent } from '../file/file.component';
 import { LicensePipe } from '../license.pipe';
 import { ContributionsComponent } from './contributions/contributions.component';
 import { CitationActionComponent } from '../citation/citation-action/citation-action.component';
+import { DocumentActionsComponent } from '../document-actions/document-actions.component';
 
 @Component({
     templateUrl: './detail.component.html',
@@ -63,7 +64,8 @@ import { CitationActionComponent } from '../citation/citation-action/citation-ac
     JoinPipe,
     LanguageValuePipe,
     LicensePipe,
-    CitationActionComponent
+    CitationActionComponent,
+    DocumentActionsComponent,
 ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

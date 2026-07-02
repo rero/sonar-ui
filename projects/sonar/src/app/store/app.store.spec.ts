@@ -54,7 +54,7 @@ describe('AppStore', () => {
       expect(store.user()).toBeNull();
       expect(store.organisation()).toBeNull();
       expect(store.permissions()).toBeNull();
-      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [] });
+      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [], document_serializers: [] });
     });
 
     it('isLogged should be false initially', () => {
@@ -70,7 +70,7 @@ describe('AppStore', () => {
       expect(store.user()).toMatchObject({ pid: '1', role: 'submitter' });
       expect(store.organisation()).toEqual({ code: 'org1', pid: 'o1', isDedicated: false });
       expect(store.permissions()).toEqual(loggedUserResponse.metadata.permissions);
-      expect(store.settings()).toEqual(loggedUserResponse.settings);
+      expect(store.settings()).toEqual({ ...loggedUserResponse.settings, availableLanguages: [], document_serializers: [] });
     });
 
     it('should not set user if is_user is false', () => {
@@ -81,7 +81,7 @@ describe('AppStore', () => {
       });
 
       expect(store.user()).toBeNull();
-      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [] });
+      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [], document_serializers: [] });
     });
 
     it('should store settings even when user is not logged in', () => {
@@ -91,7 +91,20 @@ describe('AppStore', () => {
       });
 
       expect(store.user()).toBeNull();
-      expect(store.settings()).toEqual({ document_identifier_link: {} });
+      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [], document_serializers: [] });
+    });
+
+    it('should store document_serializers with their label', () => {
+      const documentSerializers = [
+        { format: 'bibtex', icon: 'fa-file-text-o', label: 'BibTeX' },
+        { format: 'ris', icon: 'fa-file-text-o', label: 'RIS' },
+      ];
+      store.load().subscribe();
+      httpTesting.expectOne('/api/logged-user/?resolve=1').flush({
+        settings: { document_identifier_link: {}, document_serializers: documentSerializers },
+      });
+
+      expect(store.settings()?.document_serializers).toEqual(documentSerializers);
     });
 
     it('should not store organisation and permissions on user object', () => {
