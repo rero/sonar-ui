@@ -4,66 +4,67 @@ import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { KatexDirective, RecordData, RecordService, RecordType, Nl2brPipe, TranslateLanguagePipe } from '@rero/ng-core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { KatexDirective, Nl2brPipe, RecordData, RecordService, RecordType, TranslateLanguagePipe } from '@rero/ng-core';
 import { Subscription, of, switchMap, tap } from 'rxjs';
 
-import { RecordFile } from '../../files/upload-files/upload-files.component';
-import { AppConfigService } from '../../../app-config.service';
-import { DocumentFile } from '../document.interface';
-import { FileComponent } from '../file/file.component';
-import { Tooltip } from 'primeng/tooltip';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
+import { PrimeTemplate } from 'primeng/api';
 import { Bind } from 'primeng/bind';
-import { Tag } from 'primeng/tag';
-import { ContributionsComponent } from './contributions/contributions.component';
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
+import { Dialog } from 'primeng/dialog';
 import { Ripple } from 'primeng/ripple';
 import { ScrollPanel } from 'primeng/scrollpanel';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
+import { Tag } from 'primeng/tag';
+import { Tooltip } from 'primeng/tooltip';
+import { AppConfigService } from '../../../app-config.service';
 import { FieldDescriptionComponent } from '../../../core/field-description/field-description.component';
-import { PrimeTemplate } from 'primeng/api';
-import { IdentifierComponent } from '../../identifier/identifier.component';
-import { UploadFilesComponent } from '../../files/upload-files/upload-files.component';
-import { StatsFilesComponent } from '../../files/stats-files/stats-files.component';
-import { OtherFilesComponent } from '../../files/other-files/other-files.component';
-import { Dialog } from 'primeng/dialog';
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { JoinPipe } from '../../../core/join.pipe';
 import { LanguageValuePipe } from '../../../pipe/language-value.pipe';
+import { OtherFilesComponent } from '../../files/other-files/other-files.component';
+import { StatsFilesComponent } from '../../files/stats-files/stats-files.component';
+import { RecordFile, UploadFilesComponent } from '../../files/upload-files/upload-files.component';
+import { IdentifierComponent } from '../../identifier/identifier.component';
+import { DocumentFile } from '../document.interface';
+import { FileComponent } from '../file/file.component';
 import { LicensePipe } from '../license.pipe';
+import { ContributionsComponent } from './contributions/contributions.component';
+import { CitationActionComponent } from '../citation/citation-action/citation-action.component';
 
 @Component({
     templateUrl: './detail.component.html',
     imports: [
-        FileComponent,
-        KatexDirective,
-        Tooltip,
-        Bind,
-        Tag,
-        ContributionsComponent,
-        RouterLink,
-        Tabs,
-        TabList,
-        Ripple,
-        Tab,
-        TabPanels,
-        TabPanel,
-        ScrollPanel,
-        FieldDescriptionComponent,
-        PrimeTemplate,
-        IdentifierComponent,
-        UploadFilesComponent,
-        StatsFilesComponent,
-        OtherFilesComponent,
-        Dialog,
-        AsyncPipe,
-        KeyValuePipe,
-        TranslatePipe,
-        Nl2brPipe,
-        TranslateLanguagePipe,
-        JoinPipe,
-        LanguageValuePipe,
-        LicensePipe,
-    ],
+    FileComponent,
+    KatexDirective,
+    Tooltip,
+    Bind,
+    Tag,
+    ContributionsComponent,
+    RouterLink,
+    Tabs,
+    TabList,
+    Ripple,
+    Tab,
+    TabPanels,
+    TabPanel,
+    ScrollPanel,
+    FieldDescriptionComponent,
+    PrimeTemplate,
+    IdentifierComponent,
+    UploadFilesComponent,
+    StatsFilesComponent,
+    OtherFilesComponent,
+    Dialog,
+    AsyncPipe,
+    KeyValuePipe,
+    TranslatePipe,
+    Nl2brPipe,
+    TranslateLanguagePipe,
+    JoinPipe,
+    LanguageValuePipe,
+    LicensePipe,
+    CitationActionComponent
+],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailComponent implements OnDestroy {
@@ -78,7 +79,7 @@ export class DetailComponent implements OnDestroy {
   type = input<string>();
 
   private typeConfig = computed<RecordType | null>(() => {
-    const data = this.route.snapshot.data;
+    const { data } = this.route.snapshot;
     if (data['types']?.length) {
       return (data['types'] as RecordType[]).find((t) => t.key === 'documents') ?? null;
     }

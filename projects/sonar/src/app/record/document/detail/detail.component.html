@@ -20,6 +20,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         {{ 'document_type_' + recordData().documentType | translate }}
       </span>
       }
+
+      <sonar-citation-action [recordData]="recordData()" />
     </div>
     <div class="ui:col-span-12 ui:md:col-span-9 ui:flex ui:flex-col ui:gap-2 ui:[&>*]:empty:hidden">
       <h2>
