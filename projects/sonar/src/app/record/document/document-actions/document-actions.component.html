@@ -4,6 +4,13 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <div class="ui:border ui:rounded-sm ui:border-gray-300 ui:p-2">
   <div class="ui:flex ui:gap-2 ui:items-start">
+    @for(format of exportFormats(); track format.format) {
+      <a pButton [href]="exportUrl(format.format)" target="_blank"
+        class="ui:p-2 ui:flex ui:flex-col ui:items-center ui:justify-center ui:w-24 ui:border-none ui:bg-transparent ui:cursor-pointer ui:no-underline">
+        <i class="fa fa-2x ui:mb-1 ui:text-muted-color" [class]="format.icon" aria-hidden="true"></i>
+        <span class="ui:text-center ui:text-muted-color">{{ format.format | translate }}</span>
+      </a>
+    }
     <button type="button" class="ui:p-2 ui:flex ui:flex-col ui:items-center ui:justify-center ui:w-24 ui:border-none ui:bg-transparent ui:cursor-pointer" (click)="citation()">
       <i class="fa fa-quote-right fa-2x ui:mb-1 ui:text-muted-color" aria-hidden="true"></i>
       <span class="ui:text-center ui:text-muted-color" translate>Citation</span>

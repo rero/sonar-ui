@@ -8,7 +8,10 @@ import { EMPTY, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { User, UserOrganisation } from '../models';
 
-export type AppSettings = { document_identifier_link: unknown };
+export type AppSettings = {
+  document_identifier_link: unknown,
+  document_serializers: { format: string; icon: string }[]
+};
 
 export type AppState = {
   user: User | null;
@@ -38,8 +41,10 @@ export const AppStore = signalStore(
         )
         .pipe(
           tap((response) => {
-            const settings = response.settings ?? null;
-            patchState(store, { settings });
+            const { settings } = response;
+            if (settings) {
+              patchState(store, { settings: { ...store.settings(), ...settings } });
+            }
             if (response.metadata?.is_user) {
               const { organisation, permissions, ...rest } = response.metadata;
               patchState(store, {
