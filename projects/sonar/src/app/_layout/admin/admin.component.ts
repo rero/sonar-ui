@@ -95,22 +95,24 @@ export class AdminComponent {
     this.items.set([
       {
         label: this.translateService.instant('SONAR Administration'),
+        icon: 'fa-solid fa-gear',
         visible: user.is_admin,
         items: [
-          { label: this.translateService.instant('Collections'), routerLink: ['/records/collections'], visible: isDedicated },
-          { label: this.translateService.instant('Organisations'), routerLink: ['/records/organisations'] },
-          { label: this.translateService.instant('Subdivisions'), routerLink: ['/records/subdivisions'], visible: isDedicated },
-          { label: this.translateService.instant('Users'), routerLink: ['/records/users'] },
+          { label: this.translateService.instant('Collections'), icon: 'fa-solid fa-layer-group', routerLink: ['/records/collections'], visible: isDedicated },
+          { label: this.translateService.instant('Organisations'), icon: 'fa-solid fa-building-columns', routerLink: ['/records/organisations'] },
+          { label: this.translateService.instant('Subdivisions'), icon: 'fa-solid fa-sitemap', routerLink: ['/records/subdivisions'], visible: isDedicated },
+          { label: this.translateService.instant('Users'), icon: 'fa-solid fa-users', routerLink: ['/records/users'] },
         ],
       },
-      { label: this.translateService.instant('Documents'), routerLink: ['/records', 'documents'], visible: user.is_moderator },
-      { label: this.translateService.instant('Research projects'), routerLink: ['/records', 'projects'], visible: user.is_submitter },
+      { label: this.translateService.instant('Documents'), icon: 'fa-solid fa-file-lines', routerLink: ['/records', 'documents'], visible: user.is_moderator },
+      { label: this.translateService.instant('Research projects'), icon: 'fa-solid fa-chart-gantt', routerLink: ['/records', 'projects'], visible: user.is_submitter },
       {
         label: this.translateService.instant('Deposits'),
+        icon: 'fa-solid fa-file-arrow-up',
         visible: user.is_submitter,
         items: [
-          { label: this.translateService.instant('Deposit a publication'), routerLink: ['/deposit', 'create'] },
-          { label: this.translateService.instant('Deposits'), routerLink: ['/records', 'deposits'] },
+          { label: this.translateService.instant('Deposit a publication'), icon: 'fa-solid fa-file-circle-plus', routerLink: ['/deposit', 'create'] },
+          { label: this.translateService.instant('Deposits'), icon: 'fa-solid fa-list-check', routerLink: ['/records', 'deposits'] },
         ],
       },
       { separator: true },
@@ -119,15 +121,17 @@ export class AdminComponent {
     this.userItems.set([
       {
         label: `${user.last_name}, ${user.first_name}`,
+        icon: 'fa-solid fa-user',
         items: [
-          { label: this.translateService.instant('Public interface'), url: this.store.getPublicInterfaceLink(), target: 'public' },
-          { label: this.translateService.instant('Profile'), url: '/users/profile', target: '_self' },
-          { label: this.translateService.instant('Super administration'), url: '/admin', visible: user.is_superuser, target: 'admin' },
-          { label: this.translateService.instant('Logout'), url: '/logout', target: '_self' },
+          { label: this.translateService.instant('Public interface'), icon: 'fa-solid fa-users', url: this.store.getPublicInterfaceLink(), target: 'public' },
+          { label: this.translateService.instant('Profile'), icon: 'fa-solid fa-address-card', url: '/users/profile', target: '_self' },
+          { label: this.translateService.instant('Super administration'), icon: 'fa-solid fa-screwdriver-wrench', url: '/admin', visible: user.is_superuser, target: 'admin' },
+          { label: this.translateService.instant('Logout'), icon: 'fa-solid fa-right-from-bracket', url: '/logout', target: '_self' },
         ],
       },
       {
         label: this.translateService.getCurrentLang().toUpperCase(),
+        icon: 'fa-solid fa-language',
         items: this.configService.languagesMap.map((lang) => ({
           label: this.translateLanguageService.translate(lang.bibCode),
           command: () => this.changeLanguage(lang.code),

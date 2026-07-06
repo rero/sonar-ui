@@ -14,14 +14,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     <p-button
       [title]="'edit' | translate"
       variant="text"
-      icon="fa fa-edit"
+      icon="fa-solid fa-pencil"
       class="p-panel-header-icon p-link"
       (onClick)="showEditor()"
     />
     <p-button
       [title]="'remove' | translate"
       variant="text"
-      icon="fa fa-trash"
+      icon="fa-solid fa-trash-can"
       class="p-panel-header-icon p-link"
       (onClick)="deleteFile()"
     />
@@ -87,7 +87,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           [chooseButtonProps]="{size:'small'}"
           mode="basic"
           [chooseLabel]="'A new version' | translate"
-          chooseIcon="fa fa-upload"
+          chooseIcon="fa-solid fa-upload"
           [accept]="$any(file().metadata).mimetype"
           fileLimit="1"
           [auto]="true"
@@ -108,7 +108,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     [pTooltip]="($any(file.size) | filesize) + ' / ' + ($any(file.updated) | dateTranslate : 'medium')"
     [title]="'download' | translate"
     [href]="downloadURL(file)"
-    icon="fa fa-download"
+    icon="fa-solid fa-download"
     text
     download
     [label]="name"

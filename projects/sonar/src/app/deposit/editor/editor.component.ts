@@ -23,7 +23,7 @@ import {
   resolve$ref,
 } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { tap } from 'rxjs/operators';
 import { AppStore, AppStoreType } from '../../store/app.store';
 import { DepositStore, DepositStoreType } from '../deposit.store';
@@ -82,15 +82,17 @@ export class EditorComponent {
   });
 
   importMenuItems = computed(() => {
-    const items: { label: string; command: () => void }[] = [
+    const items: MenuItem[] = [
       {
         label: this.translateService.instant('Import from swisscovery'),
+        icon: 'fa-solid fa-cloud-arrow-down',
         command: () => this.importModalIsVisible.set(true),
       },
     ];
     if (this.store.mainFile()) {
       items.push({
         label: this.translateService.instant('Analyze uploaded PDF'),
+        icon: 'fa-solid fa-file-pdf',
         command: () => this.confirmPdfImport(),
       });
     }
@@ -296,7 +298,6 @@ export class EditorComponent {
 
   private getFormFields(fieldGroup: FormlyFieldConfig[], step: string): FormlyFieldConfig[] {
     const fields = fieldGroup.filter((item) => item.key === step);
-    console.log(this.store.schema(), this.currentStep(), step, fields);
     return [fields[0]];
   }
 }

@@ -17,21 +17,25 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       <div class="ui:flex ui:gap-2 ui:justify-center">
         <p-button
           severity="success"
+          icon="fa-solid fa-check"
           (onClick)="review('approve', true)"
           [label]="'Validate' | translate"
         />
         <p-button
           severity="primary"
+          icon="fa-solid fa-check-double"
           (onClick)="review('approve')"
           [label]="'Validate and see other deposits' | translate"
         />
         <p-button
           severity="warn"
+          icon="fa-solid fa-pen-to-square"
           (onClick)="review('ask_for_changes')"
           [label]="'Ask for changes' | translate"
         />
         <p-button
           severity="danger"
+          icon="fa-solid fa-xmark"
           (onClick)="review('reject')"
           [label]="'Reject' | translate"
         />

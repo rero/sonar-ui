@@ -14,39 +14,39 @@ export class FaIconClassPipe implements PipeTransform {
    */
   faClassForMimeType(mimetype: string): string {
     if (mimetype == null) {
-      return 'fa-file-o';
+      return 'fa-regular fa-file';
     }
     switch (true) {
       case mimetype.startsWith('image/'):
-        return 'fa-file-image-o';
+        return 'fa-regular fa-file-image';
       case mimetype.startsWith('audio/'):
-        return 'fa-file-audio-o';
+        return 'fa-regular fa-file-audio';
       case mimetype.startsWith('text/'):
-        return 'fa-file-text-o';
+        return 'fa-regular fa-file-lines';
       case mimetype.startsWith('video/'):
-        return 'fa-file-video-o';
+        return 'fa-regular fa-file-video';
       case mimetype.startsWith('application/vnd.openxmlformats-officedocument.presentationml'):
-        return 'fa-file-powerpoint-o';
+        return 'fa-regular fa-file-powerpoint';
       case mimetype.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml'):
-        return 'fa-file-word-o';
+        return 'fa-regular fa-file-word';
       case mimetype.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml'):
-        return 'fa-file-excel-o';
+        return 'fa-regular fa-file-excel';
       case mimetype.startsWith('application/pdf'):
-        return 'fa-file-pdf-o';
+        return 'fa-regular fa-file-pdf';
     }
-    return 'fa-file-o';
+    return 'fa-regular fa-file';
   }
 
   faClassForContribution(type: string): string {
     switch(type) {
       case 'bf:Meeting':
-        return 'fa-users';
+        return 'fa-solid fa-users';
       case 'bf:Organization':
-        return 'fa-building';
+        return 'fa-solid fa-building';
       case 'bf:Person':
-        return 'fa-user';
+        return 'fa-solid fa-user';
       default:
-        return 'fa-circle';
+        return 'fa-solid fa-circle';
     }
   }
 
