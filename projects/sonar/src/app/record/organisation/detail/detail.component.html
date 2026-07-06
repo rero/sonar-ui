@@ -9,13 +9,13 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
     <sonar-field-description [label]="'Is shared' | translate" [field]="record().metadata.isShared">
       <ng-template let-isShared pTemplate="template">
-        <i class="fa fa-{{ isShared ? 'check' : 'close' }}"></i>
+        <i class="fa-solid fa-{{ isShared ? 'check' : 'xmark' }}"></i>
       </ng-template>
     </sonar-field-description>
 
     <sonar-field-description [label]="'Is dedicated' | translate" [field]="record().metadata.isDedicated">
       <ng-template let-isDedicated pTemplate="template">
-        <i class="fa fa-{{ isDedicated ? 'check' : 'close' }}"></i>
+        <i class="fa-solid fa-{{ isDedicated ? 'check' : 'xmark' }}"></i>
       </ng-template>
     </sonar-field-description>
 
@@ -56,7 +56,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             {{ 'Label' | translate }}: {{ customField.label | languageValue | async }}
             <br>
           }
-          <i class="fa fa-{{ customField.includeInFacets ? 'check' : 'remove' }}"></i>
+          <i class="fa-solid fa-{{ customField.includeInFacets ? 'check' : 'xmark' }}"></i>
           {{ 'Include in facets' | translate }}
         </ng-template>
       </sonar-field-description>
@@ -64,7 +64,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
     <sonar-field-description [label]="'Visible facets in the public interface for documents' | translate" [field]="record().metadata.publicDocumentFacets">
       <ng-template let-publicDocumentFacet pTemplate="template">
-        <i class="fa fa-check" aria-hidden="true"></i>
+        <i class="fa-solid fa-check" aria-hidden="true"></i>
         {{ publicDocumentFacet | translate | ucfirst }}
       </ng-template>
     </sonar-field-description>

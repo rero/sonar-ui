@@ -22,8 +22,8 @@ export const subdivisionsRouteResolver: ResolveFn<Partial<RecordType>[]> = () =>
     showFacetsIfNoResults: true,
     exportFormats: [],
     sortOptions: [
-      { label: _('Relevance'), value: 'relevance', icon: 'fa fa-sort-amount-desc', defaultQuery: true },
-      { label: _('Name'), value: 'name', icon: 'fa fa-sort-alpha-asc', defaultNoQuery: true },
+      { label: _('Relevance'), value: 'relevance', icon: 'fa-solid fa-arrow-down-wide-short', defaultQuery: true },
+      { label: _('Name'), value: 'name', icon: 'fa-solid fa-arrow-down-a-z', defaultNoQuery: true },
     ],
     canAdd: () => routeToolService.canAccess('subdivisions', 'add'),
     canUpdate: (record: RecordData) => routeToolService.canAccess('subdivisions', 'update', record),

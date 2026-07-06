@@ -14,7 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     }
   </div>
   <span>
-    <i class="fa fa-calendar"></i>&nbsp;
+    <i class="fa-solid fa-calendar-days"></i>&nbsp;
     {{ $any(record().metadata.startDate) | dateTranslate: 'mediumDate' }} -
     @if(record().metadata?.endDate) {
       {{ $any(record().metadata.endDate) | dateTranslate: 'mediumDate' }}

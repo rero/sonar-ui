@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 @if (loading()) {
-  <i class="fa fa-spinner fa-spin"></i>
+  <i class="fa-solid fa-spinner fa-spin"></i>
 } @else {
   @if (files()?.length > 0) {
     <div class="ui:flex ui:flex-col ui:gap-2">
@@ -16,7 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           [(ngModel)]="filterText"
         />
         <p-inputgroup-addon>
-          <i class="fa fa-filter"></i>
+          <i class="fa-solid fa-filter"></i>
         </p-inputgroup-addon>
       </p-inputgroup>
       <small>{{ resultsText() }}</small>
@@ -49,15 +49,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                 </div>
               } @else {
                 <div>
-                  <i class="fa fa-4x" [ngClass]="file.mimetype | faIconClass: 'file'"></i>
+                  <i class="fa-4x" [ngClass]="file.mimetype | faIconClass: 'file'"></i>
                 </div>
               }
               <div class="ui:flex ui:items-center ui:justify-center">
                 @if (file.preview) {
-                  <p-button variant="text" icon="fa fa-eye" (onClick)="preview(file)" />
+                  <p-button variant="text" icon="fa-solid fa-eye" (onClick)="preview(file)" />
                 }
                 @if (file.download) {
-                  <a pButton text [href]="file.download"><i class="fa fa-download"></i></a>
+                  <a pButton text [href]="file.download"><i class="fa-solid fa-download"></i></a>
                 }
               </div>
               <small>{{ file.label }}</small>

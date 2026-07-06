@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 {{ mainFile().key }} ({{ $any(mainFile().size) | filesize }})
 <p-button
   href="#"
-  icon="fa fa-eye"
+  icon="fa-solid fa-eye"
   variant="text"
   (onClick)="
     $event.preventDefault();
@@ -19,7 +19,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   pButton
   target="_blank"
   text
-><i class="fa fa-download"></i></a>
+><i class="fa-solid fa-download"></i></a>
 
 @if(additionalFiles()?.length > 0) {
   <div class="ui:mt-2">
@@ -29,7 +29,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         {{ file.key }} ({{ $any(file.size) | filesize }})
         <p-button
           href="#"
-          icon="fa fa-eye"
+          icon="fa-solid fa-eye"
           variant="text"
           (onClick)="previewFileKey.set(file.key); isShowPreview.set(true)"
         />
@@ -38,7 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           pButton
           text
           target="_blank"
-        ><i class="fa fa-download"></i></a>
+        ><i class="fa-solid fa-download"></i></a>
       </div>
     }
   </div>

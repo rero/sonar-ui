@@ -50,7 +50,7 @@
     "@rero/ng-core": "^21.0.1",
     "crypto-js": "^4.2.0",
     "easymde": "^2.20.0",
-    "font-awesome": "^4.7.0",
+    "@fortawesome/fontawesome-free": "^7.0.0",
     "generate-password-lite": "^1.0.2",
     "katex": "^0.16.22",
     "lodash-es": "^4.17.21",

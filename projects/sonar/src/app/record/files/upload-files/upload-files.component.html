@@ -57,7 +57,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       <ng-template #empty>
         @if (!reachMaxFileLimit()) {
           <div class="ui:flex ui:items-center ui:justify-center ui:flex-col ui:p-2">
-              <i class="fa fa-cloud-upload ui:!border-2 ui:!rounded-full ui:!p-8 ui:!text-4xl ui:!text-muted-color"></i>
+              <i class="fa-solid fa-cloud-arrow-up ui:!inline-flex ui:!items-center ui:!justify-center ui:!aspect-square ui:!w-28 ui:!border-2 ui:!rounded-full ui:!text-4xl ui:!text-muted-color"></i>
               <p class="ui:mt-6 ui:mb-0" translate>Drag and drop files to here to upload.</p>
           </div>
         }
@@ -93,5 +93,5 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   }
   </div>
 } @else {
-  <i class="fa fa-spinner fa-spin"></i>
+  <i class="fa-solid fa-spinner fa-spin"></i>
 }

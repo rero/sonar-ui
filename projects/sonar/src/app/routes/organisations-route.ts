@@ -37,8 +37,8 @@ export const organisationsRouteResolver: ResolveFn<Partial<RecordType>[]> = () =
     detailComponent: OrganisationDetailComponent,
     files: fileConfig,
     sortOptions: [
-      { label: _('Relevance'), icon: 'fa fa-sort-amount-desc', value: 'relevance', defaultQuery: true },
-      { label: _('Name'), value: 'name', icon: 'fa fa-sort-alpha-asc', defaultNoQuery: true },
+      { label: _('Relevance'), icon: 'fa-solid fa-arrow-down-wide-short', value: 'relevance', defaultQuery: true },
+      { label: _('Name'), value: 'name', icon: 'fa-solid fa-arrow-down-a-z', defaultNoQuery: true },
     ],
     aggregationsBucketSize: 10,
     showFacetsIfNoResults: true,

@@ -29,9 +29,9 @@ export const depositsRouteResolver: ResolveFn<Partial<RecordType>[]> = () => {
     showFacetsIfNoResults: true,
     exportFormats: [],
     sortOptions: [
-      { label: _('Relevance'), value: 'relevance', icon: 'fa fa-sort-amount-desc', defaultQuery: true },
-      { label: _('Date descending'), value: 'newest', icon: 'fa fa-sort-amount-desc', defaultNoQuery: true },
-      { label: _('Date ascending'), value: 'oldest', icon: 'fa fa-sort-amount-asc' },
+      { label: _('Relevance'), value: 'relevance', icon: 'fa-solid fa-arrow-down-wide-short', defaultQuery: true },
+      { label: _('Date descending'), value: 'newest', icon: 'fa-solid fa-arrow-down-wide-short', defaultNoQuery: true },
+      { label: _('Date ascending'), value: 'oldest', icon: 'fa-solid fa-arrow-down-short-wide' },
     ],
     canAdd: () => of({ can: false, message: '' }),
     canUpdate: () => of({ can: false, message: '' }),

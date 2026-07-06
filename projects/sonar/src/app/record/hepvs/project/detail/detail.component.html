@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     </div>
   }
   <span>
-    <i class="fa fa-calendar"></i>&nbsp;
+    <i class="fa-solid fa-calendar-days"></i>&nbsp;
     {{ $any(record.metadata.startDate) | dateTranslate: 'mediumDate' }} -
     @if(record.metadata?.endDate) {
       {{ $any(record.metadata.endDate) | dateTranslate: 'mediumDate' }}
@@ -87,7 +87,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           {{ funding.funder.type }}
         }
         <i class="ui:ml-2 fa"
-        [ngClass]="{ 'fa-check text-success': funding.fundingReceived, 'fa-remove text-danger': !funding.fundingReceived }"></i>
+        [ngClass]="{ 'fa-solid fa-check text-success': funding.fundingReceived, 'fa-solid fa-xmark text-danger': !funding.fundingReceived }"></i>
       </ng-template>
     </sonar-field-description>
   }
