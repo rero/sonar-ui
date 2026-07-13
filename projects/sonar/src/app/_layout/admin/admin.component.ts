@@ -130,6 +130,7 @@ export class AdminComponent {
         icon: 'fa-solid fa-language',
         items: availableLanguages.map((lang) => ({
           label: this.translateService.instant(lang.name),
+          styleClass: this.translateService.getCurrentLang() === lang.code ? 'ui:font-bold' : '',
           command: () => this.changeLanguage(lang.code),
         })),
       },
