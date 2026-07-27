@@ -24,4 +24,4 @@ display_success_message "Run the tests"
 ng test --no-watch
 
 display_success_message "Run packing"
-npm run pack
+pnpm run pack
