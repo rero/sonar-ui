@@ -1,0 +1,28 @@
+<!--
+SPDX-FileCopyrightText: Fondation RERO+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+@if (message()) {
+  <p-message class="ui:mb-4" [severity]="messageType()">{{ message() }}</p-message>
+}
+@if (styles().length > 0) {
+  <div class="ui:grid ui:grid-cols-1 ui:md:grid-cols-[250px_1fr] ui:gap-2">
+    <div class="ui:border ui:rounded-md ui:border-gray-300 ui:p-2">
+      <ul class="ui:list-none ui:m-0 ui:p-0">
+        @for(style of styles(); track $index) {
+          <li class="ui:mb-2"><button type="button" class="ui:border-0 ui:bg-transparent ui:cursor-pointer ui:p-0 ui:text-base" [class.ui:font-bold]="style.id === selectedStyle()" (click)="cite(style.id)">{{ style.label }}</button></li>
+        }
+      </ul>
+    </div>
+    <div class="ui:border ui:rounded-md ui:border-gray-300 ui:flex ui:flex-col ui:gap-2 ui:p-2">
+      @let html = citation();
+      @if(html) {
+        <span [innerHTML]="html"></span>
+        <button type="button" class="fa fa-clipboard ui:text-muted-color ui:mt-2 ui:bg-transparent ui:border-0 ui:cursor-pointer ui:p-0 ui:w-fit" (click)="copy()" [title]="'Copy to the Clipboard' | translate"></button>
+      } @else {
+        <span translate>Select a style on the left</span>
+      }
+    </div>
+  </div>
+  <div class="ui:mt-3 ui:font-bold" translate>Be sure to check the citation before using it</div>
+}
