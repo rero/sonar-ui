@@ -5,13 +5,22 @@
 # pushes back to `translations` only when the set of source messages changes. It
 # never writes the language files -- Weblate is their sole editor, via the
 # monolingual base file. The two actors therefore touch disjoint files
-# (CI: assets/i18n/messages.json, Weblate: assets/i18n/<lang>.json), so a
+# (CI: translations/messages.json, Weblate: src/assets/i18n/<lang>.json), so a
 # CI<->Weblate conflict is impossible by construction. The buffer is
 # squash-merged into `staging` once per release, which must be followed
 # immediately by merging `staging` back into `translations`. The squash leaves no
 # trace of the buffer in staging's ancestry, so until that resync lands the merge
 # base is stale and the next nightly merge conflicts on the language files -- even
 # with Weblate as their only writer.
+#
+# The template deliberately lives OUTSIDE src/assets/i18n/, and must stay there.
+# Weblate derives a language code from the template path by matching it against
+# the component filemask (`src/assets/i18n/*.json`); a template inside the mask
+# yields the code `messages`, which fails validation with "Template language
+# (messages) does not match source language (en_US)". No filemask can avoid this
+# -- `*` compiles to `[^/]*` and `?` is not a wildcard -- so only a path outside
+# the mask works. Being out of src/assets/ also stops a file the app never reads
+# from being copied into dist/.
 #
 # Deliberately does NOT run `update_catalog`: in a monolingual format Weblate
 # derives the string list from the base file (messages.json), so pushing a key
@@ -78,7 +87,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TEMPLATE='projects/sonar/src/assets/i18n/messages.json'
+          TEMPLATE='projects/sonar/translations/messages.json'
           # Unlike pybabel, ngx-translate-extract writes no timestamp header, so a
           # plain diff is enough to skip content-free commits.
           if git diff --quiet -- "$TEMPLATE"; then
