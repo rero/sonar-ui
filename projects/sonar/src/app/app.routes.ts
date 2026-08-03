@@ -35,11 +35,11 @@ const recordMatcher = (type: string) => (url: UrlSegment[]) => {
   return null;
 };
 
-const publicSearchViewResolver: ResolveFn<void> = (route: ActivatedRouteSnapshot) => {
+export const publicSearchViewResolver: ResolveFn<void> = (route: ActivatedRouteSnapshot) => {
   const view = route.params['view'];
   const types = route.data['types'] as Record<string, unknown>[];
   if (view && types?.[0]) {
-    types[0]['detailUrl'] = `/${view}/:type/:pid`;
+    route.data['detailUrl'] = `/${view}/:type/:pid`;
     types[0]['preFilters'] = { view };
   }
 };
