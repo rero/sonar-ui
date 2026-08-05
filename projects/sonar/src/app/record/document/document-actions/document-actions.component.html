@@ -1,0 +1,15 @@
+<!--
+SPDX-FileCopyrightText: Fondation RERO+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<p-panel [header]="'Export to…'|translate" [dt]="{ root: { background: 'white' }, header: { background: '{surface.100}' } }">
+  <div class="ui:flex ui:flex-wrap ui:gap-2 ui:items-start ui:p-2">
+    @for(format of exportFormats(); track format.format) {
+      <a pButton [href]="exportUrl(format.format)"
+        class="ui:p-2 ui:flex ui:flex-col ui:items-center ui:justify-center ui:w-26 ui:border-none ui:bg-transparent ui:cursor-pointer ui:no-underline">
+        <i class="fa-2x ui:text-muted-color" [class]="format.icon" aria-hidden="true"></i>
+        <span class="ui:text-center ui:text-xs ui:text-muted-color">{{ format.label | translate }}</span>
+      </a>
+    }
+  </div>
+</p-panel>

@@ -1,18 +1,25 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
+import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { ApiService } from '@rero/ng-core';
-import { HttpClient } from '@angular/common/http';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { User, UserOrganisation } from '../models';
 
 export type language = { code: string, name: string }
 
+export type DocumentSerializer = {
+  format: string;
+  icon: string;
+  label: string;
+};
+
 export type AppSettings = {
-  document_identifier_link: unknown,
-  availableLanguages: language[]
+  document_identifier_link: unknown;
+  availableLanguages: language[];
+  document_serializers: DocumentSerializer[];
 };
 
 export type AppState = {
@@ -32,7 +39,8 @@ export const AppStore = signalStore(
     permissions: null,
     settings: {
       document_identifier_link: {},
-      availableLanguages: []
+      availableLanguages: [],
+      document_serializers: []
     },
   }),
   withComputed((store, apiService = inject(ApiService)) => ({
@@ -58,7 +66,7 @@ export const AppStore = signalStore(
           tap((response) => {
             const { settings } = response;
             if (settings) {
-              patchState(store, { settings });
+              patchState(store, { settings: { ...store.settings(), ...settings } });
             }
             if (response.metadata?.is_user) {
               const { organisation, permissions, ...rest } = response.metadata;
