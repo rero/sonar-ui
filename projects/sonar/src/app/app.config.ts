@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { DatePipe } from '@angular/common';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withRouterConfig } from '@angular/router';
 import { provideTranslateLoader, provideTranslateService } from '@ngx-translate/core';
@@ -11,7 +11,6 @@ import { AppConfigService } from './app-config.service';
 import { AppTranslateLoader } from './app-translate-loader';
 import { AppTranslateService } from './app-translate.service';
 import { AppStore } from './store/app.store';
-import { HttpInterceptor } from './interceptor/http.interceptor';
 import { LanguageValuePipe } from './pipe/language-value.pipe';
 import { primeNGSonarConfig } from './primeng-config';
 import { UIAutocompleteService } from './ui-autocomplete.service';
@@ -27,12 +26,7 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: NgCoreTranslateService, useExisting: AppTranslateService },
     providePrimeNG(primeNGSonarConfig),
-    provideHttpClient(withInterceptorsFromDi()),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpInterceptor,
-      multi: true,
-    },
+    provideHttpClient(),
     {
       provide: CoreConfigService,
       useClass: AppConfigService,
