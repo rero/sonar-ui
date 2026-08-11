@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { RecordService } from '@rero/ng-core';
+import { IFilter, RecordService } from '@rero/ng-core';
 import { cloneDeep } from 'lodash-es';
 import { of } from 'rxjs';
 import { BucketNameService } from './bucket-name.service';
@@ -48,6 +48,23 @@ describe('BucketNameService', () => {
     service.transform({ key: 'default', doc_count: 0, aggregationKey: 'other', name: 'default value' }).subscribe(
       (value: string) => expect(value).toEqual('default value')
     );
+  });
+
+  it('should translate the values with the prefix of their aggregation', () => {
+    translateServiceSpy.stream.mockClear();
+    service.transform({ key: 'eng', doc_count: 0, aggregationKey: 'language' }).subscribe();
+    expect(translateServiceSpy.stream).toHaveBeenCalledWith('lang_eng');
+    service.transform({ key: 'coar:c_12cc', doc_count: 0, aggregationKey: 'document_type' }).subscribe();
+    expect(translateServiceSpy.stream).toHaveBeenCalledWith('document_type_coar:c_12cc');
+    service.transform({ key: 'validated', doc_count: 0, aggregationKey: 'status' }).subscribe();
+    expect(translateServiceSpy.stream).toHaveBeenCalledWith('deposit_status_validated');
+  });
+
+  it('should name a selected filter, which carries no document count', () => {
+    translateServiceSpy.stream.mockClear();
+    const filter: IFilter = { key: 'eng', aggregationKey: 'language' };
+    service.transform(filter).subscribe();
+    expect(translateServiceSpy.stream).toHaveBeenCalledWith('lang_eng');
   });
 
   it('should return the label value, if translations are not available.', () => {
