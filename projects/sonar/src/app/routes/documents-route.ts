@@ -3,14 +3,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { _ } from '@ngx-translate/core';
-import { ApiService, Bucket, DetailComponent, EditorComponent, File as NgCoreFile, RecordData, RecordSearchPageComponent, RecordType } from '@rero/ng-core';
+import { ApiService, Bucket, DetailComponent, EditorComponent, IFilter, File as NgCoreFile, RecordData, RecordSearchPageComponent, RecordType } from '@rero/ng-core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { canAddGuard } from '../guard/can-add.guard';
 import { roleGuard } from '../guard/role.guard';
-import { AggregationFilter } from '../record/document/aggregation-filter';
 import { DetailComponent as DocumentDetailComponent } from '../record/document/detail/detail.component';
 import { DocumentComponent } from '../record/document/document.component';
 import { typeResolver } from './type-resolver';
@@ -52,11 +50,8 @@ export function fetchAggregationsOrder(route: ActivatedRouteSnapshot): Observabl
 }
 
 export const documentsRouteResolver: ResolveFn<Partial<RecordType>[]> = (route: ActivatedRouteSnapshot) => {
-  const translateService = inject(TranslateService);
   const routeToolService = inject(RouteToolService);
   const bucketNameService = inject(BucketNameService);
-
-  AggregationFilter.translateService = translateService;
 
   return fetchAggregationsOrder(route).pipe(
     map((aggregationsOrder) => [{
@@ -64,10 +59,10 @@ export const documentsRouteResolver: ResolveFn<Partial<RecordType>[]> = (route: 
       label: 'Documents',
       component: DocumentComponent,
       detailComponent: DocumentDetailComponent,
-      aggregations: AggregationFilter.filter,
       aggregationsExpand: ['document_type', 'controlled_affiliation', 'year'],
       aggregationsOrder,
       processBucketName: (bucket: Bucket) => bucketNameService.transform(bucket),
+      processFilterName: (filter: IFilter) => bucketNameService.transform(filter),
       aggregationsBucketSize: 10,
       editorSettings: { longMode: true, getHeaders: { Accept: 'application/rero+json' } },
       files: {
