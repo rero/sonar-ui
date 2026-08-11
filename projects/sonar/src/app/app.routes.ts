@@ -16,7 +16,7 @@ import { DocumentComponent } from './record/document/document.component';
 import { collectionsRouteResolver } from './routes/collections-route';
 import { depositsRouteResolver } from './routes/deposits-route';
 import { BucketNameService } from './bucket-name.service';
-import { documentsRouteResolver, fetchAggregationsOrder } from './routes/documents-route';
+import { documentsRouteResolver, fetchAggregations } from './routes/documents-route';
 import { organisationsRouteResolver } from './routes/organisations-route';
 import { projectsRouteResolver } from './routes/projects-route';
 import { subdivisionsRouteResolver } from './routes/subdivisions-route';
@@ -46,9 +46,12 @@ const publicDocumentsAggregationsResolver: ResolveFn<void> = (route: ActivatedRo
   const bucketNameService = inject(BucketNameService);
   const types = route.data['types'] as Record<string, unknown>[];
   if (!types?.[0]) return;
-  return fetchAggregationsOrder(route).pipe(
-    map((aggregationsOrder) => {
-      types[0]['aggregationsOrder'] = aggregationsOrder;
+  // No organisation is available in a public view, the custom field facets are named
+  // with the labels resolved by the backend for the current language.
+  return fetchAggregations(route).pipe(
+    map(({ order, names }) => {
+      types[0]['aggregationsOrder'] = order;
+      types[0]['aggregationsName'] = names;
       types[0]['processBucketName'] = (bucket: Bucket) => bucketNameService.transform(bucket);
       types[0]['processFilterName'] = (filter: IFilter) => bucketNameService.transform(filter);
     })
