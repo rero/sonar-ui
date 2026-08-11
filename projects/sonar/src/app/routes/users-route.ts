@@ -5,6 +5,7 @@ import { ResolveFn, Routes } from '@angular/router';
 import { _ } from '@ngx-translate/core';
 import { EditorComponent, RecordData, RecordSearchPageComponent, RecordType } from '@rero/ng-core';
 import { of } from 'rxjs';
+import { canAddGuard } from '../guard/can-add.guard';
 import { roleGuard } from '../guard/role.guard';
 import { UserComponent } from '../record/user/user.component';
 import { typeResolver } from './type-resolver';
@@ -46,6 +47,13 @@ export const usersRoutes: Routes = [
     title: typeResolver,
     component: EditorComponent,
     canActivate: [roleGuard],
+    data: { role: 'submitter' },
+  },
+  {
+    path: 'new',
+    title: typeResolver,
+    component: EditorComponent,
+    canActivate: [roleGuard, canAddGuard],
     data: { role: 'submitter' },
   },
 ];
