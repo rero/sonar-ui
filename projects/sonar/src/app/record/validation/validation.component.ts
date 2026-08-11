@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map, startWith } from 'rxjs/operators';
+import { finalize, map, startWith } from 'rxjs/operators';
 import { TranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
-import { CONFIG, RecordData, RecordService, DateTranslatePipe, Nl2brPipe } from '@rero/ng-core';
+import { CONFIG, Error as CoreError, JsonObject, RecordData, RecordService, DateTranslatePipe, Nl2brPipe } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AppStore, AppStoreType } from '../../store/app.store';
@@ -52,14 +52,14 @@ export class ValidationComponent {
   type = input.required<string>();
 
   user = this.store.user;
-  validation = signal<Record<string, unknown> | null>(null);
+  validation = signal<JsonObject | null>(null);
   showLogs = signal(false);
 
   comment = viewChild<ElementRef>('comment');
 
   isModerator = computed(() => this.user()?.is_moderator ?? false);
   status = computed(() => this.validation()?.['status'] as validation_status | undefined);
-  logs = computed(() => this.validation()?.['logs'] as Record<string, unknown>[] | undefined);
+  logs = computed(() => this.validation()?.['logs'] as JsonObject[] | undefined);
 
   private currentLang = toSignal(
     this.translateService.onLangChange.pipe(
@@ -77,12 +77,12 @@ export class ValidationComponent {
     );
   });
   isOwner = computed(() =>
-    this.store.userRefEndpoint() === (this.validation()?.['user'] as Record<string, unknown>)?.['$ref']
+    this.store.userRefEndpoint() === (this.validation()?.['user'] as JsonObject)?.['$ref']
   );
 
   constructor() {
     effect(() => {
-      this.validation.set(this.record().metadata.validation as Record<string, unknown>);
+      this.validation.set(this.record().metadata.validation as JsonObject);
     });
   }
 
@@ -95,26 +95,37 @@ export class ValidationComponent {
       accept: () => {
         this.spinner.show();
 
-        const updated: Record<string, unknown> = { ...this.validation()!, action };
+        const validation: JsonObject = { ...this.validation()!, action };
         const commentValue = this.comment()?.nativeElement?.value;
         if (commentValue) {
-          updated['comment'] = commentValue;
+          validation['comment'] = commentValue;
         } else {
-          delete updated['comment'];
+          delete validation['comment'];
         }
-        this.validation.set(updated);
+        const record = this.record();
+        const updated: RecordData = { ...record, metadata: { ...record.metadata, validation } };
 
         this.recordService
-          .update(this.type(), this.record().id, this.record())
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .subscribe((record: any) => {
-            this.validation.set(record.metadata['validation'] as Record<string, unknown>);
-            this.spinner.hide();
-            this.messageService.add({
-              severity: 'success',
-              detail: this.translateService.instant('Review has been done successfully!'),
-              life: CONFIG.MESSAGE_LIFE,
-            });
+          .update(this.type(), record.id, updated)
+          .pipe(finalize(() => this.spinner.hide()))
+          .subscribe({
+            next: (response: unknown) => {
+              this.validation.set((response as RecordData).metadata['validation'] as JsonObject);
+              this.messageService.add({
+                severity: 'success',
+                detail: this.translateService.instant('Review has been done successfully!'),
+                life: CONFIG.MESSAGE_LIFE,
+              });
+            },
+            error: (error: CoreError) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.translateService.instant('Error'),
+                detail: error.title,
+                sticky: true,
+                closable: true,
+              });
+            },
           });
       },
     });
