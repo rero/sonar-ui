@@ -8,6 +8,7 @@ import {
   effect,
   inject,
   input,
+  linkedSignal,
   signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -64,7 +65,15 @@ export class EditorComponent {
   currentStep = input.required<string>();
   steps = input.required<string[]>();
 
-  form = signal<UntypedFormGroup>(new UntypedFormGroup({}));
+  /**
+   * A fresh form group is required on each step, as formly only clears the validators of the
+   * controls of the previous step and leaves them registered. Such a leftover control keeps its
+   * invalid status forever and silently blocks the save of every following step.
+   */
+  form = linkedSignal<string, UntypedFormGroup>({
+    source: this.currentStep,
+    computation: () => new UntypedFormGroup({}),
+  });
   model = signal<Record<string, unknown>>({});
   fields = signal<FormlyFieldConfig[]>([]);
   importModalIsVisible = signal(false);
