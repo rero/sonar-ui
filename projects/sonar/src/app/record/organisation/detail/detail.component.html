@@ -50,7 +50,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     </sonar-field-description>
 
     @for (i of [1, 2, 3]; track i) {
-      <sonar-field-description [label]="'Custom field ' + i | translate" [field]="record().metadata['documentsCustomField' + i]">
+      <sonar-field-description [label]="'Document custom field ' + i | translate" [field]="record().metadata['documentsCustomField' + i]">
         <ng-template let-customField pTemplate="template">
           @if (customField.label) {
             {{ 'Label' | translate }}: {{ customField.label | languageValue | async }}

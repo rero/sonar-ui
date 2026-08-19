@@ -3,14 +3,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, Routes } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { _ } from '@ngx-translate/core';
-import { ApiService, Bucket, DetailComponent, EditorComponent, File as NgCoreFile, RecordData, RecordSearchPageComponent, RecordType } from '@rero/ng-core';
+import { ApiService, Bucket, DetailComponent, EditorComponent, IFilter, File as NgCoreFile, RecordData, RecordSearchPageComponent, RecordType } from '@rero/ng-core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { canAddGuard } from '../guard/can-add.guard';
 import { roleGuard } from '../guard/role.guard';
-import { AggregationFilter } from '../record/document/aggregation-filter';
 import { DetailComponent as DocumentDetailComponent } from '../record/document/detail/detail.component';
 import { DocumentComponent } from '../record/document/document.component';
 import { typeResolver } from './type-resolver';
@@ -32,7 +30,27 @@ const fileConfig = {
     of({ can: file?.metadata?.permissions?.delete ?? false, message: '' }),
 };
 
-export function fetchAggregationsOrder(route: ActivatedRouteSnapshot): Observable<string[]> {
+/**
+ * Aggregation returned by the backend. Aggregations with a label configured on the
+ * organisation, such as the custom fields, come with the label resolved for the
+ * current language.
+ */
+type Aggregation = string | { key: string; name: string };
+
+/** Aggregations to display: the keys in the order given by the backend, and the labels of the named ones. */
+export type AggregationsConfig = { order: string[]; names: Record<string, string> };
+
+/** Split the aggregations returned by the backend into their order and their labels. */
+export const toAggregationsConfig = (aggregations: Aggregation[]): AggregationsConfig => ({
+  order: aggregations.map((aggregation) => typeof aggregation === 'string' ? aggregation : aggregation.key),
+  names: Object.fromEntries(
+    aggregations
+      .filter((aggregation) => typeof aggregation !== 'string')
+      .map((aggregation) => [aggregation.key, aggregation.name])
+  ),
+});
+
+export function fetchAggregations(route: ActivatedRouteSnapshot): Observable<AggregationsConfig> {
   const apiService = inject(ApiService);
   const httpClient = inject(HttpClient);
   let params = new HttpParams();
@@ -43,31 +61,29 @@ export function fetchAggregationsOrder(route: ActivatedRouteSnapshot): Observabl
   if (route.queryParams['collection_view']) {
     params = params.set('collection', '1');
   }
-  return httpClient.get<(string | { key: string; name: string })[]>(
+  return httpClient.get<Aggregation[]>(
     `${apiService.getEndpointByType('documents', true)}/aggregations`,
     { params }
-  ).pipe(
-    map((items) => items.map((item) => typeof item === 'string' ? item : item.key))
-  );
+  ).pipe(map(toAggregationsConfig));
 }
 
 export const documentsRouteResolver: ResolveFn<Partial<RecordType>[]> = (route: ActivatedRouteSnapshot) => {
-  const translateService = inject(TranslateService);
   const routeToolService = inject(RouteToolService);
   const bucketNameService = inject(BucketNameService);
 
-  AggregationFilter.translateService = translateService;
-
-  return fetchAggregationsOrder(route).pipe(
-    map((aggregationsOrder) => [{
+  // The custom field facets are not named here: their labels are taken from the
+  // translations, filled with the organisation of the logged user, and stay up to date
+  // when the language is switched without reloading the application.
+  return fetchAggregations(route).pipe(
+    map(({ order }) => [{
       key: 'documents',
       label: 'Documents',
       component: DocumentComponent,
       detailComponent: DocumentDetailComponent,
-      aggregations: AggregationFilter.filter,
       aggregationsExpand: ['document_type', 'controlled_affiliation', 'year'],
-      aggregationsOrder,
+      aggregationsOrder: order,
       processBucketName: (bucket: Bucket) => bucketNameService.transform(bucket),
+      processFilterName: (filter: IFilter) => bucketNameService.transform(filter),
       aggregationsBucketSize: 10,
       editorSettings: { longMode: true, getHeaders: { Accept: 'application/rero+json' } },
       files: {

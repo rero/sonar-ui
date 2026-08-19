@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, Routes, UrlSegment } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { _ } from '@ngx-translate/core';
-import { Bucket, DetailComponent, EditorComponent, RecordData, RecordSearchPageComponent } from '@rero/ng-core';
+import { Bucket, DetailComponent, EditorComponent, IFilter, RecordData, RecordSearchPageComponent } from '@rero/ng-core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AdminComponent } from './_layout/admin/admin.component';
@@ -12,13 +11,12 @@ import { OutletComponent } from './_layout/outlet/outlet.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { dedicatedGuard } from './guard/dedicated.guard';
 import { roleGuard } from './guard/role.guard';
-import { AggregationFilter } from './record/document/aggregation-filter';
 import { DetailComponent as DocumentDetailComponent } from './record/document/detail/detail.component';
 import { DocumentComponent } from './record/document/document.component';
 import { collectionsRouteResolver } from './routes/collections-route';
 import { depositsRouteResolver } from './routes/deposits-route';
 import { BucketNameService } from './bucket-name.service';
-import { documentsRouteResolver, fetchAggregationsOrder } from './routes/documents-route';
+import { documentsRouteResolver, fetchAggregations } from './routes/documents-route';
 import { organisationsRouteResolver } from './routes/organisations-route';
 import { projectsRouteResolver } from './routes/projects-route';
 import { subdivisionsRouteResolver } from './routes/subdivisions-route';
@@ -45,14 +43,17 @@ export const publicSearchViewResolver: ResolveFn<void> = (route: ActivatedRouteS
 };
 
 const publicDocumentsAggregationsResolver: ResolveFn<void> = (route: ActivatedRouteSnapshot) => {
-  AggregationFilter.translateService = inject(TranslateService);
   const bucketNameService = inject(BucketNameService);
   const types = route.data['types'] as Record<string, unknown>[];
   if (!types?.[0]) return;
-  return fetchAggregationsOrder(route).pipe(
-    map((aggregationsOrder) => {
-      types[0]['aggregationsOrder'] = aggregationsOrder;
+  // No organisation is available in a public view, the custom field facets are named
+  // with the labels resolved by the backend for the current language.
+  return fetchAggregations(route).pipe(
+    map(({ order, names }) => {
+      types[0]['aggregationsOrder'] = order;
+      types[0]['aggregationsName'] = names;
       types[0]['processBucketName'] = (bucket: Bucket) => bucketNameService.transform(bucket);
+      types[0]['processFilterName'] = (filter: IFilter) => bucketNameService.transform(filter);
     })
   );
 };
@@ -139,7 +140,6 @@ export const routes: Routes = [
           canAdd: () => of({ can: false, message: '' }),
           canUpdate: () => of({ can: false, message: '' }),
           canDelete: () => of({ can: false, message: '' }),
-          aggregations: AggregationFilter.filter,
           aggregationsExpand: ['document_type', 'controlled_affiliation', 'year'],
           aggregationsBucketSize: 10,
           exportFormats: [],

@@ -4,28 +4,30 @@ import { inject } from '@angular/core';
 import { ResolveFn, Routes } from '@angular/router';
 import { DepositStore } from '../deposit/deposit.store';
 import { _ } from '@ngx-translate/core';
-import { RecordData, RecordSearchPageComponent, RecordType } from '@rero/ng-core';
+import { Bucket, IFilter, RecordData, RecordSearchPageComponent, RecordType } from '@rero/ng-core';
 import { of } from 'rxjs';
 import { roleGuard } from '../guard/role.guard';
 import { BriefViewComponent } from '../deposit/brief-view/brief-view.component';
 import { ConfirmationComponent } from '../deposit/confirmation/confirmation.component';
 import { MetadataComponent } from '../deposit/metadata/metadata.component';
 import { UploadComponent } from '../deposit/upload/upload.component';
-import { AggregationFilter } from '../record/document/aggregation-filter';
 import { typeResolver } from './type-resolver';
 import { RouteToolService } from './route-tool.service';
+import { BucketNameService } from '../bucket-name.service';
 
 export const depositsRouteResolver: ResolveFn<Partial<RecordType>[]> = () => {
   const routeToolService = inject(RouteToolService);
+  const bucketNameService = inject(BucketNameService);
 
   return [{
     key: 'deposits',
     label: 'Deposits',
     component: BriefViewComponent,
-    aggregations: AggregationFilter.filter,
     aggregationsExpand: ['status', 'user', 'contributor'],
     aggregationsOrder: ['status', 'user', 'contributor', 'subdivision'],
     aggregationsBucketSize: 10,
+    processBucketName: (bucket: Bucket) => bucketNameService.transform(bucket),
+    processFilterName: (filter: IFilter) => bucketNameService.transform(filter),
     showFacetsIfNoResults: true,
     exportFormats: [],
     sortOptions: [

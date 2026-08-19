@@ -86,8 +86,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         @if (['Swiss National Science Foundation', 'Swissuniversities'].includes(funding.funder.type)) {
           {{ funding.funder.type }}
         }
-        <i class="ui:ml-2 fa"
-        [ngClass]="{ 'fa-solid fa-check text-success': funding.fundingReceived, 'fa-solid fa-xmark text-danger': !funding.fundingReceived }"></i>
+        <i class="ui:ml-2"
+        [ngClass]="{ 'fa-solid fa-check text-success': funding.fundingReceived, 'fa-solid fa-xmark text-error': !funding.fundingReceived }"></i>
       </ng-template>
     </sonar-field-description>
   }
