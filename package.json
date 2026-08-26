@@ -80,6 +80,7 @@
     "@vendure/ngx-translate-extract": "^10.1.0",
     "@vitest/coverage-v8": "^4.1.1",
     "angular-eslint": "^21.3.1",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "eslint": "^9.39.0",
     "jsdom": "^22.0.0",
     "postcss": "^8.5.3",
