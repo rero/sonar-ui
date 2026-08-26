@@ -1,5 +1,28 @@
 # Changelog
 
+## [21.1.0](https://github.com/rero/sonar-ui/compare/v21.0.0...v21.1.0) (2026-08-26)
+
+### Features
+
+* **documents:** add citation component ([37cadfc](https://github.com/rero/sonar-ui/commit/37cadfc4577626b12f961aa38dc83a97804f696c))
+* **documents:** add export formats ([e5378d4](https://github.com/rero/sonar-ui/commit/e5378d481c3bada5fcf6fc108374215a4df43d2c))
+* **icons:** migrate to Font Awesome v7 ([395976e](https://github.com/rero/sonar-ui/commit/395976e647c60aa5cb7fd75acf6e682754f97c09))
+* **ssl:** serve the dev server over https with a dev certificate ([03b54d9](https://github.com/rero/sonar-ui/commit/03b54d97c9d8334f486a951add4aee6f14bb9575))
+* **swisscovery:** add error toast on search failure ([35e9786](https://github.com/rero/sonar-ui/commit/35e9786cd595fef4e817610976935fa0062285e9))
+* **translate:** allow language config override ([021cec7](https://github.com/rero/sonar-ui/commit/021cec772fd062ea9c766f9e16e423551cc676fe))
+
+### Bug Fixes
+
+* **deposit:** fix the Continue button after a breadcrumb navigation ([5f0e7fd](https://github.com/rero/sonar-ui/commit/5f0e7fdbc05a8bcab0efd701584ae078dd0f3d76))
+* display the custom fields with their configured label ([567cbb9](https://github.com/rero/sonar-ui/commit/567cbb9682a5379c86d2efe821d175aa5be75d2d))
+* **documents:** show the full-text toggle even without a query ([f5ea15f](https://github.com/rero/sonar-ui/commit/f5ea15f77ab118cfbfd51359dbd8aa8823e24073)), closes [rero/sonar#671](https://github.com/rero/sonar/issues/671)
+* **projects:** replace incorrect css colour class ([d0b8b71](https://github.com/rero/sonar-ui/commit/d0b8b710292111e9cb0638b32158ee091bfaacff))
+* **routing:** fix contributor link on the shared detail page ([40c93c1](https://github.com/rero/sonar-ui/commit/40c93c159b736ed4d546a4dfb9271a9a0e0a5af0))
+* **routing:** fix public view detailUrl resolution ([c6a526a](https://github.com/rero/sonar-ui/commit/c6a526a59ccf67959247699db7945762ca097321))
+* **search:** translate the selected filter buttons ([9b14144](https://github.com/rero/sonar-ui/commit/9b14144cd4a8f0cec10cc11e7b44a911c347ba21))
+* submit record for validation not working ([5254aed](https://github.com/rero/sonar-ui/commit/5254aedb2f5e98320386a95db049f4cbd9138082))
+* **users:** add missing route to create a new user ([bb6ea25](https://github.com/rero/sonar-ui/commit/bb6ea254ca567ac485c148576b501eacae300653))
+
 ## [v21.0.0](https://github.com/rero/sonar-ui/tree/v21.0.0) (2026-06-11)
 
 [Full Changelog](https://github.com/rero/sonar-ui/compare/v19.0.3...v21.0.0)
