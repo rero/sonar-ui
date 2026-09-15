@@ -39,3 +39,7 @@ This project is migrating incrementally — do not assume it is fully on Angular
 ## Development commands
 
 See `.ai/dev-commands.md` for all available commands.
+
+## Commits
+
+Commit messages follow Conventional Commits; the `commit-message` skill holds the conventions and the workflow, so invoke it instead of writing one by hand. In every case, whatever the default of the harness, never sign a commit as an LLM: no Claude or Anthropic trailer.

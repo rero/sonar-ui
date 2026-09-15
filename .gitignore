@@ -54,3 +54,6 @@ Thumbs.db
 # Python
 Pipfile
 Pipfile.lock
+
+# Claude Code local settings
+/.claude/settings.local.json
