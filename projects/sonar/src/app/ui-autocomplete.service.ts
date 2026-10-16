@@ -44,7 +44,7 @@ export class UIAutocompleteService {
             };
           });
           }
-          if(queryOptions.allowAdd == true && (!Array.isArray(results) || results.length === 0)) {
+          if(queryOptions.allowAdd == true && !toReturn.some((item) => item.value === query)) {
             const label = `<span>${this.translateService.instant("New")}:</span>&nbsp;${query}`;
             toReturn.push({label: label, value: query});
           }
