@@ -1,5 +1,11 @@
 # Changelog
 
+## [21.1.1](https://github.com/rero/sonar-ui/compare/v21.1.0...v21.1.1) (2026-10-26)
+
+### Bug Fixes
+
+* **editor:** offer new value unless exact match ([06971af](https://github.com/rero/sonar-ui/commit/06971af5e8468ff41542c7c10d5ff1fa7d8e5dda))
+
 ## [21.1.0](https://github.com/rero/sonar-ui/compare/v21.0.0...v21.1.0) (2026-08-26)
 
 ### Features
