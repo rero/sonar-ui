@@ -1,10 +1,11 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
+import { DialogModule } from '@openng/optimus-ui/dialog';
+
 import { FileLinkPipe } from '../../core/file-link.pipe';
 import { FilesComponent } from './files.component';
-import { DialogModule } from 'primeng/dialog';
 
 describe('FilesComponent', () => {
   let component: FilesComponent;
@@ -12,13 +13,9 @@ describe('FilesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [
-        TranslateModule.forRoot(),
-        DialogModule,
-        FilesComponent,
-        FileLinkPipe
-    ],
-}).compileComponents();
+      imports: [DialogModule, FilesComponent, FileLinkPipe],
+      providers: [provideTranslateService()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(FilesComponent);
     fixture.componentRef.setInput('mainFile', {});

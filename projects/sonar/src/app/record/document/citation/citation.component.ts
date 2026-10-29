@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { Clipboard } from '@angular/cdk/clipboard';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { TranslateDirective, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { DynamicDialogConfig } from '@openng/optimus-ui/dynamicdialog';
+import { Message } from '@openng/optimus-ui/message';
 import { ApiService } from '@rero/ng-core';
-import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { Message } from 'primeng/message';
 import { catchError, EMPTY } from 'rxjs';
 
 type CitationStyle = {
@@ -20,12 +20,10 @@ type Citation = {
 
 @Component({
   selector: 'sonar-citation',
-  imports: [Message, TranslateDirective, TranslatePipe],
+  imports: [Message, TranslatePipe],
   templateUrl: './citation.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CitationComponent implements OnInit {
-
   private apiService = inject(ApiService);
   private httpClient = inject(HttpClient);
   private translateService = inject(TranslateService);
@@ -34,8 +32,8 @@ export class CitationComponent implements OnInit {
 
   protected styles = signal<CitationStyle[]>([]);
   protected selectedStyle = signal<string>('');
-  protected citation = signal<string|undefined>(undefined);
-  protected message = signal<string|undefined>(undefined);
+  protected citation = signal<string | undefined>(undefined);
+  protected message = signal<string | undefined>(undefined);
   protected messageType = signal<'success' | 'error'>('success');
 
   private documentPid!: string;
@@ -43,22 +41,26 @@ export class CitationComponent implements OnInit {
   ngOnInit(): void {
     const { data } = this.dynamicDialogConfig;
     this.documentPid = data.documentPid;
-    this.httpClient.get<CitationStyle[]>(`${this.apiService.getEndpointByType('documents', true)}/citation-styles`)
+    this.httpClient
+      .get<CitationStyle[]>(`${this.apiService.getEndpointByType('documents', true)}/citation-styles`)
       .pipe(
         catchError((error: HttpErrorResponse) => {
           this.messageType.set('error');
           this.message.set(this.translateService.instant('An error occurred while loading citation styles'));
           console.error('citation-styles error', error);
           return EMPTY;
-        })
+        }),
       )
-      .subscribe(result => this.styles.set(result));
+      .subscribe((result) => this.styles.set(result));
   }
 
   cite(style: string): void {
     this.selectedStyle.set(style);
     this.message.set(undefined);
-    this.httpClient.get<Citation>(`${this.apiService.getEndpointByType('documents', true)}/${this.documentPid}/citation?style=${style}`)
+    this.httpClient
+      .get<Citation>(
+        `${this.apiService.getEndpointByType('documents', true)}/${this.documentPid}/citation?style=${style}`,
+      )
       .pipe(
         catchError(() => {
           this.messageType.set('error');
@@ -66,9 +68,9 @@ export class CitationComponent implements OnInit {
           this.citation.set(undefined);
           this.selectedStyle.set('');
           return EMPTY;
-        })
+        }),
       )
-      .subscribe(result => this.citation.set(result.citation));
+      .subscribe((result) => this.citation.set(result.citation));
   }
 
   copy(): void {
@@ -78,19 +80,19 @@ export class CitationComponent implements OnInit {
     }
     const text = new DOMParser().parseFromString(html, 'text/html').body.textContent ?? '';
     try {
-      navigator.clipboard.write([
-        new ClipboardItem({
-          'text/plain': new Blob([text], { type: 'text/plain' }),
-          'text/html': new Blob([html], { type: 'text/html' }),
-        })
-      ]).catch(() => this.clipboard.copy(text));
+      navigator.clipboard
+        .write([
+          new ClipboardItem({
+            'text/plain': new Blob([text], { type: 'text/plain' }),
+            'text/html': new Blob([html], { type: 'text/html' }),
+          }),
+        ])
+        .catch(() => this.clipboard.copy(text));
     } catch {
       this.clipboard.copy(text);
     }
     const style = this.styles().find((style: CitationStyle) => style.id === this.selectedStyle());
-    const styleName = style
-      ? this.translateService.instant(style.label)
-      : this.translateService.instant('Unknown');
+    const styleName = style ? this.translateService.instant(style.label) : this.translateService.instant('Unknown');
     this.messageType.set('success');
     this.message.set(styleName + ': ' + this.translateService.instant('The text has been copied to the clipboard'));
   }

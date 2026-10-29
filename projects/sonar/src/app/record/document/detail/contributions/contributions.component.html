@@ -2,25 +2,23 @@
 SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-@let contributors = contributions()|contributors:meeting();
-@if(contributors.length > 0) {
-  @if(!additionalInfosFields()) {
+@let contributors = contributions() | contributors: meeting();
+@if (contributors.length > 0) {
+  @if (!additionalInfosFields()) {
     <ul class="ui:list-none">
-      @for (contributor of contributors|slice:0:contributorsLength(); track $index) {
+      @for (contributor of contributors | slice: 0 : contributorsLength(); track $index) {
         <li><sonar-contribution [contributor]="contributor" viewType="detail" /></li>
       }
     </ul>
-    @if(showMore() && contributors.length > contributorsLength()) {
-    <a href="#" (click)="showMoreContributors($event)">
-      {{ 'Show more' | translate }}&hellip;
-    </a>
+    @if (showMore() && contributors.length > contributorsLength()) {
+      <a href="#" (click)="showMoreContributors($event)"> {{ 'Show more' | translate }}&hellip; </a>
     }
   } @else {
     <dl class="metadata">
-      <dt translate>Conference</dt>
+      <dt>{{ 'Conference' | translate }}</dt>
       <dd>
         <ul class="ui:list-none">
-          @for (contributor of contributors|slice:0:contributorsLength(); track $index) {
+          @for (contributor of contributors | slice: 0 : contributorsLength(); track $index) {
             <li><sonar-contribution [contributor]="contributor" viewType="detail" /></li>
           }
         </ul>

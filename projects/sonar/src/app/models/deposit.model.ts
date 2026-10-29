@@ -8,7 +8,7 @@ export type DepositFile = {
   version_id: string;
   order?: number;
   [key: string]: unknown;
-}
+};
 
 export type JsonRef = { $ref: string };
 
@@ -21,4 +21,4 @@ export type Deposit = {
   _files?: DepositFile[];
   diffusion?: { license?: string; [key: string]: unknown };
   [key: string]: unknown;
-}
+};

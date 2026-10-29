@@ -2,15 +2,16 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
 import { ApiService, CoreTranslateLoader } from '@rero/ng-core';
+
 import { AppStore } from '../../../store/app.store';
 import { DocumentActionsComponent } from './document-actions.component';
 
 const API_BASE = '/api/documents';
 
 const apiServiceMock = {
-  getEndpointByType: vi.fn().mockReturnValue(API_BASE)
+  getEndpointByType: vi.fn().mockReturnValue(API_BASE),
 };
 
 const EXPORT_FORMATS = [
@@ -22,7 +23,7 @@ const appStoreMock = {
   settings: signal({
     document_identifier_link: {},
     document_serializers: EXPORT_FORMATS,
-  })
+  }),
 };
 
 describe('DocumentActionsComponent', () => {
@@ -31,16 +32,14 @@ describe('DocumentActionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        TranslateModule.forRoot({
-          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader }
-        }),
-        DocumentActionsComponent
-      ],
+      imports: [DocumentActionsComponent],
       providers: [
+        provideTranslateService({
+          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
+        }),
         { provide: ApiService, useValue: apiServiceMock },
         { provide: AppStore, useValue: appStoreMock },
-      ]
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DocumentActionsComponent);

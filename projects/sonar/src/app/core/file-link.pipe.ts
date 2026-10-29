@@ -8,7 +8,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
  */
 @Pipe({ name: 'fileLink' })
 export class FileLinkPipe implements PipeTransform {
-
   public sanitizer: DomSanitizer = inject(DomSanitizer);
 
   /**

@@ -3,25 +3,26 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, Routes, UrlSegment } from '@angular/router';
 import { _ } from '@ngx-translate/core';
-import { Bucket, DetailComponent, EditorComponent, IFilter, RecordData, RecordSearchPageComponent } from '@rero/ng-core';
+import { Bucket, DetailComponent, IFilter, RecordData, RecordSearchPageComponent } from '@rero/ng-core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { AdminComponent } from './_layout/admin/admin.component';
 import { OutletComponent } from './_layout/outlet/outlet.component';
+import { BucketNameService } from './bucket-name.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { dedicatedGuard } from './guard/dedicated.guard';
 import { roleGuard } from './guard/role.guard';
 import { DetailComponent as DocumentDetailComponent } from './record/document/detail/detail.component';
 import { DocumentComponent } from './record/document/document.component';
-import { collectionsRouteResolver } from './routes/collections-route';
-import { depositsRouteResolver } from './routes/deposits-route';
-import { BucketNameService } from './bucket-name.service';
-import { documentsRouteResolver, fetchAggregations } from './routes/documents-route';
-import { organisationsRouteResolver } from './routes/organisations-route';
-import { projectsRouteResolver } from './routes/projects-route';
-import { subdivisionsRouteResolver } from './routes/subdivisions-route';
+import { collectionsRouteResolver } from './routes/collections-route.resolver';
+import { depositsRouteResolver } from './routes/deposits-route.resolver';
+import { documentsRouteResolver, fetchAggregations } from './routes/documents-route.resolver';
+import { organisationsRouteResolver } from './routes/organisations-route.resolver';
+import { projectsRouteResolver } from './routes/projects-route.resolver';
+import { subdivisionsRouteResolver } from './routes/subdivisions-route.resolver';
 import { typeResolver } from './routes/type-resolver';
-import { usersRouteResolver } from './routes/users-route';
+import { usersRouteResolver } from './routes/users-route.resolver';
 
 export { typeResolver };
 
@@ -54,7 +55,7 @@ const publicDocumentsAggregationsResolver: ResolveFn<void> = (route: ActivatedRo
       types[0]['aggregationsName'] = names;
       types[0]['processBucketName'] = (bucket: Bucket) => bucketNameService.transform(bucket);
       types[0]['processFilterName'] = (filter: IFilter) => bucketNameService.transform(filter);
-    })
+    }),
   );
 };
 
@@ -112,13 +113,11 @@ export const routes: Routes = [
       {
         path: ':type/profile/:pid',
         title: typeResolver,
-        component: EditorComponent,
+        loadChildren: () => import('./routes/profile-route').then((m) => m.profileRoutes),
         canActivate: [roleGuard],
         data: {
           hideHeader: true,
-          types: [
-            { key: 'users', redirectUrl: (record: RecordData) => of(`/users/profile/${record.id}`) },
-          ],
+          types: [{ key: 'users', redirectUrl: (record: RecordData) => of(`/users/profile/${record.id}`) }],
         },
       },
     ],
@@ -148,8 +147,18 @@ export const routes: Routes = [
             { label: _('Open access'), filter: 'open_access', value: 'true' },
           ],
           sortOptions: [
-            { label: _('Relevance'), value: 'relevance', icon: 'fa-solid fa-arrow-down-wide-short', defaultQuery: true },
-            { label: _('Date descending'), value: 'newest', icon: 'fa-solid fa-arrow-down-wide-short', defaultNoQuery: true },
+            {
+              label: _('Relevance'),
+              value: 'relevance',
+              icon: 'fa-solid fa-arrow-down-wide-short',
+              defaultQuery: true,
+            },
+            {
+              label: _('Date descending'),
+              value: 'newest',
+              icon: 'fa-solid fa-arrow-down-wide-short',
+              defaultNoQuery: true,
+            },
             { label: _('Date ascending'), icon: 'fa-solid fa-arrow-down-short-wide', value: 'oldest' },
             { label: _('Title'), icon: 'fa-solid fa-arrow-down-a-z', value: 'title' },
           ],

@@ -1,35 +1,26 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { TranslateDirective, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MenuItem } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Menubar } from '@openng/optimus-ui/menubar';
+import { Message } from '@openng/optimus-ui/message';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MenuItem } from 'primeng/api';
-import { Bind } from 'primeng/bind';
-import { Menubar } from 'primeng/menubar';
-import { Message } from 'primeng/message';
 import { filter } from 'rxjs/operators';
+
 import { User } from '../../models';
 import { AppStore, AppStoreType } from '../../store/app.store';
 
 @Component({
-    selector: 'sonar-layout-admin',
-    templateUrl: './admin.component.html',
-    imports: [
-        RouterLink,
-        TranslateDirective,
-        Bind,
-        Menubar,
-        RouterOutlet,
-        Message,
-        TranslatePipe,
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-layout-admin',
+  templateUrl: './admin.component.html',
+  imports: [RouterLink, Bind, Menubar, RouterOutlet, Message, TranslatePipe],
 })
 export class AdminComponent {
-
   private readonly spinner = inject(NgxSpinnerService);
   private readonly store = inject(AppStore) as AppStoreType;
   private readonly httpClient = inject(HttpClient);
@@ -46,32 +37,36 @@ export class AdminComponent {
   constructor() {
     this.spinner.show();
 
-    toObservable(this.store.user).pipe(takeUntilDestroyed()).subscribe({
-      next: (user) => {
-        if (user !== null) {
-          this.user.set(user);
+    toObservable(this.store.user)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (user) => {
+          if (user !== null) {
+            this.user.set(user);
+            this.spinner.hide();
+            this.ready.set(true);
+          }
+        },
+        complete: () => {
           this.spinner.hide();
           this.ready.set(true);
-        }
-      },
-      complete: () => {
-        this.spinner.hide();
-        this.ready.set(true);
-      },
-    });
+        },
+      });
 
     this.translateService.onLangChange.pipe(takeUntilDestroyed()).subscribe(() => this.setMenus());
 
-    this.router.events.pipe(
-      filter(e => e instanceof NavigationEnd),
-      takeUntilDestroyed()
-    ).subscribe(() => {
-      let route = this.activatedRoute;
-      while (route.firstChild) {
-        route = route.firstChild;
-      }
-      this.hideHeader.set(route.snapshot.data['hideHeader'] === true);
-    });
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => {
+        let route = this.activatedRoute;
+        while (route.firstChild) {
+          route = route.firstChild;
+        }
+        this.hideHeader.set(route.snapshot.data['hideHeader'] === true);
+      });
 
     effect(() => {
       if (this.user()) {
@@ -94,21 +89,53 @@ export class AdminComponent {
         icon: 'fa-solid fa-gear',
         visible: user.is_admin,
         items: [
-          { label: this.translateService.instant('Collections'), icon: 'fa-solid fa-layer-group', routerLink: ['/records/collections'], visible: isDedicated },
-          { label: this.translateService.instant('Organisations'), icon: 'fa-solid fa-building-columns', routerLink: ['/records/organisations'] },
-          { label: this.translateService.instant('Subdivisions'), icon: 'fa-solid fa-sitemap', routerLink: ['/records/subdivisions'], visible: isDedicated },
+          {
+            label: this.translateService.instant('Collections'),
+            icon: 'fa-solid fa-layer-group',
+            routerLink: ['/records/collections'],
+            visible: isDedicated,
+          },
+          {
+            label: this.translateService.instant('Organisations'),
+            icon: 'fa-solid fa-building-columns',
+            routerLink: ['/records/organisations'],
+          },
+          {
+            label: this.translateService.instant('Subdivisions'),
+            icon: 'fa-solid fa-sitemap',
+            routerLink: ['/records/subdivisions'],
+            visible: isDedicated,
+          },
           { label: this.translateService.instant('Users'), icon: 'fa-solid fa-users', routerLink: ['/records/users'] },
         ],
       },
-      { label: this.translateService.instant('Documents'), icon: 'fa-solid fa-file-lines', routerLink: ['/records', 'documents'], visible: user.is_moderator },
-      { label: this.translateService.instant('Research projects'), icon: 'fa-solid fa-chart-gantt', routerLink: ['/records', 'projects'], visible: user.is_submitter },
+      {
+        label: this.translateService.instant('Documents'),
+        icon: 'fa-solid fa-file-lines',
+        routerLink: ['/records', 'documents'],
+        visible: user.is_moderator,
+      },
+      {
+        label: this.translateService.instant('Research projects'),
+        icon: 'fa-solid fa-chart-gantt',
+        routerLink: ['/records', 'projects'],
+        visible: user.is_submitter,
+      },
       {
         label: this.translateService.instant('Deposits'),
         icon: 'fa-solid fa-file-arrow-up',
         visible: user.is_submitter,
         items: [
-          { label: this.translateService.instant('Deposit a publication'), icon: 'fa-solid fa-file-circle-plus', routerLink: ['/deposit', 'create'] },
-          { label: this.translateService.instant('Deposits'), icon: 'fa-solid fa-list-check', routerLink: ['/records', 'deposits'] },
+          {
+            label: this.translateService.instant('Deposit a publication'),
+            icon: 'fa-solid fa-file-circle-plus',
+            routerLink: ['/deposit', 'create'],
+          },
+          {
+            label: this.translateService.instant('Deposits'),
+            icon: 'fa-solid fa-list-check',
+            routerLink: ['/records', 'deposits'],
+          },
         ],
       },
       { separator: true },
@@ -119,10 +146,31 @@ export class AdminComponent {
         label: `${user.last_name}, ${user.first_name}`,
         icon: 'fa-solid fa-user',
         items: [
-          { label: this.translateService.instant('Public interface'), icon: 'fa-solid fa-users', url: this.store.publicInterfaceLink(), target: 'public' },
-          { label: this.translateService.instant('Profile'), icon: 'fa-solid fa-address-card', url: '/users/profile', target: '_self' },
-          { label: this.translateService.instant('Super administration'), icon: 'fa-solid fa-screwdriver-wrench', url: '/admin', visible: user.is_superuser, target: 'admin' },
-          { label: this.translateService.instant('Logout'), icon: 'fa-solid fa-right-from-bracket', url: '/logout', target: '_self' },
+          {
+            label: this.translateService.instant('Public interface'),
+            icon: 'fa-solid fa-users',
+            url: this.store.publicInterfaceLink(),
+            target: 'public',
+          },
+          {
+            label: this.translateService.instant('Profile'),
+            icon: 'fa-solid fa-address-card',
+            url: '/users/profile',
+            target: '_self',
+          },
+          {
+            label: this.translateService.instant('Super administration'),
+            icon: 'fa-solid fa-screwdriver-wrench',
+            url: '/admin',
+            visible: user.is_superuser,
+            target: 'admin',
+          },
+          {
+            label: this.translateService.instant('Logout'),
+            icon: 'fa-solid fa-right-from-bracket',
+            url: '/logout',
+            target: '_self',
+          },
         ],
       },
       {

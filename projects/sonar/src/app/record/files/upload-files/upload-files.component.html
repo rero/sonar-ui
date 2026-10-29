@@ -3,13 +3,7 @@ SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<ngx-spinner
-  name="file-upload"
-  color="#fff"
-  size="medium"
-  type="ball-zig-zag"
-  [fullScreen]="true"
->
+<ngx-spinner name="file-upload" color="#fff" size="medium" type="ball-zig-zag" [fullScreen]="true">
   <p class="ui:text-white">
     {{ 'Loading...' | translate }}
     @if (fileUpload()?.files?.length > 0) {
@@ -20,7 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 @if (files() !== null) {
   <div class="ui:flex ui:flex-col ui:gap-2">
-    <h5 translate>Upload Files</h5>
+    <h5>{{ 'Upload Files' | translate }}</h5>
     <p-fileUpload
       [disabled]="reachMaxFileLimit()"
       styleClass="ui:[&>.p-fileupload-header]:flex-col ui:[&>.p-fileupload-header]:items-start"
@@ -33,38 +27,39 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       (uploadHandler)="uploadHandler($event, '')"
       mode="advanced"
       [maxFileSize]="maxFileSize"
-      (onSelect)="onSelect($event, '')"
-    >
+      (onSelect)="onSelect($event, '')">
       <ng-template #toolbar>
-          <p class="text-warning ui:w-full" translate>
-          By uploading a file, I declare that I am aware of the terms and
+        <p class="text-warning ui:w-full">
+          {{
+            'By uploading a file, I declare that I am aware of the terms and
           conditions of the copyright transfer agreement governing the
           publication of the respective document, and that the deposit of its
-          full-text content in the current platform is compatible with those.
-          </p>
+          full-text content in the current platform is compatible with those.' | translate
+          }}
+        </p>
       </ng-template>
 
       <ng-template #file let-file />
 
       <ng-template #content let-file>
         @if (reachMaxFileLimit()) {
-          <p-message
-            severity="error"
-
-          >{{ 'The maximum number of files is reached. No additional upload is allowed.' | translate }}</p-message>
+          <p-message severity="error">{{
+            'The maximum number of files is reached. No additional upload is allowed.' | translate
+          }}</p-message>
         }
       </ng-template>
       <ng-template #empty>
         @if (!reachMaxFileLimit()) {
           <div class="ui:flex ui:items-center ui:justify-center ui:flex-col ui:p-2">
-              <i class="fa-solid fa-cloud-arrow-up ui:!inline-flex ui:!items-center ui:!justify-center ui:!aspect-square ui:!w-28 ui:!border-2 ui:!rounded-full ui:!text-4xl ui:!text-muted-color"></i>
-              <p class="ui:mt-6 ui:mb-0" translate>Drag and drop files to here to upload.</p>
+            <i
+              class="fa-solid fa-cloud-arrow-up ui:!inline-flex ui:!items-center ui:!justify-center ui:!aspect-square ui:!w-28 ui:!border-2 ui:!rounded-full ui:!text-4xl ui:!text-muted-color"></i>
+            <p class="ui:mt-6 ui:mb-0">{{ 'Drag and drop files to here to upload.' | translate }}</p>
           </div>
         }
-    </ng-template>
+      </ng-template>
     </p-fileUpload>
 
-    @if(files()!.length > 0) {
+    @if (files()!.length > 0) {
       <p-orderList
         [responsive]="true"
         scrollHeight="auto"
@@ -77,8 +72,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         controlsPosition="right"
         class="ui:[&_.p-orderlist-list-container]:flex-grow"
         metaKeySelection="true"
-        [filterPlaceholder]="'Filter by label' | translate"
-      >
+        [filterPlaceholder]="'Filter by label' | translate">
         <ng-template let-file pTemplate="item">
           <sonar-file-item
             class="ui:flex-grow"
@@ -86,11 +80,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             (update)="update(file, $event)"
             (delete)="deleteFile($event)"
             [file]="file"
-            (upload)="uploadNewVersion($event)"
-          />
+            (upload)="uploadNewVersion($event)" />
         </ng-template>
       </p-orderList>
-  }
+    }
   </div>
 } @else {
   <i class="fa-solid fa-spinner fa-spin"></i>

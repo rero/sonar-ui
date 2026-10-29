@@ -1,43 +1,48 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, ElementRef, computed, effect, inject, input, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, input, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { finalize, map, startWith } from 'rxjs/operators';
-import { TranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
-import { CONFIG, Error as CoreError, JsonObject, RecordData, RecordService, DateTranslatePipe, Nl2brPipe } from '@rero/ng-core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Button } from '@openng/optimus-ui/button';
+import { ButtonGroup } from '@openng/optimus-ui/buttongroup';
+import { Message } from '@openng/optimus-ui/message';
+import { Panel } from '@openng/optimus-ui/panel';
+import { TableModule } from '@openng/optimus-ui/table';
+import { Textarea } from '@openng/optimus-ui/textarea';
+import {
+  CONFIG,
+  Error as CoreError,
+  DateTranslatePipe,
+  JsonObject,
+  Nl2brPipe,
+  RecordData,
+  RecordService,
+} from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { AppStore, AppStoreType } from '../../store/app.store';
+import { finalize, map, startWith } from 'rxjs/operators';
 
 import { validation_action, validation_status } from '../../enum/validation';
-import { Bind } from 'primeng/bind';
-import { Panel } from 'primeng/panel';
-import { Message } from 'primeng/message';
-import { Textarea } from 'primeng/textarea';
-import { ButtonGroup } from 'primeng/buttongroup';
-import { Button } from 'primeng/button';
-import { TableModule } from 'primeng/table';
+import { AppStore, AppStoreType } from '../../store/app.store';
 
 @Component({
-    selector: 'sonar-record-validation',
-    templateUrl: './validation.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        Bind,
-        Panel,
-        Message,
-        TranslateDirective,
-        Textarea,
-        ButtonGroup,
-        Button,
-        TableModule,
-        TranslatePipe,
-        DateTranslatePipe,
-        Nl2brPipe,
-    ],
+  selector: 'sonar-record-validation',
+  templateUrl: './validation.component.html',
+  imports: [
+    Bind,
+    Panel,
+    Message,
+    Textarea,
+    ButtonGroup,
+    Button,
+    TableModule,
+    TranslatePipe,
+    DateTranslatePipe,
+    Nl2brPipe,
+  ],
 })
 export class ValidationComponent {
-
   private readonly store = inject(AppStore) as AppStoreType;
   private readonly recordService = inject(RecordService);
   private readonly translateService = inject(TranslateService);
@@ -63,22 +68,19 @@ export class ValidationComponent {
 
   private currentLang = toSignal(
     this.translateService.onLangChange.pipe(
-      map(e => e.lang),
-      startWith(this.translateService.getCurrentLang())
-    )
+      map((e) => e.lang),
+      startWith(this.translateService.getCurrentLang()),
+    ),
   );
 
   translatedStatusMessage = computed(() => {
     this.currentLang();
     const translatedStatus = this.status() ? this.translateService.instant(this.status()!) : '';
-    return this.translateService.instant(
-      'The record is currently in status "{{ status }}".',
-      { status: translatedStatus }
-    );
+    return this.translateService.instant('The record is currently in status "{{ status }}".', {
+      status: translatedStatus,
+    });
   });
-  isOwner = computed(() =>
-    this.store.userRefEndpoint() === (this.validation()?.['user'] as JsonObject)?.['$ref']
-  );
+  isOwner = computed(() => this.store.userRefEndpoint() === (this.validation()?.['user'] as JsonObject)?.['$ref']);
 
   constructor() {
     effect(() => {

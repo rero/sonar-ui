@@ -7,11 +7,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormlyModule } from '@ngx-formly/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { CoreConfigService } from '@rero/ng-core';
-import { AppConfigService } from '../../app-config.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { EMPTY, of } from 'rxjs';
+
+import { AppConfigService } from '../../app-config.service';
 import { HighlightJsonPipe } from '../../core/highlight-json.pipe';
 import { StepComponent } from '../../core/step/step.component';
 import { AppStore } from '../../store/app.store';
@@ -61,13 +62,13 @@ describe('MetadataComponent', () => {
       imports: [
         FormsModule,
         FormlyModule.forRoot({}),
-        TranslateModule.forRoot({}),
         RouterModule.forRoot([]),
         MetadataComponent,
         StepComponent,
         HighlightJsonPipe,
       ],
       providers: [
+        provideTranslateService({}),
         { provide: CoreConfigService, useClass: AppConfigService },
         MessageService,
         ConfirmationService,

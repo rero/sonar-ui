@@ -1,22 +1,21 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TranslateService, TranslateDirective } from '@ngx-translate/core';
-import { AppConfigService } from './app-config.service';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Bind } from '@openng/optimus-ui/bind';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { Toast } from '@openng/optimus-ui/toast';
 import { NgxSpinnerComponent } from 'ngx-spinner';
-import { Bind } from 'primeng/bind';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Toast } from 'primeng/toast';
+
+import { AppConfigService } from './app-config.service';
 
 @Component({
-    selector: 'sonar-root',
-    templateUrl: './app.component.html',
-    imports: [TranslateDirective, RouterOutlet, Bind, ConfirmDialog, NgxSpinnerComponent, Toast],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-root',
+  templateUrl: './app.component.html',
+  imports: [TranslatePipe, RouterOutlet, Bind, ConfirmDialog, NgxSpinnerComponent, Toast],
 })
 export class AppComponent {
-
   private readonly translateService = inject(TranslateService);
   private readonly appConfigService = inject(AppConfigService);
 

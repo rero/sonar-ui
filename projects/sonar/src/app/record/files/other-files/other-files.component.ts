@@ -2,33 +2,47 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { DomSanitizer } from '@angular/platform-browser';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { RecordService } from '@rero/ng-core';
-import { PaginatorState, Paginator } from 'primeng/paginator';
-import { Observable, map, switchMap, tap } from 'rxjs';
-import { File, previewFile } from '../../../type/fileType';
-import { Bind } from 'primeng/bind';
-import { InputGroup } from 'primeng/inputgroup';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { InputText } from 'primeng/inputtext';
-import { InputGroupAddon } from 'primeng/inputgroupaddon';
-import { Carousel } from 'primeng/carousel';
 import { NgClass } from '@angular/common';
-import { Button, ButtonDirective } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
+import { Component, computed, inject, input, model, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { Carousel } from '@openng/optimus-ui/carousel';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { InputGroup } from '@openng/optimus-ui/inputgroup';
+import { InputGroupAddon } from '@openng/optimus-ui/inputgroupaddon';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Paginator, PaginatorState } from '@openng/optimus-ui/paginator';
+import { RecordService } from '@rero/ng-core';
+import { map, Observable, switchMap, tap } from 'rxjs';
+
 import { FaIconClassPipe } from '../../../pipe/fa-icon-class.pipe';
+import { File, previewFile } from '../../../type/fileType';
 
 @Component({
-    selector: 'sonar-other-files',
-    templateUrl: './other-files.component.html',
-    imports: [Bind, InputGroup, ReactiveFormsModule, InputText, FormsModule, InputGroupAddon, Carousel, NgClass, Button, ButtonDirective, Paginator, Dialog, TranslatePipe, FaIconClassPipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-other-files',
+  templateUrl: './other-files.component.html',
+  imports: [
+    Bind,
+    InputGroup,
+    ReactiveFormsModule,
+    InputText,
+    FormsModule,
+    InputGroupAddon,
+    Carousel,
+    NgClass,
+    Button,
+    ButtonDirective,
+    Paginator,
+    Dialog,
+    TranslatePipe,
+    FaIconClassPipe,
+  ],
 })
 export class OtherFilesComponent {
-
   private readonly translateService = inject(TranslateService);
   private readonly recordService = inject(RecordService);
   private readonly sanitizer = inject(DomSanitizer);
@@ -39,8 +53,7 @@ export class OtherFilesComponent {
   files = toSignal(toObservable(this.documentPid).pipe(switchMap(() => this.getFiles())));
 
   private readonly breakpointState = toSignal(
-    this.breakpointObserver
-        .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large])
+    this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large]),
   );
 
   filteredFiles = computed(() => {
@@ -91,38 +104,36 @@ export class OtherFilesComponent {
   getFiles(): Observable<File[]> {
     // retrieve all records files linked to a given document pid
     this.loading.set(true);
-    return this.recordService
-      .getRecord('documents', this.documentPid(), { resolve: 1 })
-      .pipe(
-        tap(() => (this.loading.set(false))),
-        map((res: { metadata?: { _files?: Record<string, unknown>[] } }) => res?.metadata?._files ?? []),
-        map((res: Record<string, unknown>[]) => {
-          const files: File[] = [];
-            const data: Record<string, File> = {};
-            // retrieve main files
-            res.map((entry) => {
-              // main file (such as pdf) and avoid the first
-              if (entry['type'] == 'file' && entry?.['order'] != '1') {
-                const links = entry['links'] as Record<string, string>;
-                const dataFile: Partial<File> & { mimetype?: string } = {
-                  label: entry?.['label'] ? entry['label'] as string : entry['key'] as string,
-                  download: links['download'],
-                };
-                if (links?.['preview']) {
-                  dataFile.preview = links['preview'];
-                }
-                if (entry?.['thumbnail']) {
-                  dataFile.thumbnail = entry['thumbnail'] as string;
-                }
-                data[entry['key'] as string] = dataFile as File;
-              }
-            });
-            Object.values(data).map((d: File) => files.push(d));
-          files.sort((a, b) => a.label.localeCompare(b.label, 'en', { numeric: true }));
-          this.loading.set(false);
-          return files;
-        })
-      );
+    return this.recordService.getRecord('documents', this.documentPid(), { resolve: 1 }).pipe(
+      tap(() => this.loading.set(false)),
+      map((res: { metadata?: { _files?: Record<string, unknown>[] } }) => res?.metadata?._files ?? []),
+      map((res: Record<string, unknown>[]) => {
+        const files: File[] = [];
+        const data: Record<string, File> = {};
+        // retrieve main files
+        res.map((entry) => {
+          // main file (such as pdf) and avoid the first
+          if (entry['type'] == 'file' && entry?.['order'] != '1') {
+            const links = entry['links'] as Record<string, string>;
+            const dataFile: Partial<File> & { mimetype?: string } = {
+              label: entry?.['label'] ? (entry['label'] as string) : (entry['key'] as string),
+              download: links['download'],
+            };
+            if (links?.['preview']) {
+              dataFile.preview = links['preview'];
+            }
+            if (entry?.['thumbnail']) {
+              dataFile.thumbnail = entry['thumbnail'] as string;
+            }
+            data[entry['key'] as string] = dataFile as File;
+          }
+        });
+        Object.values(data).map((d: File) => files.push(d));
+        files.sort((a, b) => a.label.localeCompare(b.label, 'en', { numeric: true }));
+        this.loading.set(false);
+        return files;
+      }),
+    );
   }
 
   /**

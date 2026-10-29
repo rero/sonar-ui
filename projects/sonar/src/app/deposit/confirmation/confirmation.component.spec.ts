@@ -3,13 +3,13 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
-import { AppConfigService } from '../../app-config.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { depositTestingService } from 'projects/sonar/tests/utils';
+
+import { AppConfigService } from '../../app-config.service';
 import { JoinPipe } from '../../core/join.pipe';
 import { DepositService } from '../deposit.service';
 import { ConfirmationComponent } from './confirmation.component';
@@ -20,24 +20,22 @@ describe('ConfirmationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [
-        RouterModule.forRoot([]),
-        BrowserAnimationsModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: BaseTranslateLoader,
-                useClass: CoreTranslateLoader,
-            }
+      imports: [RouterModule.forRoot([]), ConfirmationComponent, JoinPipe],
+      providers: [
+        provideTranslateService({
+          loader: {
+            provide: BaseTranslateLoader,
+            useClass: CoreTranslateLoader,
+          },
         }),
-        ConfirmationComponent, JoinPipe
-    ],
-    providers: [
-        { provide: CoreConfigService, useClass: AppConfigService }, MessageService, ConfirmationService,
+        { provide: CoreConfigService, useClass: AppConfigService },
+        MessageService,
+        ConfirmationService,
         { provide: DepositService, useValue: depositTestingService },
         provideHttpClientTesting(),
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-}).compileComponents();
+        provideHttpClient(withInterceptorsFromDi()),
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {

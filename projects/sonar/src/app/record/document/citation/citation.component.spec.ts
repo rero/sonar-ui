@@ -1,22 +1,23 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
+import { Clipboard } from '@angular/cdk/clipboard';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { DynamicDialogConfig } from '@openng/optimus-ui/dynamicdialog';
 import { ApiService, CoreTranslateLoader } from '@rero/ng-core';
-import { Clipboard } from '@angular/cdk/clipboard';
-import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+
 import { CitationComponent } from './citation.component';
 
 const API_BASE = '/api/documents';
 
 const apiServiceMock = {
-  getEndpointByType: vi.fn().mockReturnValue(API_BASE)
+  getEndpointByType: vi.fn().mockReturnValue(API_BASE),
 };
 
 const clipboardMock = {
-  copy: vi.fn()
+  copy: vi.fn(),
 };
 
 const STYLES = [
@@ -31,19 +32,17 @@ describe('CitationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        TranslateModule.forRoot({
-          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader }
-        }),
-        CitationComponent
-      ],
+      imports: [CitationComponent],
       providers: [
+        provideTranslateService({
+          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
+        }),
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         { provide: ApiService, useValue: apiServiceMock },
         { provide: Clipboard, useValue: clipboardMock },
-        { provide: DynamicDialogConfig, useValue: { data: { documentPid: 'doc-123' } } }
-      ]
+        { provide: DynamicDialogConfig, useValue: { data: { documentPid: 'doc-123' } } },
+      ],
     }).compileComponents();
 
     httpTesting = TestBed.inject(HttpTestingController);
@@ -122,14 +121,17 @@ describe('CitationComponent', () => {
       Object.assign(navigator, { clipboard: { write: clipboardWriteMock } });
       Object.assign(globalThis, {
         Blob: class {
-          constructor(public parts: string[], public options: { type: string }) {}
+          constructor(
+            public parts: string[],
+            public options: { type: string },
+          ) {}
         },
         ClipboardItem: class {
           constructor(public items: Record<string, { parts: string[] }>) {}
           getType(type: string): Promise<{ parts: string[] }> {
             return Promise.resolve(this.items[type]);
           }
-        }
+        },
       });
     });
 

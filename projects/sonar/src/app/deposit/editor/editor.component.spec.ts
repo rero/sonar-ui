@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { DatePipe } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { FieldType, FormlyModule } from '@ngx-formly/core';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
+import { DialogModule } from '@openng/optimus-ui/dialog';
 import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
-import { AppConfigService } from '../../app-config.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { DialogModule } from 'primeng/dialog';
 import { depositTestingService } from 'projects/sonar/tests/utils';
 import { EMPTY, of } from 'rxjs';
+
+import { AppConfigService } from '../../app-config.service';
 import { AppStore } from '../../store/app.store';
 import { DepositService } from '../deposit.service';
 import { DepositStore } from '../deposit.store';
@@ -50,7 +50,6 @@ const appStoreMock: any = {
 @Component({
   selector: 'sonar-stub-field',
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class StubFieldComponent extends FieldType {}
 
@@ -61,12 +60,8 @@ describe('EditorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        BrowserAnimationsModule,
         ReactiveFormsModule,
         RouterModule.forRoot([]),
-        TranslateModule.forRoot({
-          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
-        }),
         FormsModule,
         FormlyModule.forRoot({
           types: [
@@ -78,6 +73,9 @@ describe('EditorComponent', () => {
         EditorComponent,
       ],
       providers: [
+        provideTranslateService({
+          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
+        }),
         { provide: CoreConfigService, useClass: AppConfigService },
         MessageService,
         ConfirmationService,

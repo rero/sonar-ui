@@ -4,6 +4,7 @@ import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+
 import { Deposit, DepositFile } from '../models/deposit.model';
 import { AppStore } from '../store/app.store';
 import { DepositService } from './deposit.service';
@@ -50,7 +51,7 @@ export const DepositStore = signalStore(
       return depositService.get(id).pipe(
         tap((result) => {
           const files = [...(result.metadata._files ?? [])].sort(
-            (a: DepositFile, b: DepositFile) => (a.order ?? 0) - (b.order ?? 0)
+            (a: DepositFile, b: DepositFile) => (a.order ?? 0) - (b.order ?? 0),
           );
           patchState(store, {
             deposit: { ...result.metadata, _files: files },
@@ -61,33 +62,29 @@ export const DepositStore = signalStore(
         catchError((err: Error) => {
           patchState(store, { isLoading: false, error: err.message });
           return throwError(() => err);
-        })
+        }),
       );
     },
 
     create(): Observable<{ metadata: Deposit; [key: string]: unknown }> {
-      return depositService.create().pipe(
-        tap((result) => patchState(store, { deposit: result.metadata }))
-      );
+      return depositService.create().pipe(tap((result) => patchState(store, { deposit: result.metadata })));
     },
 
     update(
       id: string,
-      data: Record<string, unknown>
+      data: Record<string, unknown>,
     ): Observable<{ metadata: Deposit; [key: string]: unknown } | null> {
       return depositService.update(id, data).pipe(
         tap((result) => {
           if (result) {
             patchState(store, { deposit: result.metadata });
           }
-        })
+        }),
       );
     },
 
     delete(deposit: Deposit): Observable<unknown> {
-      return depositService.delete(deposit).pipe(
-        tap(() => patchState(store, { deposit: null }))
-      );
+      return depositService.delete(deposit).pipe(tap(() => patchState(store, { deposit: null })));
     },
 
     publish(id: string): Observable<unknown> {
@@ -103,16 +100,10 @@ export const DepositStore = signalStore(
       if (currentSchema !== null) {
         return of(currentSchema);
       }
-      return depositService.getJsonSchema(type).pipe(
-        tap((schema) => patchState(store, { schema }))
-      );
+      return depositService.getJsonSchema(type).pipe(tap((schema) => patchState(store, { schema })));
     },
 
-    reviewDeposit(
-      deposit: Deposit,
-      action: string,
-      comment: string | null = null
-    ): Observable<unknown> {
+    reviewDeposit(deposit: Deposit, action: string, comment: string | null = null): Observable<unknown> {
       return depositService.reviewDeposit(deposit, action, comment);
     },
 
@@ -126,5 +117,5 @@ export const DepositStore = signalStore(
         patchState(store, { deposit: { ...current, ...updates } });
       }
     },
-  }))
+  })),
 );

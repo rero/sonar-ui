@@ -1,31 +1,45 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { JsonPipe } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MessageService } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Ripple } from '@openng/optimus-ui/ripple';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@openng/optimus-ui/tabs';
 import { CONFIG } from '@rero/ng-core';
-import { MessageService } from 'primeng/api';
-import { Bind } from 'primeng/bind';
-import { Ripple } from 'primeng/ripple';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { switchMap, tap } from 'rxjs/operators';
+
 import { HighlightJsonPipe } from '../../core/highlight-json.pipe';
 import { StepComponent } from '../../core/step/step.component';
 import { DepositStore, DepositStoreType } from '../deposit.store';
 import { EditorComponent } from '../editor/editor.component';
 import { FilesComponent } from '../files/files.component';
 import { ReviewComponent } from '../review/review.component';
-import { JsonPipe } from '@angular/common';
 
 @Component({
-    selector: 'sonar-deposit-metadata',
-    templateUrl: './metadata.component.html',
-    imports: [StepComponent, ReviewComponent, Bind, Tabs, TabList, Ripple, Tab, TabPanels, TabPanel, EditorComponent, FilesComponent, JsonPipe, TranslatePipe, HighlightJsonPipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-deposit-metadata',
+  templateUrl: './metadata.component.html',
+  imports: [
+    StepComponent,
+    ReviewComponent,
+    Bind,
+    Tabs,
+    TabList,
+    Ripple,
+    Tab,
+    TabPanels,
+    TabPanel,
+    EditorComponent,
+    FilesComponent,
+    JsonPipe,
+    TranslatePipe,
+    HighlightJsonPipe,
+  ],
 })
 export class MetadataComponent {
-
   private messageService = inject(MessageService);
   private router = inject(Router);
   private translateService = inject(TranslateService);
@@ -35,11 +49,11 @@ export class MetadataComponent {
   steps = signal<string[]>(['files', 'metadata', 'contributors', 'projects', 'diffusion']);
 
   constructor() {
-    inject(ActivatedRoute).params
-      .pipe(
+    inject(ActivatedRoute)
+      .params.pipe(
         tap((params) => this.currentStep.set(params['step'])),
         switchMap((params) => this.store.load(params['id'])),
-        takeUntilDestroyed()
+        takeUntilDestroyed(),
       )
       .subscribe({
         next: () => {

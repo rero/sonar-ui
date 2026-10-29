@@ -12,7 +12,7 @@ describe('LicensePipe', () => {
   it('should return license info', () => {
     const licenseInfo = {
       icon: 'https://mirrors.creativecommons.org/presskit/buttons/88x31/svg/by-nc.svg',
-      link: 'https://creativecommons.org/licenses/by-nc/4.0/'
+      link: 'https://creativecommons.org/licenses/by-nc/4.0/',
     };
     expect(pipe.transform('CC BY-NC')).toEqual(licenseInfo);
   });

@@ -7,4 +7,4 @@ export type Identifier = {
   value: string;
   source?: string;
   link?: string;
-}
+};

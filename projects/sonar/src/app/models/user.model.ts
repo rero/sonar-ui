@@ -4,7 +4,7 @@
 export type CustomFieldConfig = {
   label?: { language: string; value: string }[];
   includeInFacets?: boolean;
-}
+};
 
 export type UserOrganisation = {
   code: string;
@@ -14,7 +14,7 @@ export type UserOrganisation = {
   documentsCustomField2?: CustomFieldConfig;
   documentsCustomField3?: CustomFieldConfig;
   [key: string]: unknown;
-}
+};
 
 export type User = {
   pid: string;
@@ -25,4 +25,4 @@ export type User = {
   is_admin?: boolean;
   is_superuser?: boolean;
   [key: string]: unknown;
-}
+};

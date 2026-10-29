@@ -8,7 +8,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
  */
 @Pipe({ name: 'highlightJson' })
 export class HighlightJsonPipe implements PipeTransform {
-
   private sanitizer: DomSanitizer = inject(DomSanitizer);
 
   /**
@@ -18,10 +17,7 @@ export class HighlightJsonPipe implements PipeTransform {
    * @return Highlighted string.
    */
   transform(value: string): SafeHtml {
-    let json = value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    let json = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     json = json.replace(
       /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
@@ -39,7 +35,7 @@ export class HighlightJsonPipe implements PipeTransform {
           cls = 'text-warning';
         }
         return `<span class="${cls}">${match}</span>`;
-      }
+      },
     );
 
     return this.sanitizer.bypassSecurityTrustHtml(json);

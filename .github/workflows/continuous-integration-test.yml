@@ -53,10 +53,12 @@ jobs:
 
       - name: Build and install local ng-core
         if: steps.ng_core.outputs.local == 'true'
+        # Run from the ng-core directory, so Corepack uses the pnpm version of ng-core.
+        # Install the pack rather than the dist directory, which would resolve
+        # Angular from ng-core/node_modules and load it twice.
         run: |
-          pnpm ci --dir ng-core
-          pnpm --dir ng-core run pack
-          pnpm add ng-core/dist/rero/ng-core
+          (cd ng-core && pnpm ci && pnpm run pack)
+          pnpm add ./ng-core/rero-ng-core-*.tgz
 
       - name: run tests
         run: pnpm exec ./run-tests.sh

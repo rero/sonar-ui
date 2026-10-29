@@ -13,4 +13,4 @@ export type DocumentFile = {
     restricted: boolean;
     date: string;
   };
-}
+};

@@ -1,22 +1,16 @@
 # Angular Rules
 
-Framework version: Angular 21
-
-## Migration rules
-
-This project is migrating incrementally to Angular 21 patterns:
-
-- New components must be standalone.
-- Existing NgModules are not removed unless explicitly refactored.
-- New code must not introduce new NgModules.
+Framework version: Angular 22
 
 ## Core rules
 
-- New components must be standalone.
-- Prefer Angular Signals for local state in new components.
-- Avoid RxJS when Signals are sufficient for new code.
-- Use strict TypeScript typing.
-- Use `inject()` instead of constructor-based dependency injection.
+- Use standalone components only. Standalone is the default since
+  Angular 19 — do not set `standalone: true` explicitly, and never set
+  `standalone: false`.
+- Do not introduce NgModules.
+- Prefer Angular Signals for local state.
+- Avoid RxJS when Signals are sufficient.
+- Use explicit TypeScript types.
 
 ## Component design
 
@@ -26,55 +20,58 @@ This project is migrating incrementally to Angular 21 patterns:
 
 ## Change detection
 
-- Use OnPush change detection by default.
-
-Example:
-
-@Component({
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
+- OnPush is the default change detection strategy since Angular 22. Do not
+  set `changeDetection: ChangeDetectionStrategy.OnPush` on new components;
+  the existing explicit ones can stay.
 
 ## Dependency injection
 
-- Use `inject()` function — avoid constructor injection for new code.
-- Avoid unnecessary services.
-- Prefer simple utility functions when Angular DI is not needed.
+- Use `inject()`, not constructor parameters.
+- Avoid unnecessary services; prefer simple utility functions when Angular
+  DI is not needed.
+- Use `@Service()` instead of `@Injectable({ providedIn: 'root' })` for new
+  root-provided services (available since Angular 22).
+- Use `@Service({ autoProvided: false })` instead of a bare `@Injectable()`
+  for services that must be registered in a `providers` array.
 
-## Template syntax
+## Templates
 
-- Use new control flow syntax: `@if`, `@for`, `@switch`.
-- Do not introduce new `*ngIf`, `*ngFor`, `*ngSwitch` directives.
+- Use the control flow syntax: `@if`, `@for`, `@switch`. Do not introduce
+  `*ngIf`, `*ngFor` or `*ngSwitch`.
+- Translate with the pipe, `{{ 'Key' | translate }}` or
+  `[label]="'Key' | translate"`. Never use the element content as key
+  (`<span translate>Key</span>`) nor a bare `translate` attribute:
+  ngx-translate 18 warns for each element and removes it in version 19.
+- Mark an `ngModel` that only drives a control of the component itself with
+  `[ngModelOptions]="{ standalone: true }"`: Angular 22 warns when an
+  `ngModel` sits in a parent form it cannot register with.
 
 ## Inputs and outputs
 
-- Use the new `input()` and `output()` APIs for new components.
-- Use `model()` for two-way binding.
+- Use the `input()`, `output()` and `model()` APIs, not the `@Input()` and
+  `@Output()` decorators.
 
 ## State management
-
-State management rules:
 
 1. Local component state → Angular Signals
 2. Application state → NgRx Signal Store
 
-Use:
+Use `@ngrx/signals`: `signalStore`, `withState`, `withMethods`,
+`withComputed`, `signalStoreFeature`, `patchState`.
 
-- @ngrx/signals
-- signalStore
-- withState
-- withMethods
-- withComputed
-- signalStoreFeature
-
-Do not introduce:
-
-- New NgRx Store reducers/effects
-- New BehaviorSubject stores
-- New custom RxJS state services
+Do not introduce NgRx Store reducers/effects, BehaviorSubject stores or
+custom RxJS state services.
 
 ## Code quality
 
 - Avoid the use of `any`.
 - Prefer explicit types.
 - Keep functions small and testable.
+- All code comments must be written in English.
+
+## Zoneless mode
+
+- Do not rely on zone-based change detection.
+- Prefer Angular Signals to trigger updates.
+- Avoid patterns requiring `NgZone`.
+- Do not introduce `zone.js` dependencies.

@@ -2,18 +2,19 @@
 
 import '@angular/compiler';
 import '@analogjs/vitest-angular/setup-snapshots';
+
 import { setupTestBed } from '@analogjs/vitest-angular/setup-testbed';
 
 setupTestBed();
 
-// PrimeNG TabList uses ResizeObserver — jsdom doesn't implement it
+// Optimus UI TabList uses ResizeObserver — jsdom doesn't implement it
 global.ResizeObserver = class {
   observe = vi.fn();
   unobserve = vi.fn();
   disconnect = vi.fn();
 };
 
-// PrimeNG components (Menubar, etc.) call window.matchMedia — jsdom doesn't implement it
+// Optimus UI components (Menubar, etc.) call window.matchMedia — jsdom doesn't implement it
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query: string) => ({
@@ -27,4 +28,3 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 });
-

@@ -6,22 +6,21 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   <dl class="metadata">
     <dt>{{ label() }}</dt>
     <dd>
-      @if(type() === 'array') {
+      @if (type() === 'array') {
         <ul class="ui:list-none">
-          @for (value of $any(field()); track $index; let last=$last; let index=$index) {
+          @for (value of $any(field()); track $index; let last = $last; let index = $index) {
             <li>
               @if (template()) {
-                <ng-container *ngTemplateOutlet="template(); context: { $implicit: value, last, index }"/>
+                <ng-container *ngTemplateOutlet="template(); context: { $implicit: value, last, index }" />
               } @else {
                 {{ value }}
               }
             </li>
           }
         </ul>
-      }
-      @else {
+      } @else {
         @if (template()) {
-          <ng-container *ngTemplateOutlet="template(); context: { $implicit: field() }"/>
+          <ng-container *ngTemplateOutlet="template(); context: { $implicit: field() }" />
         } @else {
           {{ field() }}
         }

@@ -11,12 +11,9 @@
       "prefix": "sonar",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular/build:application",
           "options": {
-            "allowedCommonJsDependencies": [
-              "crypto-js",
-              "easymde"
-            ],
+            "allowedCommonJsDependencies": ["easymde"],
             "outputPath": {
               "base": "build/dist/sonar"
             },
@@ -37,18 +34,12 @@
                 "output": "/assets/sonar-ui/ng-core/languages"
               }
             ],
-            "styles": [
-              "projects/sonar/src/styles.scss"
-            ],
+            "styles": ["projects/sonar/src/styles.scss"],
             "stylePreprocessorOptions": {
               "sass": {
-                "silenceDeprecations": [
-                  "import"
-                ]
+                "silenceDeprecations": ["import"]
               },
-              "includePaths": [
-                "node_modules"
-              ]
+              "includePaths": ["node_modules"]
             },
             "scripts": [],
             "extractLicenses": false,
@@ -92,7 +83,7 @@
           "defaultConfiguration": ""
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {
             "buildTarget": "sonar:build"
           },
@@ -106,43 +97,20 @@
             }
           }
         },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "sonar:build"
-          }
-        },
         "test": {
           "builder": "@analogjs/vitest-angular:test"
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "projects/sonar/e2e/protractor.conf.js",
-            "devServerTarget": "sonar:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "sonar:serve:production"
-            }
-          }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/sonar/**/*.ts",
-              "projects/sonar/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/sonar/**/*.ts", "projects/sonar/**/*.html"]
           }
         }
       }
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@angular-eslint/schematics"
-    ]
+    "schematicCollections": ["@angular-eslint/schematics"]
   },
   "schematics": {
     "@schematics/angular:component": {

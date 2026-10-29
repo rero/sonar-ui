@@ -2,20 +2,16 @@
 SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-<sonar-deposit-step
-  [maxStep]="maxStep()"
-  [steps]="['files', 'metadata', 'contributors', 'projects', 'diffusion']"
-/>
+<sonar-deposit-step [maxStep]="maxStep()" [steps]="['files', 'metadata', 'contributors', 'projects', 'diffusion']" />
 <div class="ui:flex ui:justify-end ui:flex-wrap">
   <p-button
     class="ui:flex ui:align-center ui:justify-center"
     [routerLink]="['..', 'metadata']"
     icon="fa-solid fa-chevron-right"
     [label]="'Continue' | translate"
-    iconPos="right"
-  />
+    iconPos="right" />
 </div>
 
 @if (deposit()) {
-  <sonar-upload-files recordType="deposits" [pid]="deposit().pid"/>
+  <sonar-upload-files recordType="deposits" [pid]="deposit().pid" />
 }
