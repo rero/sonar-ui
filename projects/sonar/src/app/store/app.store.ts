@@ -6,9 +6,10 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { ApiService } from '@rero/ng-core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+
 import { User, UserOrganisation } from '../models';
 
-export type language = { code: string, name: string }
+export type language = { code: string; name: string };
 
 export type DocumentSerializer = {
   format: string;
@@ -40,7 +41,7 @@ export const AppStore = signalStore(
     settings: {
       document_identifier_link: {},
       availableLanguages: [],
-      document_serializers: []
+      document_serializers: [],
     },
   }),
   withComputed((store, apiService = inject(ApiService)) => ({
@@ -59,9 +60,14 @@ export const AppStore = signalStore(
   withMethods((store, http = inject(HttpClient), apiService = inject(ApiService)) => ({
     load(): Observable<void> {
       return http
-        .get<{ metadata?: User & { is_user?: boolean; organisation?: UserOrganisation; permissions?: Record<string, Record<string, boolean>> }; settings?: AppSettings | null }>(
-          `${apiService.baseUrl}/logged-user/?resolve=1`
-        )
+        .get<{
+          metadata?: User & {
+            is_user?: boolean;
+            organisation?: UserOrganisation;
+            permissions?: Record<string, Record<string, boolean>>;
+          };
+          settings?: AppSettings | null;
+        }>(`${apiService.baseUrl}/logged-user/?resolve=1`)
         .pipe(
           tap((response) => {
             const { settings } = response;
@@ -78,7 +84,7 @@ export const AppStore = signalStore(
             }
           }),
           map(() => undefined),
-          catchError(() => EMPTY)
+          catchError(() => EMPTY),
         );
     },
 
@@ -99,6 +105,5 @@ export const AppStore = signalStore(
     checkUserPid(pid: string): boolean {
       return store.user()?.pid === pid;
     },
-
-  }))
+  })),
 );

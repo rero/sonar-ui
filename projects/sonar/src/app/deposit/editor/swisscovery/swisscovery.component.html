@@ -7,54 +7,49 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     appendTo="body"
     class="ui:w-full"
     [options]="types()"
-    [ngModel]="scType()" (ngModelChange)="scType.set($event)"
+    [ngModel]="scType()"
+    (ngModelChange)="scType.set($event)"
     optionLabel="name"
-    [placeholder]="'Search in ...' | translate"
-  />
+    [placeholder]="'Search in ...' | translate" />
   <p-inputgroup>
     <input
       type="text"
       pAutoFocus
-      [ngModel]="searchTerms()" (ngModelChange)="searchTerms.set($event)"
+      [ngModel]="searchTerms()"
+      (ngModelChange)="searchTerms.set($event)"
       (keyup.enter)="searchSwisscovery()"
       pInputText
-      placeholder="Keyword"
-    />
+      placeholder="Keyword" />
     <p-inputgroup-addon>
       <p-button
-      (onClick)="searchSwisscovery()"
-      icon="fa-solid fa-magnifying-glass"
-      severity="secondary"
-      variant="text"
-      />
+        (onClick)="searchSwisscovery()"
+        icon="fa-solid fa-magnifying-glass"
+        severity="secondary"
+        variant="text" />
     </p-inputgroup-addon>
-
   </p-inputgroup>
 
   @if (scResult()) {
     @if (hasSwisscoveryResult()) {
       <div class="ui:flex ui:flex-col ui:gap-2">
         <dl class="metadata">
-          <dt translate>Title</dt>
+          <dt>{{ 'Title' | translate }}</dt>
           <dd>{{ scResult()?.metadata?.title ? scResult().metadata.title : ('no title' | translate) }}</dd>
-          @if(scResult()?.contributors) {
-          <dt translate>Contributors</dt>
-          <dd>
-            <ul>
-              @for(contributor of scResult().contributors; track $index) {
-                <li>{{ contributor.name }}</li>
-              }
-            </ul>
-          </dd>
+          @if (scResult()?.contributors) {
+            <dt>{{ 'Contributors' | translate }}</dt>
+            <dd>
+              <ul>
+                @for (contributor of scResult().contributors; track $index) {
+                  <li>{{ contributor.name }}</li>
+                }
+              </ul>
+            </dd>
           }
         </dl>
         <p-button (onClick)="save()" [label]="'Import' | translate" />
       </div>
     } @else {
-      <p-message
-        severity="warn"
-       
-      >{{ 'No result found' | translate }}</p-message>
+      <p-message severity="warn">{{ 'No result found' | translate }}</p-message>
     }
   }
 </div>

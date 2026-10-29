@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 @use 'sass:meta';
-@use "@fortawesome/fontawesome-free/scss/fontawesome";
-@use "@fortawesome/fontawesome-free/scss/solid";
-@use "@fortawesome/fontawesome-free/scss/regular";
-@use "easymde/dist/easymde.min";
-@use "ngx-spinner/animations/ball-zig-zag.css";
-@use "@rero/ng-core/assets/scss/ng-core-tailwind";
-@use "@rero/ng-core/assets/scss/katex";
-@import "tailwindcss/theme.css" layer(theme) prefix(ui);
-@import "tailwindcss/utilities.css" layer(utilities) prefix(ui);
+@use '@fortawesome/fontawesome-free/scss/fontawesome';
+@use '@fortawesome/fontawesome-free/scss/solid';
+@use '@fortawesome/fontawesome-free/scss/regular';
+@use 'easymde/dist/easymde.min';
+@use 'ngx-spinner/animations/ball-zig-zag.css';
+@use '@rero/ng-core/assets/scss/ng-core-tailwind';
+@use '@rero/ng-core/assets/scss/katex';
+@import 'tailwindcss/theme.css' layer(theme) prefix(ui);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(ui);
 
-@plugin "tailwindcss-primeui";
+@plugin "@openng/optimus-ui-tailwindcss";
 
 body {
   margin: 0;
@@ -20,9 +20,9 @@ body {
 
 @layer sonar-ui {
   .sonar-ui {
-    @import "tailwindcss/preflight.css" layer(base) prefix(ui);
-    @import "@rero/ng-core/assets/scss/theme";
-    @import "@rero/ng-core/assets/scss/typography";
+    @import 'tailwindcss/preflight.css' layer(base) prefix(ui);
+    @import '@rero/ng-core/assets/scss/theme';
+    @import '@rero/ng-core/assets/scss/typography';
 
     legend {
       @apply ui:text-base;

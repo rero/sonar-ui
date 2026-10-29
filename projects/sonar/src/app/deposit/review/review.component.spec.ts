@@ -5,11 +5,12 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
-import { AppConfigService } from '../../app-config.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { EMPTY } from 'rxjs';
+
+import { AppConfigService } from '../../app-config.service';
 import { AppStore } from '../../store/app.store';
 import { DepositStore } from '../deposit.store';
 import { ReviewComponent } from './review.component';
@@ -31,14 +32,11 @@ describe('ReviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        TranslateModule.forRoot({
+      imports: [RouterModule.forRoot([]), ReviewComponent],
+      providers: [
+        provideTranslateService({
           loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
         }),
-        RouterModule.forRoot([]),
-        ReviewComponent,
-      ],
-      providers: [
         { provide: CoreConfigService, useClass: AppConfigService },
         ConfirmationService,
         MessageService,

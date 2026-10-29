@@ -1,9 +1,10 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CoreTranslateLoader } from '@rero/ng-core';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { CoreTranslateLoader } from '@rero/ng-core';
+
 import { IContribution } from '../contribution.interface';
 import { ContributionComponent } from './contribution.component';
 
@@ -28,13 +29,11 @@ describe('ContributionComponent', () => {
 
   const createComponent = async (activatedRoute: ActivatedRoute) => {
     await TestBed.configureTestingModule({
-      imports: [
-        TranslateModule.forRoot({
-          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader }
-        }),
-        ContributionComponent
-      ],
+      imports: [ContributionComponent],
       providers: [
+        provideTranslateService({
+          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
+        }),
         { provide: ActivatedRoute, useValue: activatedRoute },
       ],
     }).compileComponents();

@@ -54,8 +54,8 @@ jobs:
       - name: Build and install local ng-core
         if: steps.ng_core.outputs.local == 'true'
         run: |
-          pnpm ci --dir ng-core
-          pnpm --dir ng-core run pack
+          # From the ng-core directory, so Corepack uses the pnpm of ng-core.
+          (cd ng-core && pnpm ci && pnpm run pack)
           # The tarball, not dist/: a linked directory resolves its imports
           # from ng-core/node_modules and loads a second Angular.
           pnpm add ./ng-core/rero-ng-core-*.tgz

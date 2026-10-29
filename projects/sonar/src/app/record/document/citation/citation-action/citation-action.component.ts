@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { DialogService } from 'primeng/dynamicdialog';
+import { Button } from '@openng/optimus-ui/button';
+import { DialogService } from '@openng/optimus-ui/dynamicdialog';
+
 import { CitationComponent } from '../citation.component';
-import { Button } from "primeng/button";
 
 @Component({
   selector: 'sonar-citation-action',
   templateUrl: './citation-action.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Button, TranslatePipe],
 })
 export class CitationActionComponent {

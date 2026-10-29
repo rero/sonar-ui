@@ -9,11 +9,6 @@
       "projects/sonar/tests/utils": ["tests/utils.ts"]
     }
   },
-  "files": [
-    "src/test-setup.ts"
-  ],
-  "include": [
-    "src/**/*.ts",
-    "tests/**/*.ts"
-  ]
+  "files": ["src/test-setup.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
 }

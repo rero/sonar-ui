@@ -1,121 +1,111 @@
 # Angular Patterns
 
-## Standalone component pattern
+## Component
 
-New components must be standalone with OnPush change detection.
+Standalone and OnPush are the defaults: no `standalone` or
+`changeDetection` property.
 
-Example:
-
+```typescript
 @Component({
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TranslatePipe]
+  selector: 'sonar-my-component',
+  imports: [TranslatePipe],
+  templateUrl: './my-component.component.html',
 })
 export class MyComponent {
-  private myService = inject(MyService);
-}
+  private readonly router = inject(Router);
 
-## Dependency injection
+  readonly item = input.required<Item>();
+  readonly limit = input<number>(10);
+  readonly selected = output<Item>();
 
-Use `inject()` instead of constructor parameters.
+  readonly count = signal(0);
+  readonly doubled = computed(() => this.count() * 2);
 
-Example:
-
-export class MyComponent {
-  private router = inject(Router);
-  private translateService = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
-}
-
-## Inputs and outputs
-
-Use the new signal-based input/output API for new components.
-
-Example:
-
-export class MyComponent {
-  item = input.required<Item>();
-  limit = input<number>(10);
-  selected = output<Item>();
-}
-
-## Signals for local state
-
-Use signals for component-local reactive state.
-
-Example:
-
-export class MyComponent {
-  count = signal(0);
-  doubled = computed(() => this.count() * 2);
-
-  increment() {
-    this.count.update(v => v + 1);
+  increment(): void {
+    this.count.update((value) => value + 1);
   }
 }
+```
 
 ## RxJS interop
 
-Use toSignal() and takeUntilDestroyed() for RxJS interop.
+Use `toSignal()` and `takeUntilDestroyed()`.
 
-Example:
-
+```typescript
 export class MyComponent {
-  private destroyRef = inject(DestroyRef);
+  private readonly service = inject(MyService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  data = toSignal(this.service.getData());
+  readonly data = toSignal(this.service.getData());
 
-  ngOnInit() {
-    this.service.stream$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(...);
+  constructor() {
+    this.service.stream$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 }
+```
 
 ## NgRx Signal Store
 
-Application state should be implemented using NgRx Signal Store.
+The state signals are read-only: update them with `patchState()`.
 
-Example pattern:
-
-import { signalStore, withState, withMethods } from '@ngrx/signals';
+```typescript
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 
 export const CounterStore = signalStore(
   { providedIn: 'root' },
-
-  withState({
-    count: 0
-  }),
-
+  withState({ count: 0 }),
   withMethods((store) => ({
-    increment() {
-      store.count.update(v => v + 1)
-    }
-  }))
-)
+    increment(): void {
+      patchState(store, (state) => ({ count: state.count + 1 }));
+    },
+  })),
+);
+```
 
-Usage in component:
+## Record route with an editor
 
-@Component({
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class CounterComponent {
-  store = inject(CounterStore);
+The routes of a record type live in `routes/<type>-route.ts`, loaded lazily,
+and register Formly for their editors:
+
+```typescript
+import { Routes } from '@angular/router';
+import { RecordSearchPageComponent } from '@rero/ng-core';
+import { EditorComponent } from '@rero/ng-core/editor';
+
+import { sonarFormlyProviders } from './formly.providers';
+
+export const usersRoutes: Routes = [
+  {
+    path: '',
+    providers: sonarFormlyProviders,
+    children: [
+      { path: '', component: RecordSearchPageComponent },
+      { path: 'edit/:pid', component: EditorComponent },
+      { path: 'new', component: EditorComponent },
+    ],
+  },
+];
+```
+
+Its resolver goes in `routes/<type>-route.resolver.ts`, which
+`app.routes.ts` imports:
+
+```typescript
+{
+  matcher: recordMatcher('users'),
+  loadChildren: () => import('./routes/users-route').then((m) => m.usersRoutes),
+  resolve: { types: usersRouteResolver },
 }
+```
 
-## Template control flow
+## Dialog with a form
 
-Use new control flow syntax — not structural directives.
+A dialog that displays a Formly form is loaded on demand, from a component
+of a route that registers Formly:
 
-Example:
-
-@if (item()) {
-  <div>{{ item().title }}</div>
-} @else {
-  <span>No item</span>
+```typescript
+async showEditor(): Promise<void> {
+  const { FileItemEditorComponent } = await import('../file-item-editor/file-item-editor.component');
+  this.dialogService.open(FileItemEditorComponent, { /* ... */ });
 }
-
-@for (item of items(); track item.id) {
-  <li>{{ item.label }}</li>
-}
+```

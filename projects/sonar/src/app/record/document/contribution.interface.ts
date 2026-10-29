@@ -10,15 +10,14 @@ export type IContribution = {
       type: string;
       source?: string;
       value: string;
-    },
+    };
     date_of_birth?: string;
     date_of_death?: string;
     place?: string;
     date?: string;
     number?: string;
-
   };
   role: string[];
   affiliation?: string;
   controlledAffiliation?: string[];
-}
+};

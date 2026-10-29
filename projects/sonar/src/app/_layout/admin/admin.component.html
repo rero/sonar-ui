@@ -3,12 +3,12 @@ SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 @if (ready()) {
-  @if(user()) {
+  @if (user()) {
     @if (!hideHeader()) {
       <div class="ui:bg-primary-600">
         <div class="container ui:py-4 ui:px-8 ui:mb-2 ui:text-lg">
           <a class="ui:text-white ui:no-underline" routerLink="">
-            SONAR <span class="ui:text-orange-400" translate>administration</span>
+            SONAR <span class="ui:text-orange-400">{{ 'administration' | translate }}</span>
           </a>
         </div>
       </div>
@@ -29,22 +29,23 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             <div>
               <div class="ui:flex ui:gap-2">
                 <div>
-                  <a href="/help/"><i class="fa-solid fa-circle-question ui:mr-1"></i><span translate>Help</span></a>
+                  <a href="/help/"
+                    ><i class="fa-solid fa-circle-question ui:mr-1"></i><span>{{ 'Help' | translate }}</span></a
+                  >
                 </div>
                 <div>
-                  <a href="https://sonar.ch" target="_blank"><i class="fa-solid fa-at ui:mr-1"></i><span translate>Project and contact</span></a>
+                  <a href="https://sonar.ch" target="_blank"
+                    ><i class="fa-solid fa-at ui:mr-1"></i><span>{{ 'Project and contact' | translate }}</span></a
+                  >
                 </div>
               </div>
             </div>
-            <div>
-              Powered by <a href="https://www.rero.ch" target="_blank">RERO</a>
-            </div>
+            <div>Powered by <a href="https://www.rero.ch" target="_blank">RERO</a></div>
           </div>
         </div>
       </footer>
     }
-  }
-  @else {
+  } @else {
     <div class="container ui:px-8 ui:mb-2">
       <p-message class="ui:w-full" severity="error">
         {{ 'An error occurred, application cannot be loaded.' | translate }}

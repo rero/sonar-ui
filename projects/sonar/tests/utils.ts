@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { CoreConfigService } from '@rero/ng-core';
 import { of } from 'rxjs';
+
 import { AppConfigService } from '../src/app/app-config.service';
 import { DepositService } from '../src/app/deposit/deposit.service';
 

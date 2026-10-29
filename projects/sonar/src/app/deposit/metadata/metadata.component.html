@@ -2,9 +2,9 @@
 SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-@if(store.deposit()) {
+@if (store.deposit()) {
   <sonar-deposit-step [maxStep]="store.maxStep()" [steps]="steps()" />
-  @if(currentStep() === 'diffusion') {
+  @if (currentStep() === 'diffusion') {
     <sonar-deposit-review [deposit]="store.deposit()!" />
   }
 
@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       <p-tab value="json">
         {{ 'JSON' | translate }}
       </p-tab>
-      @if(store.mainFile()) {
+      @if (store.mainFile()) {
         <p-tab value="files">
           {{ 'Files' | translate }}
         </p-tab>
@@ -25,21 +25,17 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="editor">
-        <sonar-deposit-editor
-          [currentStep]="currentStep()"
-          [steps]="steps()"
-        />
+        <sonar-deposit-editor [currentStep]="currentStep()" [steps]="steps()" />
       </p-tabpanel>
       <p-tabpanel value="json">
         <pre class="p-3" [innerHTML]="store.deposit() | json | highlightJson"></pre>
       </p-tabpanel>
-      @if(store.mainFile()) {
+      @if (store.mainFile()) {
         <p-tabpanel value="files">
           <sonar-deposit-files
             [mainFile]="store.mainFile()!"
             [depositPid]="store.deposit()!.pid"
-            [additionalFiles]="store.additionalFiles()"
-          />
+            [additionalFiles]="store.additionalFiles()" />
         </p-tabpanel>
       }
     </p-tabpanels>

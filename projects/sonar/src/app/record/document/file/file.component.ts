@@ -1,22 +1,21 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { DocumentFile } from '../document.interface';
-import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
-import { Bind } from 'primeng/bind';
-import { Tag } from 'primeng/tag';
-import { ButtonDirective, Button } from 'primeng/button';
+import { Component, input, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { Tag } from '@openng/optimus-ui/tag';
+
+import { DocumentFile } from '../document.interface';
 
 @Component({
-    selector: 'sonar-document-file',
-    templateUrl: './file.component.html',
-    imports: [RouterLink, NgTemplateOutlet, Bind, Tag, ButtonDirective, Button, TranslatePipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-document-file',
+  templateUrl: './file.component.html',
+  imports: [RouterLink, NgTemplateOutlet, Bind, Tag, ButtonDirective, Button, TranslatePipe],
 })
 export class FileComponent {
-
   file = input.required<DocumentFile>();
 
   showPreview = input<boolean>(true);

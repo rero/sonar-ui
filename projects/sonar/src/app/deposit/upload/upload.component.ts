@@ -1,24 +1,23 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Button } from '@openng/optimus-ui/button';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Bind } from 'primeng/bind';
-import { Button } from 'primeng/button';
+
 import { StepComponent } from '../../core/step/step.component';
 import { UploadFilesComponent } from '../../record/files/upload-files/upload-files.component';
 import { DepositStore, DepositStoreType } from '../deposit.store';
 
 @Component({
-    selector: 'sonar-deposit-upload',
-    templateUrl: './upload.component.html',
-    imports: [StepComponent, Bind, Button, RouterLink, UploadFilesComponent, TranslatePipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-deposit-upload',
+  templateUrl: './upload.component.html',
+  imports: [StepComponent, Bind, Button, RouterLink, UploadFilesComponent, TranslatePipe],
 })
 export class UploadComponent {
-
   private store = inject(DepositStore) as DepositStoreType;
   private router = inject(Router);
   private spinner = inject(NgxSpinnerService);
@@ -32,7 +31,8 @@ export class UploadComponent {
       this.createEmptyDeposit();
     } else if (route.snapshot.params?.id) {
       this.spinner.show();
-      this.store.load(route.snapshot.params.id)
+      this.store
+        .load(route.snapshot.params.id)
         .pipe(takeUntilDestroyed())
         .subscribe({
           next: () => {
@@ -47,7 +47,8 @@ export class UploadComponent {
   }
 
   createEmptyDeposit(): void {
-    this.store.create()
+    this.store
+      .create()
       .pipe(takeUntilDestroyed())
       .subscribe((result) => {
         this.router.navigate(['deposit', result.metadata.pid, 'files']);

@@ -8,13 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   @if (files()?.length > 0) {
     <div class="ui:flex ui:flex-col ui:gap-2">
       <p-inputgroup>
-        <input
-          id="filter"
-          type="text"
-          pInputText
-          [placeholder]="'filter' | translate"
-          [(ngModel)]="filterText"
-        />
+        <input id="filter" type="text" pInputText [placeholder]="'filter' | translate" [(ngModel)]="filterText" />
         <p-inputgroup-addon>
           <i class="fa-solid fa-filter"></i>
         </p-inputgroup-addon>
@@ -31,8 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           [numVisible]="numVisible()"
           [page]="page()"
           [numScroll]="numVisible()"
-          [circular]="false"
-        >
+          [circular]="false">
           <ng-template let-file #item>
             <div class="ui:px-1 ui:flex ui:flex-col">
               @if (file.thumbnail) {
@@ -44,8 +37,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                     [src]="file.thumbnail"
                     [alt]="file.label"
                     class="ui:shadow-sm ui:border-surface-300 ui:dark:border-surface-500 ui:border ui:mb-1 ui:max-w-20 ui:cursor-zoom-in"
-                    loading="lazy"
-                  />
+                    loading="lazy" />
                 </div>
               } @else {
                 <div>
@@ -72,8 +64,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           [rows]="numVisible()"
           [totalRecords]="filteredFiles().length"
           [showJumpToPageInput]="false"
-          [pageLinkSize]="3"
-        />
+          [pageLinkSize]="3" />
       }
     }
   }
@@ -84,16 +75,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       [(visible)]="isShowPreview"
       [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
       [style]="{ width: '50vw' }"
-      class="ui:transform-none"
-    >
+      class="ui:transform-none">
       <ng-template #header>
         <h4>{{ previewFile()?.label ?? ('Preview' | translate) }}</h4>
       </ng-template>
       <iframe
         id="preview-iframe"
         [style]="{ width: '100%', height: '800px', border: 'none' }"
-        [src]="previewFile().url"
-      ></iframe>
+        [src]="previewFile().url"></iframe>
     </p-dialog>
   }
 }

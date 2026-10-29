@@ -2,30 +2,21 @@
 SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-@if(deposit(); as deposit) {
+@if (deposit(); as deposit) {
   <div class="ui:flex ui:flex-col ui:gap-3">
-    <p-message
-      severity="success"
-     
-    >{{ 'Thank you for submitting a publication!' | translate }}</p-message>
-    @if(deposit.status === 'to_validate') {
-      <p-message
-        severity="warn"
-       
-      >{{ 'This deposit will be reviewed and published shortly.' | translate }}</p-message>
+    <p-message severity="success">{{ 'Thank you for submitting a publication!' | translate }}</p-message>
+    @if (deposit.status === 'to_validate') {
+      <p-message severity="warn">{{ 'This deposit will be reviewed and published shortly.' | translate }}</p-message>
     }
-    @if(deposit.status === 'validated') {
-      <p-message
-        severity="error"
-       
-      >{{ 'This deposit will be published shortly.' | translate }}</p-message>
+    @if (deposit.status === 'validated') {
+      <p-message severity="error">{{ 'This deposit will be published shortly.' | translate }}</p-message>
     }
-    @if(isSubmitter) {
+    @if (isSubmitter) {
       <div class="ui:flex ui:mt-4">
         <div class="ui:grow">
-          <a [href]="publicInterfaceLink" translate>Back to public interface</a>
+          <a [href]="publicInterfaceLink">{{ 'Back to public interface' | translate }}</a>
         </div>
-        <a [routerLink]="['/deposit', 'create']" translate>Deposit another publication</a>
+        <a [routerLink]="['/deposit', 'create']">{{ 'Deposit another publication' | translate }}</a>
       </div>
     }
   </div>

@@ -1,59 +1,40 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { inject } from '@angular/core';
-import { ResolveFn, Routes } from '@angular/router';
-import { _ } from '@ngx-translate/core';
-import { EditorComponent, RecordData, RecordSearchPageComponent, RecordType } from '@rero/ng-core';
-import { of } from 'rxjs';
+import { Routes } from '@angular/router';
+import { RecordSearchPageComponent } from '@rero/ng-core';
+import { EditorComponent } from '@rero/ng-core/editor';
+
 import { canAddGuard } from '../guard/can-add.guard';
 import { roleGuard } from '../guard/role.guard';
-import { UserComponent } from '../record/user/user.component';
+import { sonarFormlyProviders } from './formly.providers';
 import { typeResolver } from './type-resolver';
-import { RouteToolService } from './route-tool.service';
-
-export const usersRouteResolver: ResolveFn<Partial<RecordType>[]> = () => {
-  const routeToolService = inject(RouteToolService);
-
-  return [{
-    key: 'users',
-    label: 'Users',
-    component: UserComponent,
-    aggregationsOrder: ['subdivision'],
-    redirectUrl: (record: RecordData) => of(`/records/users?q=pid:${record.metadata['pid']}`),
-    sortOptions: [
-      { label: _('Relevance'), value: 'relevance', icon: 'fa-solid fa-arrow-down-wide-short', defaultQuery: true },
-      { label: _('Name'), value: 'name', icon: 'fa-solid fa-arrow-down-a-z', defaultNoQuery: true },
-    ],
-    aggregationsBucketSize: 10,
-    showFacetsIfNoResults: true,
-    exportFormats: [],
-    canAdd: () => routeToolService.canAccess('users', 'add'),
-    canUpdate: (record: RecordData) => routeToolService.canAccess('users', 'update', record),
-    canDelete: (record: RecordData) => routeToolService.canAccess('users', 'delete', record),
-    canRead: (record: RecordData) => routeToolService.canAccess('users', 'read', record),
-  }];
-};
 
 export const usersRoutes: Routes = [
   {
     path: '',
-    title: typeResolver,
-    component: RecordSearchPageComponent,
-    canActivate: [roleGuard],
-    data: { role: 'submitter', showSearchInput: true },
-  },
-  {
-    path: 'edit/:pid',
-    title: typeResolver,
-    component: EditorComponent,
-    canActivate: [roleGuard],
-    data: { role: 'submitter' },
-  },
-  {
-    path: 'new',
-    title: typeResolver,
-    component: EditorComponent,
-    canActivate: [roleGuard, canAddGuard],
-    data: { role: 'submitter' },
+    providers: sonarFormlyProviders,
+    children: [
+      {
+        path: '',
+        title: typeResolver,
+        component: RecordSearchPageComponent,
+        canActivate: [roleGuard],
+        data: { role: 'submitter', showSearchInput: true },
+      },
+      {
+        path: 'edit/:pid',
+        title: typeResolver,
+        component: EditorComponent,
+        canActivate: [roleGuard],
+        data: { role: 'submitter' },
+      },
+      {
+        path: 'new',
+        title: typeResolver,
+        component: EditorComponent,
+        canActivate: [roleGuard, canAddGuard],
+        data: { role: 'submitter' },
+      },
+    ],
   },
 ];

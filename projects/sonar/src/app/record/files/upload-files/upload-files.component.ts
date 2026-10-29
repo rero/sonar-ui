@@ -2,18 +2,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal, viewChild } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { TranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService, PrimeTemplate } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { FileUpload } from '@openng/optimus-ui/fileupload';
+import { Message } from '@openng/optimus-ui/message';
+import { OrderList } from '@openng/optimus-ui/orderlist';
 import { CONFIG, RecordService } from '@rero/ng-core';
 import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
-import { ConfirmationService, MessageService, PrimeTemplate } from 'primeng/api';
-import { FileUpload } from 'primeng/fileupload';
-import { OrderList } from 'primeng/orderlist';
-import { Observable, catchError, combineLatest, concatMap, from, map, of, switchMap, tap, toArray } from 'rxjs';
+import { catchError, combineLatest, concatMap, from, map, Observable, of, switchMap, tap, toArray } from 'rxjs';
+
 import { AppConfigService } from '../../../app-config.service';
-import { Bind } from 'primeng/bind';
-import { Message } from 'primeng/message';
 import { FileItemComponent } from '../file-item/file-item.component';
 
 export type RecordFileMeta = {
@@ -24,7 +25,7 @@ export type RecordFileMeta = {
   created?: number;
   permissions?: Record<string, boolean>;
   [key: string]: unknown;
-}
+};
 
 export type RecordFile = {
   key: string;
@@ -36,32 +37,20 @@ export type RecordFile = {
   versions?: RecordFile[];
   links?: Record<string, string>;
   [key: string]: unknown;
-}
+};
 
 type RecordWithFiles = {
   pid: string;
   _files?: RecordFileMeta[];
   [key: string]: unknown;
-}
+};
 
 @Component({
-    selector: 'sonar-upload-files',
-    templateUrl: './upload-files.component.html',
-    imports: [
-        NgxSpinnerComponent,
-        TranslateDirective,
-        Bind,
-        FileUpload,
-        Message,
-        OrderList,
-        PrimeTemplate,
-        FileItemComponent,
-        TranslatePipe,
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-upload-files',
+  templateUrl: './upload-files.component.html',
+  imports: [NgxSpinnerComponent, Bind, FileUpload, Message, OrderList, PrimeTemplate, FileItemComponent, TranslatePipe],
 })
 export class UploadFilesComponent {
-
   private httpClient: HttpClient = inject(HttpClient);
   private recordService: RecordService = inject(RecordService);
   private translateService: TranslateService = inject(TranslateService);
@@ -88,19 +77,17 @@ export class UploadFilesComponent {
         pid && recordType
           ? this.httpClient
               .get<{ metadata: RecordWithFiles }>(`/api/${recordType}/${pid}`)
-              .pipe(map(rec => rec.metadata))
-          : of(null)
-      )
-    )
+              .pipe(map((rec) => rec.metadata))
+          : of(null),
+      ),
+    ),
   );
   // current record
   record: RecordWithFiles = { pid: '' };
 
   // initial files form record
   initialFiles = toSignal(
-    toObservable(this.initialRecord).pipe(
-      switchMap((record) => (record ? this.getFiles(record) : of([])))
-    )
+    toObservable(this.initialRecord).pipe(switchMap((record) => (record ? this.getFiles(record) : of([])))),
   );
 
   // current list of files
@@ -115,9 +102,9 @@ export class UploadFilesComponent {
               .getSchemaForm(recordType)
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .pipe(map((res: any) => res.schema.properties._files.items))
-          : of([])
-      )
-    )
+          : of([]),
+      ),
+    ),
   );
 
   // the maximum number of files by file record
@@ -150,14 +137,12 @@ export class UploadFilesComponent {
    */
   update(file: RecordFile, metadata: RecordFileMeta) {
     // remove useless spaces
-    if(!metadata.label) {
+    if (!metadata.label) {
       metadata.label = file.key;
     }
     metadata.label = metadata.label.trim();
 
-    const indexToUpdate = this.record._files?.findIndex(
-      (item) => item.key === file.key
-    ) ?? -1;
+    const indexToUpdate = this.record._files?.findIndex((item) => item.key === file.key) ?? -1;
     if (indexToUpdate >= 0) {
       this.record._files![indexToUpdate] = metadata;
       this.httpClient
@@ -219,7 +204,7 @@ export class UploadFilesComponent {
             });
             this.nUploadedFiles.set(0);
             this.filesChanged.emit(this.files() ?? []);
-          })
+          }),
         )
         .subscribe(() => this.spinner.hide('file-upload'));
     }
@@ -234,10 +219,7 @@ export class UploadFilesComponent {
     const fileUpload: globalThis.File = event.fileUpload;
     this.spinner.show('file-upload');
     this.httpClient
-      .put(
-        `/api/${this.recordType()}/${this.pid()}/files/${file.key}`,
-        fileUpload
-      )
+      .put(`/api/${this.recordType()}/${this.pid()}/files/${file.key}`, fileUpload)
       .pipe(
         catchError((e: { error?: { message?: string } }) => {
           let msg = this.translateService.instant('Server error');
@@ -254,7 +236,7 @@ export class UploadFilesComponent {
         }),
         switchMap(() =>
           // update the record and the files
-          this.getRecord()
+          this.getRecord(),
         ),
         tap(() => {
           this.filesChanged.emit(this.files() ?? []);
@@ -264,7 +246,7 @@ export class UploadFilesComponent {
             detail: this.translateService.instant('File uploaded successfully.'),
             life: CONFIG.MESSAGE_LIFE,
           });
-        })
+        }),
       )
       .subscribe(() => this.spinner.hide('file-upload'));
   }
@@ -274,10 +256,10 @@ export class UploadFilesComponent {
    */
   getRecord() {
     return this.httpClient.get<{ metadata: RecordWithFiles }>(`/api/${this.recordType()}/${this.pid()}`).pipe(
-      map(rec => rec.metadata),
+      map((rec) => rec.metadata),
       tap((record) => (this.record = record)),
       switchMap((record) => this.getFiles(record)),
-      tap((files) => this.files.set(files))
+      tap((files) => this.files.set(files)),
     );
   }
 
@@ -290,24 +272,23 @@ export class UploadFilesComponent {
   private generateCreateRequests(event: { files: globalThis.File[] }): Observable<void[]> {
     return from(event.files).pipe(
       concatMap((f: globalThis.File) =>
-        this.httpClient.put<RecordFile>(
-          `/api/${this.recordType()}/${this.pid()}/files/${f.name}`,
-          f
-        )
+        this.httpClient.put<RecordFile>(`/api/${this.recordType()}/${this.pid()}/files/${f.name}`, f),
       ),
       map((file: RecordFile) => {
         this.nUploadedFiles.set(this.nUploadedFiles() + 1);
-        this.files.set(this.processFiles([
-          {
-            label: file['key'],
-            metadata: { key: file['key'] as string, order: (this.files() ?? []).length + 1 },
-            ...file,
-          },
-          ...(this.files() ?? []),
-        ]));
+        this.files.set(
+          this.processFiles([
+            {
+              label: file['key'],
+              metadata: { key: file['key'] as string, order: (this.files() ?? []).length + 1 },
+              ...file,
+            },
+            ...(this.files() ?? []),
+          ]),
+        );
       }),
       // like a forkJoin
-      toArray()
+      toArray(),
     );
   }
 
@@ -330,18 +311,13 @@ export class UploadFilesComponent {
     if (existingFileNames.length > 0) {
       (this.fileUpload()!.msgs ??= []).push({
         severity: 'error',
-        text: this.translateService.instant('These filenames already exists') + `: ${existingFileNames.join(', ')}`
+        text: this.translateService.instant('These filenames already exists') + `: ${existingFileNames.join(', ')}`,
       });
-      this.fileUpload()!.files = this.fileUpload()!.files.filter(
-        (v) => !existingFileNames.some((n) => n == v.name)
-      );
+      this.fileUpload()!.files = this.fileUpload()!.files.filter((v) => !existingFileNames.some((n) => n == v.name));
     }
     const numberOfMaxUploadedFiles = this.maxFiles - (this.files() ?? []).length;
     if (numberOfMaxUploadedFiles < this.fileUpload()!.files.length) {
-      this.fileUpload()!.files = this.fileUpload()!.files.slice(
-        0,
-        numberOfMaxUploadedFiles
-      );
+      this.fileUpload()!.files = this.fileUpload()!.files.slice(0, numberOfMaxUploadedFiles);
     }
   }
 
@@ -353,9 +329,7 @@ export class UploadFilesComponent {
   deleteFile(file: RecordFile) {
     this.confirmationService.confirm({
       header: this.translateService.instant('Confirmation'),
-      message: this.translateService.instant(
-        'Do you really want to remove this file and all versions?'
-      ),
+      message: this.translateService.instant('Do you really want to remove this file and all versions?'),
       closable: false,
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
@@ -364,9 +338,7 @@ export class UploadFilesComponent {
           .pipe(
             tap(() => {
               this.files.set((this.files() ?? []).filter((f) => f.key !== file.key));
-              this.record._files = this.record._files?.filter(
-                (item) => file.key !== item.key
-              );
+              this.record._files = this.record._files?.filter((item) => file.key !== item.key);
             }),
             switchMap(() => this._reorder()),
             tap(() => {
@@ -377,7 +349,7 @@ export class UploadFilesComponent {
                 life: CONFIG.MESSAGE_LIFE,
               });
               this.filesChanged.emit(this.files() ?? []);
-            })
+            }),
           )
           .subscribe();
       },
@@ -410,9 +382,7 @@ export class UploadFilesComponent {
           return files.map((item: RecordFile) => {
             item.metadata = this._getFileInRecord(item.key);
             if (item?.label == null) {
-              item.label = item?.metadata?.label
-                ? item.metadata.label
-                : item.key;
+              item.label = item?.metadata?.label ? item.metadata.label : item.key;
             }
             return item;
           });
@@ -422,7 +392,7 @@ export class UploadFilesComponent {
         }),
         catchError(() => {
           return of([]);
-        })
+        }),
       );
   }
 
@@ -488,7 +458,7 @@ export class UploadFilesComponent {
           (this.files() ?? []).map((file) => {
             file.metadata = this._getFileInRecord(file.key) ?? undefined;
           });
-        })
+        }),
       );
   }
 
@@ -504,9 +474,7 @@ export class UploadFilesComponent {
     }
 
     // Get metadata stored in record.
-    const metadata = this.record._files.filter(
-      (item) => fileKey === item.key
-    );
+    const metadata = this.record._files.filter((item) => fileKey === item.key);
 
     return metadata.length > 0 ? metadata[0] : null;
   }

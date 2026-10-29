@@ -4,11 +4,12 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { StepsModule } from '@openng/optimus-ui/steps';
 import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
-import { AppConfigService } from '../../app-config.service';
-import { StepsModule } from 'primeng/steps';
 import { depositTestingService } from 'projects/sonar/tests/utils';
+
+import { AppConfigService } from '../../app-config.service';
 import { DepositService } from '../../deposit/deposit.service';
 import { StepComponent } from './step.component';
 
@@ -18,24 +19,20 @@ describe('StepComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [
-        RouterModule.forRoot([]),
-        TranslateModule.forRoot({
-            loader: {
-                provide: BaseTranslateLoader,
-                useClass: CoreTranslateLoader,
-            }
+      imports: [RouterModule.forRoot([]), StepsModule, StepComponent],
+      providers: [
+        provideTranslateService({
+          loader: {
+            provide: BaseTranslateLoader,
+            useClass: CoreTranslateLoader,
+          },
         }),
-        StepsModule,
-        StepComponent
-    ],
-    providers: [
         { provide: CoreConfigService, useClass: AppConfigService },
         { provide: DepositService, useValue: depositTestingService },
         provideHttpClientTesting(),
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-}).compileComponents();
+        provideHttpClient(withInterceptorsFromDi()),
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
