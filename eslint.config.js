@@ -6,7 +6,12 @@ const angular = require('angular-eslint');
 module.exports = tseslint.config(
   {
     files: ['**/*.ts'],
-    extends: [eslint.configs.recommended, ...tseslint.configs.recommended, ...tseslint.configs.stylistic, ...angular.configs.tsRecommended],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      ...tseslint.configs.stylistic,
+      ...angular.configs.tsRecommended,
+    ],
     processor: angular.processInlineTemplates,
     rules: {
       '@angular-eslint/prefer-standalone': 'off',
@@ -38,5 +43,5 @@ module.exports = tseslint.config(
       '@angular-eslint/template/click-events-have-key-events': 'warn',
       '@angular-eslint/template/interactive-supports-focus': 'warn',
     },
-  }
+  },
 );

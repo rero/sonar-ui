@@ -3,19 +3,13 @@ SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <div class="ui:flex ui:flex-col ui:gap-2">
-  <formly-form
-    [model]="model()"
-    [fields]="fields()"
-    [options]="options"
-    [form]="form"
-  />
+  <formly-form [model]="model()" [fields]="fields()" [options]="options" [form]="form" />
   <div class="ui:flex ui:justify-end ui:flex-wrap">
     <p-button
       [disabled]="form.invalid"
       [label]="'Save' | translate"
       (onClick)="save()"
       icon="fa-solid fa-floppy-disk"
-      size="small"
-    />
+      size="small" />
   </div>
 </div>

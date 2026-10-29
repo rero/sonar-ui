@@ -5,23 +5,26 @@ import { TranslationObject } from '@ngx-translate/core';
 import { CORE_TRANSLATION_LOADERS, CoreConfigService, CoreTranslateLoader, TranslationLoaderFn } from '@rero/ng-core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { AppConfigService } from './app-config.service';
 import { UserOrganisation } from './models';
 import { AppStore, AppStoreType } from './store/app.store';
 
-const ngCoreI18n = (base: string, lang: string): TranslationLoaderFn =>
-  () => fetch(`${base}/assets/sonar-ui/ng-core/i18n/${lang}.json`)
-    .then(r => {
-      if (!r.ok) {
-        throw new Error(`Failed to load ${lang} translations: ${r.status}`);
-      }
-      return r.json();
-    })
-    .then((data: Record<string, string>) => ({ default: data }))
-    .catch((error: unknown) => {
-      console.error(error);
-      return { default: {} };
-    });
+const ngCoreI18n =
+  (base: string, lang: string): TranslationLoaderFn =>
+  () =>
+    fetch(`${base}/assets/sonar-ui/ng-core/i18n/${lang}.json`)
+      .then((r) => {
+        if (!r.ok) {
+          throw new Error(`Failed to load ${lang} translations: ${r.status}`);
+        }
+        return r.json();
+      })
+      .then((data: Record<string, string>) => ({ default: data }))
+      .catch((error: unknown) => {
+        console.error(error);
+        return { default: {} };
+      });
 
 /**
  * Override the custom field translations with the labels configured on the organisation.
@@ -39,7 +42,7 @@ const ngCoreI18n = (base: string, lang: string): TranslationLoaderFn =>
 export function withCustomFieldLabels(
   translations: TranslationObject,
   organisation: UserOrganisation | null,
-  bibLanguage?: string
+  bibLanguage?: string,
 ): TranslationObject {
   const result = { ...translations };
 
@@ -79,8 +82,8 @@ export class AppTranslateLoader extends CoreTranslateLoader {
    */
   override getTranslation(lang: string): Observable<TranslationObject> {
     const bibLanguage = this.appConfigService.languagesMap.find((item) => item.code === lang)?.bibCode;
-    return super.getTranslation(lang).pipe(
-      map((translations) => withCustomFieldLabels(translations, this.appStore.organisation(), bibLanguage))
-    );
+    return super
+      .getTranslation(lang)
+      .pipe(map((translations) => withCustomFieldLabels(translations, this.appStore.organisation(), bibLanguage)));
   }
 }

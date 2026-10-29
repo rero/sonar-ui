@@ -4,10 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <p-panel [toggleable]="true" collapsed="true">
   <ng-template pTemplate="header">
-    <ng-container
-      [ngTemplateOutlet]="fileLink"
-      [ngTemplateOutletContext]="{ file: file(), name: file().label }"
-    />
+    <ng-container [ngTemplateOutlet]="fileLink" [ngTemplateOutletContext]="{ file: file(), name: file().label }" />
   </ng-template>
 
   <ng-template pTemplate="icons">
@@ -16,102 +13,87 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       variant="text"
       icon="fa-solid fa-pencil"
       class="p-panel-header-icon p-link"
-      (onClick)="showEditor()"
-    />
+      (onClick)="showEditor()" />
     <p-button
       [title]="'remove' | translate"
       variant="text"
       icon="fa-solid fa-trash-can"
       class="p-panel-header-icon p-link"
-      (onClick)="deleteFile()"
-    />
+      (onClick)="deleteFile()" />
   </ng-template>
 
   <div class="ui:p-4 ui:bg-white ui:flex ui:flex-col ui:gap-1">
-    @if(file().key) {
-      <sonar-field-description
-          [label]="'Filename' | translate"
-          [field]="file().key"
-        />
+    @if (file().key) {
+      <sonar-field-description [label]="'Filename' | translate" [field]="file().key" />
     }
-    @if(file().size) {
-      <sonar-field-description
-          [label]="'File Size' | translate"
-          [field]="$any(file().size) | filesize"
-        />
+    @if (file().size) {
+      <sonar-field-description [label]="'File Size' | translate" [field]="$any(file().size) | filesize" />
     }
-    @if(file().updated) {
+    @if (file().updated) {
       <sonar-field-description
-          [label]="'Updated at' | translate"
-          [field]="$any(file().updated) | dateTranslate: 'fullDate'"
-        />
+        [label]="'Updated at' | translate"
+        [field]="$any(file().updated) | dateTranslate: 'fullDate'" />
     }
     @let data = $any(file().metadata);
-    @if(data.access) {
-      <sonar-field-description
-          [label]="'Access' | translate"
-          [field]="data.access | translate"
-        />
+    @if (data.access) {
+      <sonar-field-description [label]="'Access' | translate" [field]="data.access | translate" />
     }
-    @if(data.embargo_date) {
+    @if (data.embargo_date) {
       <sonar-field-description
-          [label]="'Embargo Date' | translate"
-          [field]="data.embargo_date | dateTranslate: 'fullDate'"
-        />
+        [label]="'Embargo Date' | translate"
+        [field]="data.embargo_date | dateTranslate: 'fullDate'" />
     }
-    @if(data.embargoDate) {
+    @if (data.embargoDate) {
       <sonar-field-description
-          [label]="'Embargo Date' | translate"
-          [field]="data.embargoDate | dateTranslate: 'fullDate'"
-        />
+        [label]="'Embargo Date' | translate"
+        [field]="data.embargoDate | dateTranslate: 'fullDate'" />
     }
-    <p-divider align="left" ><b translate>Versions</b></p-divider>
+    <p-divider align="left"
+      ><b>{{ 'Versions' | translate }}</b></p-divider
+    >
 
     @if (file().versions) {
       <ul>
         @for (version of $any(file()?.versions); track $index) {
-        <li>
-          <ng-container
-            [ngTemplateOutlet]="fileLink"
-            [ngTemplateOutletContext]="{
-              file: version,
-              name: version.created | dateTranslate
-            }"
-          ></ng-container>
-        </li>
+          <li>
+            <ng-container
+              [ngTemplateOutlet]="fileLink"
+              [ngTemplateOutletContext]="{
+                file: version,
+                name: version.created | dateTranslate,
+              }"></ng-container>
+          </li>
         }
       </ul>
     }
-      <div class="ui:flex ui:justify-end ui:flex-wrap">
-        <p-fileUpload
-          [chooseButtonProps]="{size:'small'}"
-          mode="basic"
-          [chooseLabel]="'A new version' | translate"
-          chooseIcon="fa-solid fa-upload"
-          [accept]="$any(file().metadata).mimetype"
-          fileLimit="1"
-          [auto]="true"
-          [maxFileSize]="maxFileSize()"
-          [customUpload]="true"
-          (uploadHandler)="uploadHandler($event)"
-        />
-      </div>
+    <div class="ui:flex ui:justify-end ui:flex-wrap">
+      <p-fileUpload
+        [chooseButtonProps]="{ size: 'small' }"
+        mode="basic"
+        [chooseLabel]="'A new version' | translate"
+        chooseIcon="fa-solid fa-upload"
+        [accept]="$any(file().metadata).mimetype"
+        fileLimit="1"
+        [auto]="true"
+        [maxFileSize]="maxFileSize()"
+        [customUpload]="true"
+        (uploadHandler)="uploadHandler($event)" />
+    </div>
   </div>
 </p-panel>
 
 <ng-template #fileLink let-file="file" let-name="name">
   @if (file?.links?.self) {
-  <a
-    pButton
-    iconPos="right"
-    tabindex="-1"
-    [pTooltip]="($any(file.size) | filesize) + ' / ' + ($any(file.updated) | dateTranslate : 'medium')"
-    [title]="'download' | translate"
-    [href]="downloadURL(file)"
-    icon="fa-solid fa-download"
-    text
-    download
-    [label]="name"
-    ></a>
+    <a
+      pButton
+      iconPos="right"
+      tabindex="-1"
+      [pTooltip]="($any(file.size) | filesize) + ' / ' + ($any(file.updated) | dateTranslate: 'medium')"
+      [title]="'download' | translate"
+      [href]="downloadURL(file)"
+      icon="fa-solid fa-download"
+      text
+      download
+      [label]="name"></a>
   }
 </ng-template>

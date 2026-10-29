@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { ActivatedRouteSnapshot } from '@angular/router';
+
 import { publicSearchViewResolver } from './app.routes';
 
 describe('publicSearchViewResolver', () => {

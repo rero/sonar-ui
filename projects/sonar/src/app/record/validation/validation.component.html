@@ -10,23 +10,28 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           <p-message class="ui:w-full" severity="warn">
             {{ translatedStatusMessage() }}
             @if (isOwner()) {
-              &nbsp;<a href="#" class="alert-link" (click)="$event.preventDefault(); updateValidation(validationAction.PUBLISH)" translate>Submit it</a>.
+              &nbsp;<a
+                href="#"
+                class="alert-link"
+                (click)="$event.preventDefault(); updateValidation(validationAction.PUBLISH)"
+                >{{ 'Submit it' | translate }}</a
+              >.
             }
           </p-message>
         }
         @if (status() === validationStatus.TO_VALIDATE) {
           <p-message class="ui:w-full" severity="warn">
-            {{ "The record is in validation. It will be reviewed by a moderator before publishing." | translate }}
+            {{ 'The record is in validation. It will be reviewed by a moderator before publishing.' | translate }}
           </p-message>
         }
         @if (status() === validationStatus.REJECTED) {
           <p-message class="ui:w-full" severity="error">
-            {{ "The record has been rejected after a review from a moderator." | translate }}
+            {{ 'The record has been rejected after a review from a moderator.' | translate }}
           </p-message>
         }
         @if (status() === validationStatus.VALIDATED) {
           <p-message class="ui:w-full" severity="success">
-            {{ "The record is published." | translate }}
+            {{ 'The record is published.' | translate }}
           </p-message>
         }
         @if (status() === validationStatus.TO_VALIDATE && isModerator()) {
@@ -35,28 +40,24 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             class="ui:min-w-lg ui:my-4"
             pTextarea
             [autoResize]="true"
-            [placeholder]="'Leave a comment...' | translate"
-          ></textarea>
+            [placeholder]="'Leave a comment...' | translate"></textarea>
           <div class="ui:flex ui:justify-center">
             <p-buttongroup class="ui:mx-auto">
               <p-button
                 size="large"
                 severity="success"
                 (onClick)="updateValidation(validationAction.APPROVE)"
-                [label]="'Approve' | translate"
-              />
+                [label]="'Approve' | translate" />
               <p-button
                 size="large"
                 severity="warn"
                 (onClick)="updateValidation(validationAction.ASK_FOR_CHANGES)"
-                [label]="'Ask for changes' | translate"
-              />
+                [label]="'Ask for changes' | translate" />
               <p-button
                 size="large"
                 severity="danger"
                 (onClick)="updateValidation(validationAction.REJECT)"
-                [label]="'Reject' | translate"
-              />
+                [label]="'Reject' | translate" />
             </p-buttongroup>
           </div>
         }
@@ -64,16 +65,15 @@ SPDX-License-Identifier: AGPL-3.0-or-later
           <p-button
             variant="text"
             [label]="(showLogs() ? 'Hide logs' : 'Show logs') | translate"
-            (onClick)="showLogs.set(!showLogs())"
-          />
+            (onClick)="showLogs.set(!showLogs())" />
           @if (showLogs()) {
             <p-table [value]="logs()!" [tableStyle]="{ 'min-width': '50rem' }">
               <ng-template #header>
                 <tr>
-                  <th class="ui:align-top" translate>Status</th>
-                  <th class="ui:align-top" translate>Date</th>
-                  <th class="ui:align-top" translate>User</th>
-                  <th class="ui:align-top" translate>Comment</th>
+                  <th class="ui:align-top">{{ 'Status' | translate }}</th>
+                  <th class="ui:align-top">{{ 'Date' | translate }}</th>
+                  <th class="ui:align-top">{{ 'User' | translate }}</th>
+                  <th class="ui:align-top">{{ 'Comment' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template #body let-log>

@@ -2,10 +2,10 @@
 SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-@if(record(); as record) {
+@if (record(); as record) {
   <h1>{{ $any(record.metadata.name) | languageValue | async }}</h1>
-  @if(record.metadata.description) {
-    <h4 translate>Description</h4>
+  @if (record.metadata.description) {
+    <h4>{{ 'Description' | translate }}</h4>
     <p [innerHtml]="$any(record.metadata.description) | languageValue | async | markdown"></p>
   }
   <sonar-upload-files recordType="collections" [pid]="$any(record.metadata.pid)" />

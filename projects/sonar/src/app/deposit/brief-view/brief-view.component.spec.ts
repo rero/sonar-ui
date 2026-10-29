@@ -4,9 +4,10 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
 import { CoreTranslateLoader } from '@rero/ng-core';
 import { depositTestingService } from 'projects/sonar/tests/utils';
+
 import { DepositService } from '../deposit.service';
 import { BriefViewComponent } from './brief-view.component';
 
@@ -16,22 +17,19 @@ describe('BriefViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [
-        RouterModule.forRoot([]),
-        TranslateModule.forRoot({
-            loader: {
-                provide: BaseTranslateLoader,
-                useClass: CoreTranslateLoader,
-            }
+      imports: [RouterModule.forRoot([]), BriefViewComponent],
+      providers: [
+        provideTranslateService({
+          loader: {
+            provide: BaseTranslateLoader,
+            useClass: CoreTranslateLoader,
+          },
         }),
-        BriefViewComponent
-    ],
-    providers: [
         { provide: DepositService, useValue: depositTestingService },
         provideHttpClientTesting(),
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-}).compileComponents();
+        provideHttpClient(withInterceptorsFromDi()),
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {

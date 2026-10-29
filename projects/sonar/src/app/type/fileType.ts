@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { SafeUrl } from "@angular/platform-browser";
+import { SafeUrl } from '@angular/platform-browser';
 
 export type File = {
   // thumbnail URL
@@ -12,9 +12,9 @@ export type File = {
   label: string;
   // preview URL
   preview?: string;
-}
+};
 
 export type previewFile = {
   label: string;
   url: SafeUrl;
-}
+};

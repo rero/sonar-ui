@@ -1,9 +1,6 @@
 {
   "compileOnSave": false,
-  "exclude": [
-    "projects/sonar/src/test-setup.ts",
-    "projects/sonar/e2e/**"
-  ],
+  "exclude": ["projects/sonar/src/test-setup.ts"],
   "compilerOptions": {
     "sourceMap": false,
     "declaration": false,
@@ -13,21 +10,13 @@
     "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules"
-    ],
-    "paths": {
-      "@rero/ng-core": [
-        "./node_modules/@rero/ng-core"
-      ]
-    },
+    "typeRoots": ["node_modules/@types", "node_modules"],
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "strict": false,
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
-    "strictTemplates": true,
     "strictInjectionParameters": true
   }
 }

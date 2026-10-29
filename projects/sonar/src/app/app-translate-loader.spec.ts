@@ -4,6 +4,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
 import { firstValueFrom, of } from 'rxjs';
+
 import { AppConfigService } from './app-config.service';
 import { AppTranslateLoader, withCustomFieldLabels } from './app-translate-loader';
 import { UserOrganisation } from './models';
@@ -43,11 +44,7 @@ describe('AppTranslateLoader', () => {
     });
 
     it('should keep the translated title when no label is configured', () => {
-      const translations = withCustomFieldLabels(
-        { 'Custom field 2': 'Champ personnalisé 2' },
-        organisation,
-        'fre'
-      );
+      const translations = withCustomFieldLabels({ 'Custom field 2': 'Champ personnalisé 2' }, organisation, 'fre');
 
       expect(translations['Custom field 2']).toBe('Champ personnalisé 2');
       expect(translations['customField2']).toBe('Champ personnalisé 2');
@@ -79,7 +76,7 @@ describe('AppTranslateLoader', () => {
           AppTranslateLoader,
           { provide: CoreConfigService, useClass: AppConfigService },
           { provide: AppStore, useValue: appStoreMock },
-        ]
+        ],
       });
       loader = TestBed.inject(AppTranslateLoader);
       vi.spyOn(CoreTranslateLoader.prototype, 'getTranslation').mockReturnValue(of({ Deposit: 'Dépôt' }));
@@ -111,7 +108,7 @@ describe('AppTranslateLoader', () => {
           AppTranslateLoader,
           { provide: CoreConfigService, useClass: AppConfigService },
           { provide: AppStore, useValue: appStoreMock },
-        ]
+        ],
       });
       loader = TestBed.inject(AppTranslateLoader);
     });
@@ -134,7 +131,7 @@ describe('AppTranslateLoader', () => {
       const result = await (loader as any).coreTranslationLoaders[lang]();
 
       expect(globalThis.fetch).toHaveBeenCalledWith(
-        expect.stringContaining(`/assets/sonar-ui/ng-core/i18n/${lang}.json`)
+        expect.stringContaining(`/assets/sonar-ui/ng-core/i18n/${lang}.json`),
       );
       expect(result).toEqual({ default: data });
     });

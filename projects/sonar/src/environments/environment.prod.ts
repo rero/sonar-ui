@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { _ } from "@ngx-translate/core";
+import { _ } from '@ngx-translate/core';
 
 export const environment = {
   production: true,
@@ -11,7 +11,7 @@ export const environment = {
   languages: ['fr', 'de', 'it', 'en'],
   translationsURLs: [
     '/static/node_modules/@rero/sonar-ui/dist/sonar/browser/assets/i18n/${lang}.json',
-    '/api/translations/${lang}.json'
+    '/api/translations/${lang}.json',
   ],
-  ngCoreAssetsUrl: '/static/node_modules/@rero/sonar-ui/dist/sonar/browser'
+  ngCoreAssetsUrl: '/static/node_modules/@rero/sonar-ui/dist/sonar/browser',
 };

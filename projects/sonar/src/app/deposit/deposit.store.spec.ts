@@ -3,8 +3,9 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of, Subject, throwError } from 'rxjs';
-import { Deposit, DepositFile } from '../models/deposit.model';
+
 import { User } from '../models';
+import { Deposit, DepositFile } from '../models/deposit.model';
 import { AppStore } from '../store/app.store';
 import { DepositService } from './deposit.service';
 import { DepositStore, DepositStoreType } from './deposit.store';
@@ -277,9 +278,7 @@ describe('DepositStore', () => {
 
     it('should return true for in_progress deposit owned by logged-in user', () => {
       appStoreMock.checkUserReference.mockReturnValue(true);
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, status: 'in_progress' } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, status: 'in_progress' } }));
       store.load('42').subscribe();
 
       expect(store.canAccess()).toBe(true);
@@ -287,9 +286,7 @@ describe('DepositStore', () => {
 
     it('should return true for ask_for_changes deposit owned by logged-in user', () => {
       appStoreMock.checkUserReference.mockReturnValue(true);
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, status: 'ask_for_changes' } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, status: 'ask_for_changes' } }));
       store.load('42').subscribe();
 
       expect(store.canAccess()).toBe(true);
@@ -297,9 +294,7 @@ describe('DepositStore', () => {
 
     it('should return false for in_progress deposit not owned by user', () => {
       appStoreMock.checkUserReference.mockReturnValue(false);
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, status: 'in_progress' } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, status: 'in_progress' } }));
       store.load('42').subscribe();
 
       expect(store.canAccess()).toBe(false);
@@ -307,9 +302,7 @@ describe('DepositStore', () => {
 
     it('should return true for to_validate deposit when user is moderator', () => {
       appStoreMock.user.set({ ...mockUser, is_moderator: true } as unknown as User);
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, status: 'to_validate' } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, status: 'to_validate' } }));
       store.load('42').subscribe();
 
       expect(store.canAccess()).toBe(true);
@@ -317,9 +310,7 @@ describe('DepositStore', () => {
 
     it('should return false for to_validate deposit when user is not moderator', () => {
       appStoreMock.user.set({ ...mockUser, is_moderator: false } as unknown as User);
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, status: 'to_validate' } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, status: 'to_validate' } }));
       store.load('42').subscribe();
 
       expect(store.canAccess()).toBe(false);
@@ -327,9 +318,7 @@ describe('DepositStore', () => {
 
     it('should return false for validated status', () => {
       appStoreMock.checkUserReference.mockReturnValue(true);
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, status: 'validated' } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, status: 'validated' } }));
       store.load('42').subscribe();
 
       expect(store.canAccess()).toBe(false);
@@ -354,18 +343,14 @@ describe('DepositStore', () => {
     });
 
     it('mainFile() should return null when deposit has no files', () => {
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, _files: [] } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, _files: [] } }));
       store.load('42').subscribe();
 
       expect(store.mainFile()).toBeNull();
     });
 
     it('additionalFiles() should return empty array when deposit has no files', () => {
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, _files: [] } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, _files: [] } }));
       store.load('42').subscribe();
 
       expect(store.additionalFiles()).toEqual([]);
@@ -378,9 +363,7 @@ describe('DepositStore', () => {
     });
 
     it('should return the deposit step when deposit is loaded', () => {
-      depositServiceMock.get.mockReturnValue(
-        of({ metadata: { ...mockDeposit, step: 'diffusion' } })
-      );
+      depositServiceMock.get.mockReturnValue(of({ metadata: { ...mockDeposit, step: 'diffusion' } }));
       store.load('42').subscribe();
 
       expect(store.maxStep()).toBe('diffusion');

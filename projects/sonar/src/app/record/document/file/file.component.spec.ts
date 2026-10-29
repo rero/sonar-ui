@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
 import { CoreTranslateLoader } from '@rero/ng-core';
+
 import { FileComponent } from './file.component';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('FileComponent', () => {
   let component: FileComponent;
@@ -15,21 +16,18 @@ describe('FileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [
-        RouterModule.forRoot([]),
-        TranslateModule.forRoot({
-            loader: {
-                provide: BaseTranslateLoader,
-                useClass: CoreTranslateLoader,
-            },
+      imports: [RouterModule.forRoot([]), FileComponent],
+      providers: [
+        provideTranslateService({
+          loader: {
+            provide: BaseTranslateLoader,
+            useClass: CoreTranslateLoader,
+          },
         }),
-        FileComponent
-    ],
-    providers: [
         provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
-    ]
-}).compileComponents();
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -42,12 +40,12 @@ describe('FileComponent', () => {
       links: {
         external: 'external-link',
         preview: 'preview',
-        download: 'download'
+        download: 'download',
       },
       restriction: {
         restricted: false,
-        date: '2025-01-01'
-      }
+        date: '2025-01-01',
+      },
     });
     fixture.detectChanges();
   });

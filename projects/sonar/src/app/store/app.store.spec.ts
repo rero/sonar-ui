@@ -4,6 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ApiService, CoreConfigService } from '@rero/ng-core';
+
 import { AppConfigService } from '../app-config.service';
 import { AppStore, AppStoreType } from './app.store';
 
@@ -13,9 +14,7 @@ describe('AppStore', () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const apiServiceSpy = { baseUrl: '/api', getRefEndpoint: vi.fn() } as any;
-  apiServiceSpy.getRefEndpoint.mockImplementation(
-    (type: string, pid: string) => `/api/${type}/${pid}`
-  );
+  apiServiceSpy.getRefEndpoint.mockImplementation((type: string, pid: string) => `/api/${type}/${pid}`);
 
   const loggedUserResponse = {
     metadata: {
@@ -54,7 +53,11 @@ describe('AppStore', () => {
       expect(store.user()).toBeNull();
       expect(store.organisation()).toBeNull();
       expect(store.permissions()).toBeNull();
-      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [], document_serializers: [] });
+      expect(store.settings()).toEqual({
+        document_identifier_link: {},
+        availableLanguages: [],
+        document_serializers: [],
+      });
     });
 
     it('isLogged should be false initially', () => {
@@ -70,7 +73,11 @@ describe('AppStore', () => {
       expect(store.user()).toMatchObject({ pid: '1', role: 'submitter' });
       expect(store.organisation()).toEqual({ code: 'org1', pid: 'o1', isDedicated: false });
       expect(store.permissions()).toEqual(loggedUserResponse.metadata.permissions);
-      expect(store.settings()).toEqual({ ...loggedUserResponse.settings, availableLanguages: [], document_serializers: [] });
+      expect(store.settings()).toEqual({
+        ...loggedUserResponse.settings,
+        availableLanguages: [],
+        document_serializers: [],
+      });
     });
 
     it('should not set user if is_user is false', () => {
@@ -81,7 +88,11 @@ describe('AppStore', () => {
       });
 
       expect(store.user()).toBeNull();
-      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [], document_serializers: [] });
+      expect(store.settings()).toEqual({
+        document_identifier_link: {},
+        availableLanguages: [],
+        document_serializers: [],
+      });
     });
 
     it('should store settings even when user is not logged in', () => {
@@ -91,7 +102,11 @@ describe('AppStore', () => {
       });
 
       expect(store.user()).toBeNull();
-      expect(store.settings()).toEqual({ document_identifier_link: {}, availableLanguages: [], document_serializers: [] });
+      expect(store.settings()).toEqual({
+        document_identifier_link: {},
+        availableLanguages: [],
+        document_serializers: [],
+      });
     });
 
     it('should store document_serializers with their label', () => {

@@ -1,0 +1,115 @@
+// SPDX-FileCopyrightText: Fondation RERO+
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
+import { _ } from '@ngx-translate/core';
+import { ApiService, Bucket, IFilter, File as NgCoreFile, RecordData, RecordType } from '@rero/ng-core';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { BucketNameService } from '../bucket-name.service';
+import { DetailComponent as DocumentDetailComponent } from '../record/document/detail/detail.component';
+import { DocumentComponent } from '../record/document/document.component';
+import { RouteToolService } from './route-tool.service';
+
+const fileConfig = {
+  enabled: true,
+  orderList: (a: NgCoreFile, b: NgCoreFile) => (a.metadata?.order ?? 0) - (b.metadata?.order ?? 0),
+  infoExcludedFields: ['restriction', 'type', 'links', 'thumbnail', 'permissions'],
+  canAdd: () => of({ can: true, message: '' }),
+  canRead: (_record: RecordData, file: NgCoreFile) =>
+    of({ can: file?.metadata?.permissions?.read ?? false, message: '' }),
+  canUpdateMetadata: (_record: RecordData, file: NgCoreFile) =>
+    of({ can: file?.metadata?.permissions?.update ?? false, message: '' }),
+  canUpdate: (_record: RecordData, file: NgCoreFile) =>
+    of({ can: file?.metadata?.permissions?.update ?? false, message: '' }),
+  canDelete: (_record: RecordData, file: NgCoreFile) =>
+    of({ can: file?.metadata?.permissions?.delete ?? false, message: '' }),
+};
+
+/**
+ * Aggregation returned by the backend. Aggregations with a label configured on the
+ * organisation, such as the custom fields, come with the label resolved for the
+ * current language.
+ */
+type Aggregation = string | { key: string; name: string };
+
+/** Aggregations to display: the keys in the order given by the backend, and the labels of the named ones. */
+export type AggregationsConfig = { order: string[]; names: Record<string, string> };
+
+/** Split the aggregations returned by the backend into their order and their labels. */
+export const toAggregationsConfig = (aggregations: Aggregation[]): AggregationsConfig => ({
+  order: aggregations.map((aggregation) => (typeof aggregation === 'string' ? aggregation : aggregation.key)),
+  names: Object.fromEntries(
+    aggregations
+      .filter((aggregation) => typeof aggregation !== 'string')
+      .map((aggregation) => [aggregation.key, aggregation.name]),
+  ),
+});
+
+export function fetchAggregations(route: ActivatedRouteSnapshot): Observable<AggregationsConfig> {
+  const apiService = inject(ApiService);
+  const httpClient = inject(HttpClient);
+  let params = new HttpParams();
+  const view = route.params['view'];
+  if (view) {
+    params = params.set('view', view);
+  }
+  if (route.queryParams['collection_view']) {
+    params = params.set('collection', '1');
+  }
+  return httpClient
+    .get<Aggregation[]>(`${apiService.getEndpointByType('documents', true)}/aggregations`, { params })
+    .pipe(map(toAggregationsConfig));
+}
+
+export const documentsRouteResolver: ResolveFn<Partial<RecordType>[]> = (route: ActivatedRouteSnapshot) => {
+  const routeToolService = inject(RouteToolService);
+  const bucketNameService = inject(BucketNameService);
+
+  // The custom field facets are not named here: their labels are taken from the
+  // translations, filled with the organisation of the logged user, and stay up to date
+  // when the language is switched without reloading the application.
+  return fetchAggregations(route).pipe(
+    map(({ order }) => [
+      {
+        key: 'documents',
+        label: 'Documents',
+        component: DocumentComponent,
+        detailComponent: DocumentDetailComponent,
+        aggregationsExpand: ['document_type', 'controlled_affiliation', 'year'],
+        aggregationsOrder: order,
+        processBucketName: (bucket: Bucket) => bucketNameService.transform(bucket),
+        processFilterName: (filter: IFilter) => bucketNameService.transform(filter),
+        aggregationsBucketSize: 10,
+        editorSettings: { longMode: true, getHeaders: { Accept: 'application/rero+json' } },
+        files: {
+          ...fileConfig,
+          filterList: (item: NgCoreFile) => item.metadata?.type === 'file',
+        },
+        searchFilters: [
+          { label: _('Search in full-text'), filter: 'fulltext', value: 'true' },
+          { label: _('Open access'), filter: 'open_access', value: 'true' },
+        ],
+        showFacetsIfNoResults: true,
+        exportFormats: [],
+        sortOptions: [
+          { label: _('Relevance'), value: 'relevance', icon: 'fa-solid fa-arrow-down-wide-short', defaultQuery: true },
+          {
+            label: _('Date descending'),
+            value: 'newest',
+            icon: 'fa-solid fa-arrow-down-wide-short',
+            defaultNoQuery: true,
+          },
+          { label: _('Date ascending'), icon: 'fa-solid fa-arrow-down-short-wide', value: 'oldest' },
+          { label: _('Title'), icon: 'fa-solid fa-arrow-down-a-z', value: 'title' },
+        ],
+        canAdd: () => routeToolService.canAccess('documents', 'add'),
+        canUpdate: (record: RecordData) => routeToolService.canAccess('documents', 'update', record),
+        canDelete: (record: RecordData) => routeToolService.canAccess('documents', 'delete', record),
+        canRead: (record: RecordData) => routeToolService.canAccess('documents', 'read', record),
+      },
+    ]),
+  );
+};

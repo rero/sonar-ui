@@ -1,8 +1,8 @@
 /// <reference types="vitest" />
 
 import { resolve } from 'path';
-import { defineConfig } from 'vite';
 import angular from '@analogjs/vite-plugin-angular';
+import { defineConfig } from 'vite';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 const root = resolve(__dirname, '.');

@@ -7,50 +7,50 @@ describe('ContributorsPipe', () => {
   const data: IContribution[] = [
     {
       agent: { preferred_name: 'agent 1', type: 'bf:Person' },
-      role: ['cre']
+      role: ['cre'],
     },
     {
       agent: { preferred_name: 'agent 2', type: 'bf:Person' },
-      role: ['edt']
+      role: ['edt'],
     },
     {
       agent: { preferred_name: 'organisation 1', type: 'bf:Organisation' },
-      role: ['cre']
+      role: ['cre'],
     },
     {
       agent: { preferred_name: 'meeting 1', type: 'bf:Meeting' },
-      role: ['edt']
+      role: ['edt'],
     },
     {
       agent: { preferred_name: 'meeting 2', type: 'bf:Meeting' },
-      role: ['cre']
-    }
+      role: ['cre'],
+    },
   ];
 
   const resultPersonOrganisation: IContribution[] = [
     {
       agent: { preferred_name: 'agent 1', type: 'bf:Person' },
-      role: ['cre']
+      role: ['cre'],
     },
     {
       agent: { preferred_name: 'organisation 1', type: 'bf:Organisation' },
-      role: ['cre']
+      role: ['cre'],
     },
     {
       agent: { preferred_name: 'agent 2', type: 'bf:Person' },
-      role: ['edt']
-    }
+      role: ['edt'],
+    },
   ];
 
   const resultMeeting: IContribution[] = [
     {
       agent: { preferred_name: 'meeting 2', type: 'bf:Meeting' },
-      role: ['cre']
+      role: ['cre'],
     },
     {
       agent: { preferred_name: 'meeting 1', type: 'bf:Meeting' },
-      role: ['edt']
-    }
+      role: ['edt'],
+    },
   ];
 
   it('create an instance', () => {
