@@ -1,10 +1,11 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { TestBed } from '@angular/core/testing';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { IFilter, RecordService } from '@rero/ng-core';
 import { cloneDeep } from 'lodash-es';
 import { of } from 'rxjs';
+
 import { BucketNameService } from './bucket-name.service';
 
 describe('BucketNameService', () => {
@@ -15,10 +16,10 @@ describe('BucketNameService', () => {
       label: 'Collection',
       name: [
         { language: 'fre', value: 'Collection french' },
-        { language: 'eng', value: 'Collection english' }
-      ]
-    }
-  }
+        { language: 'eng', value: 'Collection english' },
+      ],
+    },
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recordServiceSpy = { getRecord: vi.fn() } as any;
@@ -29,13 +30,11 @@ describe('BucketNameService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        TranslateModule.forRoot()
-      ],
       providers: [
+        provideTranslateService(),
         { provide: RecordService, useValue: recordServiceSpy },
-        { provide: TranslateService, useValue: translateServiceSpy }
-      ]
+        { provide: TranslateService, useValue: translateServiceSpy },
+      ],
     });
     service = TestBed.inject(BucketNameService);
   });
@@ -45,9 +44,9 @@ describe('BucketNameService', () => {
   });
 
   it('should return the default value', () => {
-    service.transform({ key: 'default', doc_count: 0, aggregationKey: 'other', name: 'default value' }).subscribe(
-      (value: string) => expect(value).toEqual('default value')
-    );
+    service
+      .transform({ key: 'default', doc_count: 0, aggregationKey: 'other', name: 'default value' })
+      .subscribe((value: string) => expect(value).toEqual('default value'));
   });
 
   it('should translate the values with the prefix of their aggregation', () => {
@@ -71,21 +70,21 @@ describe('BucketNameService', () => {
     const recordNotTranslation = cloneDeep(record);
     delete recordNotTranslation.metadata.name;
     recordServiceSpy.getRecord.mockReturnValue(of(recordNotTranslation));
-    service.transform({ key: 'collection_key', doc_count: 0, aggregationKey: 'collection_view' }).subscribe(
-      (value: string) => expect(value).toEqual('Collection')
-    );
+    service
+      .transform({ key: 'collection_key', doc_count: 0, aggregationKey: 'collection_view' })
+      .subscribe((value: string) => expect(value).toEqual('Collection'));
   });
 
   it('should return the translation value according to the language', () => {
     translateServiceSpy.currentLang = 'fr';
     recordServiceSpy.getRecord.mockReturnValue(of(record));
-    service.transform({ key: 'collection_key', doc_count: 0, aggregationKey: 'collection_view' }).subscribe(
-      (value: string) => expect(value).toEqual('Collection french')
-    );
+    service
+      .transform({ key: 'collection_key', doc_count: 0, aggregationKey: 'collection_view' })
+      .subscribe((value: string) => expect(value).toEqual('Collection french'));
     translateServiceSpy.currentLang = 'en';
     recordServiceSpy.getRecord.mockReturnValue(of(record));
-    service.transform({ key: 'collection_key', doc_count: 0, aggregationKey: 'collection_view' }).subscribe(
-      (value: string) => expect(value).toEqual('Collection english')
-    );
+    service
+      .transform({ key: 'collection_key', doc_count: 0, aggregationKey: 'collection_view' })
+      .subscribe((value: string) => expect(value).toEqual('Collection english'));
   });
 });

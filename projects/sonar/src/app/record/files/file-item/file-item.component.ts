@@ -1,31 +1,43 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { RecordFile, RecordFileMeta } from '../upload-files/upload-files.component';
-import { TranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
-import { DialogService } from 'primeng/dynamicdialog';
-import { AppConfigService } from '../../../app-config.service';
-import { FileItemEditorComponent } from '../file-item-editor/file-item-editor.component';
-import { FileUploadHandlerEvent, FileUpload } from 'primeng/fileupload';
-import { Bind } from 'primeng/bind';
-import { Panel } from 'primeng/panel';
-import { PrimeTemplate } from 'primeng/api';
 import { NgTemplateOutlet } from '@angular/common';
-import { Button, ButtonDirective } from 'primeng/button';
-import { FieldDescriptionComponent } from '../../../core/field-description/field-description.component';
-import { Divider } from 'primeng/divider';
-import { Tooltip } from 'primeng/tooltip';
+import { Component, computed, inject, input, output } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { Divider } from '@openng/optimus-ui/divider';
+import { DialogService } from '@openng/optimus-ui/dynamicdialog';
+import { FileUpload, FileUploadHandlerEvent } from '@openng/optimus-ui/fileupload';
+import { Panel } from '@openng/optimus-ui/panel';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { DateTranslatePipe, FilesizePipe } from '@rero/ng-core';
 
+import { AppConfigService } from '../../../app-config.service';
+import { FieldDescriptionComponent } from '../../../core/field-description/field-description.component';
+import { RecordFile, RecordFileMeta } from '../upload-files/upload-files.component';
+
 @Component({
-    selector: 'sonar-file-item',
-    templateUrl: './file-item.component.html',
-    imports: [Bind, Panel, PrimeTemplate, NgTemplateOutlet, Button, FieldDescriptionComponent, Divider, TranslateDirective, FileUpload, ButtonDirective, Tooltip, TranslatePipe, DateTranslatePipe, FilesizePipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-file-item',
+  templateUrl: './file-item.component.html',
+  imports: [
+    Bind,
+    Panel,
+    PrimeTemplate,
+    NgTemplateOutlet,
+    Button,
+    FieldDescriptionComponent,
+    Divider,
+    FileUpload,
+    ButtonDirective,
+    Tooltip,
+    TranslatePipe,
+    DateTranslatePipe,
+    FilesizePipe,
+  ],
 })
 export class FileItemComponent {
-
   appConfigService: AppConfigService = inject(AppConfigService);
   dialogService: DialogService = inject(DialogService);
   translateService: TranslateService = inject(TranslateService);
@@ -45,18 +57,20 @@ export class FileItemComponent {
   // maximum upload file size
   maxFileSize = computed(() => this.appConfigService.maxFileSize);
 
-  showEditor() {
-     const modalRef = this.dialogService.open(FileItemEditorComponent, {
-        header: this.translateService.instant('Metadata Editor'),
-        modal: true,
-        data: {
-          file: this.file(),
-          schema: this.schema()
-        },
-        closable: true,
-        width: '60vw'
-      });
-    modalRef?.onClose.subscribe(model => model ? this.update.emit(model): null);
+  async showEditor() {
+    // Loaded on demand, so Formly stays out of the initial bundle.
+    const { FileItemEditorComponent } = await import('../file-item-editor/file-item-editor.component');
+    const modalRef = this.dialogService.open(FileItemEditorComponent, {
+      header: this.translateService.instant('Metadata Editor'),
+      modal: true,
+      data: {
+        file: this.file(),
+        schema: this.schema(),
+      },
+      closable: true,
+      width: '60vw',
+    });
+    modalRef?.onClose.subscribe((model) => (model ? this.update.emit(model) : null));
   }
 
   /**

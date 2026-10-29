@@ -2,10 +2,10 @@
 SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-@if(record()) {
+@if (record()) {
   <div class="ui:flex ui:flex-col ui:gap-2">
     <h1 class="ui:mb-4">{{ record().metadata.name }}</h1>
-    <sonar-field-description [label]="'Code' | translate" [field]="record().metadata.code"/>
+    <sonar-field-description [label]="'Code' | translate" [field]="record().metadata.code" />
 
     <sonar-field-description [label]="'Is shared' | translate" [field]="record().metadata.isShared">
       <ng-template let-isShared pTemplate="template">
@@ -19,7 +19,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       </ng-template>
     </sonar-field-description>
 
-    <sonar-field-description [label]="'Server name (without http)' | translate" [field]="record().metadata.serverName"/>
+    <sonar-field-description
+      [label]="'Server name (without http)' | translate"
+      [field]="record().metadata.serverName" />
 
     <sonar-field-description [label]="'Platform name' | translate" [field]="record().metadata.platformName">
       <ng-template let-platformName pTemplate="template">
@@ -27,7 +29,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       </ng-template>
     </sonar-field-description>
 
-    <sonar-field-description [label]="'Ark Name Assigning Authority Number (NAAN)' | translate" [field]="record().metadata.arkNAAN"/>
+    <sonar-field-description
+      [label]="'Ark Name Assigning Authority Number (NAAN)' | translate"
+      [field]="record().metadata.arkNAAN" />
 
     <sonar-field-description [label]="'Allowed IP addresses' | translate" [field]="record().metadata.allowedIps">
       <ng-template let-allowedIps pTemplate="template">
@@ -50,11 +54,13 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     </sonar-field-description>
 
     @for (i of [1, 2, 3]; track i) {
-      <sonar-field-description [label]="'Document custom field ' + i | translate" [field]="record().metadata['documentsCustomField' + i]">
+      <sonar-field-description
+        [label]="'Document custom field ' + i | translate"
+        [field]="record().metadata['documentsCustomField' + i]">
         <ng-template let-customField pTemplate="template">
           @if (customField.label) {
             {{ 'Label' | translate }}: {{ customField.label | languageValue | async }}
-            <br>
+            <br />
           }
           <i class="fa-solid fa-{{ customField.includeInFacets ? 'check' : 'xmark' }}"></i>
           {{ 'Include in facets' | translate }}
@@ -62,7 +68,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       </sonar-field-description>
     }
 
-    <sonar-field-description [label]="'Visible facets in the public interface for documents' | translate" [field]="record().metadata.publicDocumentFacets">
+    <sonar-field-description
+      [label]="'Visible facets in the public interface for documents' | translate"
+      [field]="record().metadata.publicDocumentFacets">
       <ng-template let-publicDocumentFacet pTemplate="template">
         <i class="fa-solid fa-check" aria-hidden="true"></i>
         {{ publicDocumentFacet | translate | ucfirst }}

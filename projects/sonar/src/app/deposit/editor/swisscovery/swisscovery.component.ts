@@ -2,44 +2,41 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslateDirective, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MessageService } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Button } from '@openng/optimus-ui/button';
+import { InputGroup } from '@openng/optimus-ui/inputgroup';
+import { InputGroupAddon } from '@openng/optimus-ui/inputgroupaddon';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
+import { Select } from '@openng/optimus-ui/select';
 import { ApiService } from '@rero/ng-core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MessageService } from 'primeng/api';
-import { Bind } from 'primeng/bind';
-import { Button } from 'primeng/button';
-import { InputGroup } from 'primeng/inputgroup';
-import { InputGroupAddon } from 'primeng/inputgroupaddon';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { Select } from 'primeng/select';
 import { finalize, map } from 'rxjs';
 
 type ScType = { name: string; code: string };
 type ScResult = { metadata?: { title?: string }; contributors?: { name: string }[] };
 
 @Component({
-    selector: 'sonar-deposit-editor-swisscovery',
-    templateUrl: './swisscovery.component.html',
-    imports: [
-        Bind,
-        Select,
-        ReactiveFormsModule,
-        FormsModule,
-        InputGroup,
-        InputText,
-        InputGroupAddon,
-        Button,
-        TranslateDirective,
-        Message,
-        TranslatePipe,
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-deposit-editor-swisscovery',
+  templateUrl: './swisscovery.component.html',
+  imports: [
+    Bind,
+    Select,
+    ReactiveFormsModule,
+    FormsModule,
+    InputGroup,
+    InputText,
+    InputGroupAddon,
+    Button,
+    Message,
+    TranslatePipe,
+  ],
 })
 export class SwisscoveryComponent {
-
   private spinner = inject(NgxSpinnerService);
   private apiService = inject(ApiService);
   private httpClient = inject(HttpClient);
@@ -83,10 +80,8 @@ export class SwisscoveryComponent {
         observe: 'response',
       })
       .pipe(
-        map((response: HttpResponse<ScResult>) =>
-          response.status === 200 ? response.body : null
-        ),
-        finalize(() => this.spinner.hide())
+        map((response: HttpResponse<ScResult>) => (response.status === 200 ? response.body : null)),
+        finalize(() => this.spinner.hide()),
       )
       .subscribe({
         next: (data) => {
@@ -94,8 +89,12 @@ export class SwisscoveryComponent {
             this.scResult.set(null);
           } else {
             const result: ScResult = {};
-            if (data.metadata) { result.metadata = data.metadata; }
-            if (data.contributors) { result.contributors = data.contributors; }
+            if (data.metadata) {
+              result.metadata = data.metadata;
+            }
+            if (data.contributors) {
+              result.contributors = data.contributors;
+            }
             this.scResult.set(result);
           }
         },
@@ -104,7 +103,10 @@ export class SwisscoveryComponent {
           this.messageService.add({
             severity: 'error',
             summary: this.translateService.instant('Error'),
-            detail: this.translateService.instant('Your request to the external server has failed. Try again later ({{ statusCode }})', { statusCode: err.status }),
+            detail: this.translateService.instant(
+              'Your request to the external server has failed. Try again later ({{ statusCode }})',
+              { statusCode: err.status },
+            ),
             sticky: true,
             closable: true,
           });

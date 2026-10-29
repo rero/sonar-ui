@@ -1,8 +1,9 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { TestBed } from '@angular/core/testing';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
 import { CoreTranslateLoader } from '@rero/ng-core';
+
 import { PublicationPipe } from './publication.pipe';
 
 let pipe: PublicationPipe;
@@ -10,11 +11,11 @@ let pipe: PublicationPipe;
 describe('PublicationPipe', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [PublicationPipe],
-      imports: [
-        TranslateModule.forRoot({
+      providers: [
+        provideTranslateService({
           loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
         }),
+        PublicationPipe,
       ],
     });
 
@@ -34,9 +35,7 @@ describe('PublicationPipe', () => {
   });
 
   it('should return document and year', () => {
-    expect(
-      pipe.transform({ document: { title: 'Journal' }, numberingYear: '2000' })
-    ).toBe('Journal, 2000');
+    expect(pipe.transform({ document: { title: 'Journal' }, numberingYear: '2000' })).toBe('Journal, 2000');
   });
 
   it('should return document, year and issue', () => {
@@ -45,7 +44,7 @@ describe('PublicationPipe', () => {
         document: { title: 'Journal' },
         numberingYear: '2000',
         numberingIssue: '12',
-      })
+      }),
     ).toBe('Journal, 2000, no. 12');
   });
 
@@ -56,7 +55,7 @@ describe('PublicationPipe', () => {
         numberingYear: '2000',
         numberingIssue: '12',
         numberingVolume: '1',
-      })
+      }),
     ).toBe('Journal, 2000, vol. 1, no. 12');
   });
 
@@ -68,7 +67,7 @@ describe('PublicationPipe', () => {
         numberingIssue: '12',
         numberingVolume: '1',
         numberingPages: '20-25',
-      })
+      }),
     ).toBe('Journal, 2000, vol. 1, no. 12, p. 20-25');
   });
 });

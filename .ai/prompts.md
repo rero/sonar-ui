@@ -4,36 +4,19 @@ These prompt templates help guide the LLM when performing common tasks in this r
 
 ---
 
-## Migrate Angular component to standalone
-
-Goal: migrate this component to standalone.
-
-Constraints:
-
-- Angular 21
-- standalone: true
-- do not introduce NgModules
-- replace constructor injection with inject()
-- replace *ngIf/*ngFor with @if/@for
-- keep change detection strategy OnPush
-- do not change business logic
-
----
-
 ## Refactor Angular component
 
 Goal: simplify this component.
 
 Constraints:
 
-- Angular 21
-- standalone components only
+- Angular 22, standalone and OnPush by default (no explicit property)
 - do not introduce NgModules
-- replace constructor injection with inject()
+- use inject(), not constructor injection
 - move business logic outside components when possible
 - prefer Angular Signals over RxJS for local state
-- use new input()/output() API
-- keep change detection strategy OnPush
+- use the input()/output() APIs
+- do not change the behaviour
 
 ---
 
@@ -43,10 +26,9 @@ Goal: update this test to match the current component.
 
 Constraints:
 
-- keep Karma + Jasmine
-- do not introduce Vitest
-- keep TestBed when Angular integration is required
-- use jasmine.createSpy() for mocks
+- Vitest (`describe`, `it`, `expect`, `vi.fn()`, `vi.spyOn()`)
+- no Karma, no Jasmine, no fakeAsync
+- keep TestBed only when Angular integration is required
 
 ---
 
@@ -58,7 +40,6 @@ Constraints:
 
 - do not introduce `any`
 - prefer explicit types
-- keep code compatible with strict TypeScript mode
 
 ---
 
@@ -68,7 +49,7 @@ Goal: write a unit test for the provided code.
 
 Constraints:
 
-- use Karma + Jasmine
+- use Vitest
 - prefer pure function testing
 - avoid TestBed unless Angular integration is required
 - keep the test minimal and readable

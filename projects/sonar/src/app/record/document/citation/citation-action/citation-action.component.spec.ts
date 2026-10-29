@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { DialogService } from '@openng/optimus-ui/dynamicdialog';
 import { CoreTranslateLoader } from '@rero/ng-core';
-import { DialogService } from 'primeng/dynamicdialog';
 
 import { CitationActionComponent } from './citation-action.component';
 
 const dialogServiceMock = {
-  open: vi.fn()
+  open: vi.fn(),
 };
 
 describe('CitationActionComponent', () => {
@@ -15,17 +15,14 @@ describe('CitationActionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        TranslateModule.forRoot({
-          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader }
-        }),
-        CitationActionComponent
-      ],
+      imports: [CitationActionComponent],
       providers: [
-        { provide: DialogService, useValue: dialogServiceMock }
-      ]
-    })
-    .compileComponents();
+        provideTranslateService({
+          loader: { provide: BaseTranslateLoader, useClass: CoreTranslateLoader },
+        }),
+        { provide: DialogService, useValue: dialogServiceMock },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CitationActionComponent);
     component = fixture.componentInstance;
@@ -43,8 +40,11 @@ describe('CitationActionComponent', () => {
 
   it('should open the citation dialog with the record pid', () => {
     component.citation();
-    expect(dialogServiceMock.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: { documentPid: 'doc-123' }
-    }));
+    expect(dialogServiceMock.open).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        data: { documentPid: 'doc-123' },
+      }),
+    );
   });
 });

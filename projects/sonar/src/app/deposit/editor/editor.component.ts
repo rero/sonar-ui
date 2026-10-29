@@ -1,53 +1,30 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  computed,
-  effect,
-  inject,
-  input,
-  linkedSignal,
-  signal
-} from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, linkedSignal, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormlyFieldConfig } from '@ngx-formly/core';
+import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
 import { FormlyJsonschema } from '@ngx-formly/core/json-schema';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import {
-  CONFIG,
-  JSONSchemaService,
-  processJsonSchema,
-  resolve$ref,
-} from '@rero/ng-core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MenuItem, MessageService } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Button } from '@openng/optimus-ui/button';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { SplitButton } from '@openng/optimus-ui/splitbutton';
+import { CONFIG } from '@rero/ng-core';
+import { JSONSchemaService, processJsonSchema, resolve$ref } from '@rero/ng-core/editor';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { tap } from 'rxjs/operators';
+
 import { AppStore, AppStoreType } from '../../store/app.store';
 import { DepositStore, DepositStoreType } from '../deposit.store';
-import { FormlyModule } from '@ngx-formly/core';
-import { Bind } from 'primeng/bind';
-import { SplitButton } from 'primeng/splitbutton';
-import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
 import { SwisscoveryComponent } from './swisscovery/swisscovery.component';
 
 @Component({
-    selector: 'sonar-deposit-editor',
-    templateUrl: './editor.component.html',
-    imports: [
-        FormlyModule,
-        Bind,
-        SplitButton,
-        Button,
-        Dialog,
-        SwisscoveryComponent,
-        TranslatePipe,
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-deposit-editor',
+  templateUrl: './editor.component.html',
+  imports: [FormlyModule, Bind, SplitButton, Button, Dialog, SwisscoveryComponent, TranslatePipe],
 })
 export class EditorComponent {
   private messageService: MessageService = inject(MessageService);
@@ -84,10 +61,12 @@ export class EditorComponent {
 
   canSubmit = computed(() => {
     const deposit = this.store.deposit();
-    return deposit !== null
-      && ['in_progress', 'ask_for_changes'].includes(deposit.status)
-      && this.currentStep() === 'diffusion'
-      && deposit.diffusion?.license !== undefined;
+    return (
+      deposit !== null &&
+      ['in_progress', 'ask_for_changes'].includes(deposit.status) &&
+      this.currentStep() === 'diffusion' &&
+      deposit.diffusion?.license !== undefined
+    );
   });
 
   importMenuItems = computed(() => {
@@ -142,7 +121,8 @@ export class EditorComponent {
       [this.currentStep()]: this.model()[this.currentStep()],
       step: upgradedStep,
     };
-    this.store.update(deposit.pid, updateData)
+    this.store
+      .update(deposit.pid, updateData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
         if (result) {
@@ -172,7 +152,8 @@ export class EditorComponent {
 
   publish(): void {
     this.spinner.show();
-    this.store.publish(this.store.deposit()!.pid)
+    this.store
+      .publish(this.store.deposit()!.pid)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.spinner.hide();
@@ -183,7 +164,7 @@ export class EditorComponent {
   confirmPdfImport(): void {
     this.confirmationService.confirm({
       message: this.translateService.instant(
-        'Do you really want to extract metadata from PDF and overwrite current data ?'
+        'Do you really want to extract metadata from PDF and overwrite current data ?',
       ),
       header: this.translateService.instant('Confirmation'),
       closable: false,
@@ -226,7 +207,7 @@ export class EditorComponent {
           if (Object.keys(updates).length) {
             this.store.mergeDeposit(updates);
           }
-        })
+        }),
       )
       .subscribe({
         next: () => this.spinner.hide(),
@@ -294,9 +275,7 @@ export class EditorComponent {
                 return true;
               },
               message: (_error: unknown, _field: FormlyFieldConfig) =>
-                this.translateService.instant(
-                  'The format is not valid for this type of identifier.'
-                ),
+                this.translateService.instant('The format is not valid for this type of identifier.'),
             },
           };
         }

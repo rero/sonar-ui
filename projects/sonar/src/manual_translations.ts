@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { _ } from "@ngx-translate/core";
+import { _ } from '@ngx-translate/core';
 
 // Facets
 _('document_type');
@@ -53,4 +53,3 @@ _('validated');
 _('to_validate');
 _('rejected');
 _('ask_for_changes');
-

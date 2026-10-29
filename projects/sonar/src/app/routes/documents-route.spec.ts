@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { toAggregationsConfig } from './documents-route';
+import { toAggregationsConfig } from './documents-route.resolver';
 
 const aggregations = [
   'document_type',
@@ -12,13 +12,16 @@ const aggregations = [
 describe('documents aggregations', () => {
   describe('toAggregationsConfig', () => {
     it('should keep the order given by the backend', () => {
-      expect(toAggregationsConfig(aggregations).order)
-        .toEqual(['document_type', 'year', 'customField1', 'customField3']);
+      expect(toAggregationsConfig(aggregations).order).toEqual([
+        'document_type',
+        'year',
+        'customField1',
+        'customField3',
+      ]);
     });
 
     it('should index the named aggregations by key', () => {
-      expect(toAggregationsConfig(aggregations).names)
-        .toEqual({ customField1: 'Étendue', customField3: 'Projet' });
+      expect(toAggregationsConfig(aggregations).names).toEqual({ customField1: 'Étendue', customField3: 'Projet' });
     });
 
     it('should return no name when no aggregation is named', () => {

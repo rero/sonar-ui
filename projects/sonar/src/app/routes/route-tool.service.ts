@@ -3,14 +3,13 @@
 import { inject, Injectable, Injector } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ActionStatus, ApiService } from '@rero/ng-core';
-import type { RecordData } from '@rero/ng-core';
+import { ActionStatus, ApiService, type RecordData } from '@rero/ng-core';
 import { Observable, of } from 'rxjs';
+
 import { AppStore } from '../store/app.store';
 
 @Injectable({ providedIn: 'root' })
 export class RouteToolService {
-
   injector: Injector = inject(Injector);
 
   get translateService(): TranslateService {

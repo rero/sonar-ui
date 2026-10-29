@@ -4,11 +4,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 @if (statistics(); as stats) {
   <dl class="metadata">
-    <dt translate>Document views</dt>
+    <dt>{{ 'Document views' | translate }}</dt>
     <dd>{{ stats['record-view'].count }}</dd>
   </dl>
   <p-divider />
-  <h6 translate>File downloads</h6>
+  <h6>{{ 'File downloads' | translate }}</h6>
   <dl class="metadata">
     @for (file of filteredFiles(); track $index) {
       @let key = $any(file.key);

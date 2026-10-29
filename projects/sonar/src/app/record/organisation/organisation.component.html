@@ -10,8 +10,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   <div>
     <p-tag [value]="$any(record().metadata.code)" />
   </div>
-  @if(record().metadata.description) {
-    @for(desc of $any(record().metadata.description); track $index) {
+  @if (record().metadata.description) {
+    @for (desc of $any(record().metadata.description); track $index) {
       <p>
         <span class="ui:font-bold">{{ 'lang_' + desc.language | translate | ucfirst }}</span>
         <span [innerHtml]="desc.value | markdown"></span>
