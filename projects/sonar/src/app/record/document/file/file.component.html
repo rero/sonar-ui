@@ -3,61 +3,64 @@ SPDX-FileCopyrightText: Fondation RERO+
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <div class="ui:text-center">
-@if(file()) {
-  @if(link()) {
-    @if(inRouter()) {
-      <a [routerLink]="link()">
-        <ng-container [ngTemplateOutlet]="thumbnail" />
-      </a>
-    } @else {
-      <a [href]="link()">
-        <ng-container [ngTemplateOutlet]="thumbnail" />
-      </a>
-    }
-  } @else {
-    @if (showExternalLink() && file().links.external) {
-      <a [href]="file().links.external" target="_blank">
-        <ng-container [ngTemplateOutlet]="thumbnail" />
-      </a>
-    } @else {
-      @if(showPreview() && file().links.preview) {
-        <div class="ui:hover:cursor-pointer" tabindex="0" (click)="preview(file()); $event.preventDefault()" (keyup.enter)="preview(file()); $event.preventDefault()">
+  @if (file()) {
+    @if (link()) {
+      @if (inRouter()) {
+        <a [routerLink]="link()">
           <ng-container [ngTemplateOutlet]="thumbnail" />
-        </div>
+        </a>
       } @else {
-        @if(showDownload() && file().links.download) {
-          <a [href]="file().links.download" download>
-            <ng-container [ngTemplateOutlet]="thumbnail" />
-          </a>
-        } @else {
+        <a [href]="link()">
           <ng-container [ngTemplateOutlet]="thumbnail" />
+        </a>
+      }
+    } @else {
+      @if (showExternalLink() && file().links.external) {
+        <a [href]="file().links.external" target="_blank">
+          <ng-container [ngTemplateOutlet]="thumbnail" />
+        </a>
+      } @else {
+        @if (showPreview() && file().links.preview) {
+          <div
+            class="ui:hover:cursor-pointer"
+            tabindex="0"
+            (click)="preview(file()); $event.preventDefault()"
+            (keyup.enter)="preview(file()); $event.preventDefault()">
+            <ng-container [ngTemplateOutlet]="thumbnail" />
+          </div>
+        } @else {
+          @if (showDownload() && file().links.download) {
+            <a [href]="file().links.download" download>
+              <ng-container [ngTemplateOutlet]="thumbnail" />
+            </a>
+          } @else {
+            <ng-container [ngTemplateOutlet]="thumbnail" />
+          }
         }
       }
     }
-  }
-  @if(file()?.restriction?.restricted && file()?.restriction?.date) {
-    <div class="ui:mt-2">
-      <p-tag severity="secondary">
-        {{ 'Public access from' | translate }}<br>{{ file().restriction.date }}
-      </p-tag>
+    @if (file()?.restriction?.restricted && file()?.restriction?.date) {
+      <div class="ui:mt-2">
+        <p-tag severity="secondary"> {{ 'Public access from' | translate }}<br />{{ file().restriction.date }} </p-tag>
+      </div>
+    }
+    <div class="ui:flex ui:gap-1 ui:justify-center">
+      @if (showExternalLink() && file().links.external) {
+        <a pButton text [href]="file().links.external" target="_blank"
+          ><i class="fa-solid fa-up-right-from-square"></i
+        ></a>
+      }
+      @if (showPreview() && file().links.preview) {
+        <p-button variant="text" icon="fa-solid fa-eye" (onClick)="preview(file())" />
+      }
+      @if (showDownload() && file().links.download) {
+        <a pButton text icon="fa-solid fa-download" [href]="file().links.download" download> </a>
+      }
     </div>
+  } @else {
+    <img src="/static/images/no-image.png" [alt]="'No image' | translate" class="ui:max-w-full ui:h-auto ui:inline" />
   }
-  <div class="ui:flex ui:gap-1 ui:justify-center">
-    @if(showExternalLink() && file().links.external) {
-      <a pButton text [href]="file().links.external" target="_blank"><i class="fa-solid fa-up-right-from-square"></i></a>
-    }
-    @if(showPreview() && file().links.preview) {
-      <p-button variant="text" icon="fa-solid fa-eye" (onClick)="preview(file())" />
-    }
-    @if (showDownload() && file().links.download) {
-      <a pButton text icon="fa-solid fa-download" [href]="file().links.download" download>
-      </a>
-    }
-  </div>
-} @else {
-  <img src="/static/images/no-image.png" [alt]="'No image' | translate" class="ui:max-w-full ui:h-auto ui:inline">
-}
 </div>
 <ng-template #thumbnail>
-  <img [src]="file().thumbnail" class="ui:max-w-full ui:h-auto ui:inline" [alt]="file().label">
+  <img [src]="file().thumbnail" class="ui:max-w-full ui:h-auto ui:inline" [alt]="file().label" />
 </ng-template>

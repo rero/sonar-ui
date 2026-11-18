@@ -9,14 +9,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
   </h5>
   <div class="ui:flex ui:gap-1">
     <p-tag [value]="$any(record().metadata.organisation).name" />
-    @if(validationSeverity) {
+    @if (validationSeverity) {
       <p-tag [severity]="validationSeverity" [value]="$any(record().metadata.validation).status | translate" />
     }
   </div>
   <span>
     <i class="fa-solid fa-calendar-days"></i>&nbsp;
     {{ $any(record().metadata.startDate) | dateTranslate: 'mediumDate' }} -
-    @if(record().metadata?.endDate) {
+    @if (record().metadata?.endDate) {
       {{ $any(record().metadata.endDate) | dateTranslate: 'mediumDate' }}
     } @else {
       ?

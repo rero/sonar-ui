@@ -10,7 +10,6 @@ import { map, startWith } from 'rxjs/operators';
  */
 @Pipe({ name: 'languageValue' })
 export class LanguageValuePipe implements PipeTransform {
-
   private translateService: TranslateService = inject(TranslateService);
 
   transform(value: Record<string, string>[], ...args: string[]): Observable<string> {
@@ -34,22 +33,20 @@ export class LanguageValuePipe implements PipeTransform {
     };
 
     return this.translateService.onLangChange.pipe(
-      startWith({ lang: this.translateService.currentLang }),
+      startWith({ lang: this.translateService.getCurrentLang() }),
       map((event: LangChangeEvent) => {
         if (!languageMap[event.lang]) {
           return value[0][args[0]];
         }
 
-        const itemFound = value.find(
-          (element) => element[args[1]] === languageMap[event.lang]
-        );
+        const itemFound = value.find((element) => element[args[1]] === languageMap[event.lang]);
 
         if (itemFound) {
           return itemFound[args[0]];
         }
 
         return value[0][args[0]];
-      })
+      }),
     );
   }
 }

@@ -4,7 +4,7 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-import { _ } from "@ngx-translate/core";
+import { _ } from '@ngx-translate/core';
 
 export const environment = {
   production: false,
@@ -13,10 +13,6 @@ export const environment = {
   $refPrefix: 'https://sonar.ch',
   globalViewName: 'global',
   languages: ['fr', 'de', 'it', 'en'],
-  translationsURLs: [
-    '/assets/i18n/${lang}.json',
-    '/api/translations/${lang}.json'
-  ],
-  ngCoreAssetsUrl: ''
+  translationsURLs: ['/assets/i18n/${lang}.json', '/api/translations/${lang}.json'],
+  ngCoreAssetsUrl: '',
 };
-

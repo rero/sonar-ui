@@ -9,14 +9,13 @@ type PartOf = {
   numberingVolume?: string;
   numberingIssue?: string;
   numberingPages?: string;
-}
+};
 
 /**
  * Pipe for displaying publication for a document
  */
 @Pipe({ name: 'publication' })
 export class PublicationPipe implements PipeTransform {
-
   private translateService: TranslateService = inject(TranslateService);
 
   /**
@@ -37,21 +36,15 @@ export class PublicationPipe implements PipeTransform {
     }
 
     if (value.numberingVolume) {
-      journal.push(
-        this.translateService.instant('vol.') + ' ' + value.numberingVolume
-      );
+      journal.push(this.translateService.instant('vol.') + ' ' + value.numberingVolume);
     }
 
     if (value.numberingIssue) {
-      journal.push(
-        this.translateService.instant('no.') + ' ' + value.numberingIssue
-      );
+      journal.push(this.translateService.instant('no.') + ' ' + value.numberingIssue);
     }
 
     if (value.numberingPages) {
-      journal.push(
-        this.translateService.instant('p.') + ' ' + value.numberingPages
-      );
+      journal.push(this.translateService.instant('p.') + ' ' + value.numberingPages);
     }
 
     return journal.join(', ');

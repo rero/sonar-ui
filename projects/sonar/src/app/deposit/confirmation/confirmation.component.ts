@@ -1,26 +1,25 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MessageService } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Message } from '@openng/optimus-ui/message';
 import { CONFIG } from '@rero/ng-core';
-import { MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+
 import { AppStore, AppStoreType } from '../../store/app.store';
 import { DepositService } from '../deposit.service';
-import { Bind } from 'primeng/bind';
-import { Message } from 'primeng/message';
 
 @Component({
-    selector: 'sonar-deposit-confirmation',
-    templateUrl: './confirmation.component.html',
-    imports: [Bind, Message, TranslateDirective, RouterLink, TranslatePipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-deposit-confirmation',
+  templateUrl: './confirmation.component.html',
+  imports: [Bind, Message, RouterLink, TranslatePipe],
 })
 export class ConfirmationComponent {
-
   private messageService: MessageService = inject(MessageService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private depositService: DepositService = inject(DepositService);
@@ -40,8 +39,8 @@ export class ConfirmationComponent {
         });
         this.router.navigate(['records', 'deposits']);
         return of(null);
-      })
-    )
+      }),
+    ),
   );
 
   /**
@@ -56,7 +55,7 @@ export class ConfirmationComponent {
    *
    * @returns Link to public interface.
    */
-   get publicInterfaceLink(): string {
+  get publicInterfaceLink(): string {
     return this.store.publicInterfaceLink();
   }
 }

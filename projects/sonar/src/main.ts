@@ -6,6 +6,7 @@ import localeEn from '@angular/common/locales/en-GB';
 import localeFr from '@angular/common/locales/fr';
 import localeIt from '@angular/common/locales/it';
 import { bootstrapApplication } from '@angular/platform-browser';
+
 import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
 

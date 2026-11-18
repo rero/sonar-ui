@@ -4,22 +4,29 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <div class="ui:flex ui:justify-end ui:items-center ui:flex-wrap ui:gap-2">
-  @if(currentStep() === 'metadata') {
-  <p-splitButton [label]="'Import metadata' | translate" [model]="importMenuItems()" appendTo="body" />
+  @if (currentStep() === 'metadata') {
+    <p-splitButton [label]="'Import metadata' | translate" [model]="importMenuItems()" appendTo="body" />
   }
-  @if(currentStep() === 'diffusion') {
-  <p-button (onClick)="save()" icon="fa-solid fa-floppy-disk" [label]="'Save' | translate" iconPos="left" />
+  @if (currentStep() === 'diffusion') {
+    <p-button (onClick)="save()" icon="fa-solid fa-floppy-disk" [label]="'Save' | translate" iconPos="left" />
   } @else {
-  <p-button (onClick)="save()" icon="fa-solid fa-chevron-right" [label]="'Continue' | translate" iconPos="right" />
+    <p-button (onClick)="save()" icon="fa-solid fa-chevron-right" [label]="'Continue' | translate" iconPos="right" />
   }
-  @if(canSubmit()) {
-  <p-button (onClick)="confirmPublish()" icon="fa-solid fa-paper-plane" [label]="isAdminUser() ? ('Publish' | translate) : ('Submit' | translate)" iconPos="right" />
+  @if (canSubmit()) {
+    <p-button
+      (onClick)="confirmPublish()"
+      icon="fa-solid fa-paper-plane"
+      [label]="isAdminUser() ? ('Publish' | translate) : ('Submit' | translate)"
+      iconPos="right" />
   }
 </div>
 <!-- metadata editor -->
 <formly-form [form]="form()" [model]="model()" [fields]="fields()" [class]="'step-' + currentStep()" />
 
-<p-dialog [header]="'Import from swisscovery' | translate" [modal]="true" [(visible)]="importModalIsVisible"
+<p-dialog
+  [header]="'Import from swisscovery' | translate"
+  [modal]="true"
+  [(visible)]="importModalIsVisible"
   class="ui:w-[40lvw]">
   <sonar-deposit-editor-swisscovery (data)="mapSwisscoveryRecord($event)" />
 </p-dialog>

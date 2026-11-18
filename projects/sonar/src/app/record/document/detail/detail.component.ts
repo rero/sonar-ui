@@ -1,22 +1,23 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
+import { Component, computed, effect, inject, input, OnDestroy, signal, untracked } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { KatexDirective, Nl2brPipe, RecordData, RecordService, RecordType, TranslateLanguagePipe } from '@rero/ng-core';
-import { Subscription, of, switchMap, tap } from 'rxjs';
+import { PrimeTemplate } from '@openng/optimus-ui/api';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { Ripple } from '@openng/optimus-ui/ripple';
+import { ScrollPanel } from '@openng/optimus-ui/scrollpanel';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@openng/optimus-ui/tabs';
+import { Tag } from '@openng/optimus-ui/tag';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
+import { Nl2brPipe, RecordData, RecordService, RecordType, TranslateLanguagePipe } from '@rero/ng-core';
+import { KatexDirective } from '@rero/ng-core/katex';
+import { of, Subscription, switchMap, tap } from 'rxjs';
 
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { PrimeTemplate } from 'primeng/api';
-import { Bind } from 'primeng/bind';
-import { Dialog } from 'primeng/dialog';
-import { Ripple } from 'primeng/ripple';
-import { ScrollPanel } from 'primeng/scrollpanel';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { Tag } from 'primeng/tag';
-import { Tooltip } from 'primeng/tooltip';
 import { AppConfigService } from '../../../app-config.service';
 import { FieldDescriptionComponent } from '../../../core/field-description/field-description.component';
 import { JoinPipe } from '../../../core/join.pipe';
@@ -25,16 +26,16 @@ import { OtherFilesComponent } from '../../files/other-files/other-files.compone
 import { StatsFilesComponent } from '../../files/stats-files/stats-files.component';
 import { RecordFile, UploadFilesComponent } from '../../files/upload-files/upload-files.component';
 import { IdentifierComponent } from '../../identifier/identifier.component';
+import { CitationActionComponent } from '../citation/citation-action/citation-action.component';
+import { DocumentActionsComponent } from '../document-actions/document-actions.component';
 import { DocumentFile } from '../document.interface';
 import { FileComponent } from '../file/file.component';
 import { LicensePipe } from '../license.pipe';
 import { ContributionsComponent } from './contributions/contributions.component';
-import { CitationActionComponent } from '../citation/citation-action/citation-action.component';
-import { DocumentActionsComponent } from '../document-actions/document-actions.component';
 
 @Component({
-    templateUrl: './detail.component.html',
-    imports: [
+  templateUrl: './detail.component.html',
+  imports: [
     FileComponent,
     KatexDirective,
     Tooltip,
@@ -66,11 +67,9 @@ import { DocumentActionsComponent } from '../document-actions/document-actions.c
     LicensePipe,
     CitationActionComponent,
     DocumentActionsComponent,
-],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  ],
 })
 export class DetailComponent implements OnDestroy {
-
   private configService: AppConfigService = inject(AppConfigService);
   private translateService: TranslateService = inject(TranslateService);
   private sanitizer: DomSanitizer = inject(DomSanitizer);
@@ -103,11 +102,12 @@ export class DetailComponent implements OnDestroy {
         if (config?.canUpdate) {
           return config.canUpdate(record);
         }
-        const perms = (record.metadata as Record<string, unknown>)?.['permissions'] as Record<string, unknown> | undefined;
-        return of({ can: !!(perms?.['update']), message: '' });
-      })
+        const perms = (record.metadata as Record<string, unknown>)?.['permissions'] as
+          Record<string, unknown> | undefined;
+        return of({ can: !!perms?.['update'], message: '' });
+      }),
     ),
-    { initialValue: { can: false, message: '' } }
+    { initialValue: { can: false, message: '' } },
   );
 
   previewFile = signal<{ label: string; url: unknown } | null>(null);
@@ -119,7 +119,7 @@ export class DetailComponent implements OnDestroy {
 
   filteredFiles = computed(() => this.getFilteredFiles());
 
-  mainFile = computed(() => this.filteredFiles().length === 0 ? null : this.filteredFiles()[0]);
+  mainFile = computed(() => (this.filteredFiles().length === 0 ? null : this.filteredFiles()[0]));
 
   // File count updated immediately from the upload component's filesChanged event.
   filesCount = signal<number>(0);
@@ -127,7 +127,7 @@ export class DetailComponent implements OnDestroy {
   // True once the upload component has emitted at least once — prevents onRecordChange from overriding.
   private filesCountInitialized = false;
 
-  initialTab = computed(() => this.canUpdate().can ? 'edit' : 'stats');
+  initialTab = computed(() => (this.canUpdate().can ? 'edit' : 'stats'));
 
   // Subscription to observables, used to unsubscribe to all at the same time.
   private subscription: Subscription = new Subscription();
@@ -142,9 +142,7 @@ export class DetailComponent implements OnDestroy {
         }
       }
     });
-    this.subscription.add(
-      this.translateService.onLangChange.subscribe(() => this.sortAbstracts())
-    );
+    this.subscription.add(this.translateService.onLangChange.subscribe(() => this.sortAbstracts()));
   }
 
   ngOnDestroy(): void {
@@ -213,10 +211,7 @@ export class DetailComponent implements OnDestroy {
       return item.agent.preferred_name;
     });
 
-    return `(${this.translateService.instant(
-      'supported by {{ organisations }}',
-      { organisations: text.join(', ') }
-    )})`;
+    return `(${this.translateService.instant('supported by {{ organisations }}', { organisations: text.join(', ') })})`;
   }
 
   /**
@@ -249,8 +244,7 @@ export class DetailComponent implements OnDestroy {
     (rec['abstracts'] as Record<string, unknown>[]).map((abstract: Record<string, unknown>) => {
       if (
         this.configService.languagesMap.find(
-          (map: { code: string; bibCode: string }) =>
-            map.bibCode === abstract['language']
+          (map: { code: string; bibCode: string }) => map.bibCode === abstract['language'],
         )
       ) {
         abstractsLanguage.push(abstract);
@@ -260,18 +254,14 @@ export class DetailComponent implements OnDestroy {
     });
 
     const firstLanguage = this.configService.languagesMap.find(
-      (item) => item.code === this.translateService.currentLang
+      (item) => item.code === this.translateService.getCurrentLang(),
     );
     const languagesPriorities = [firstLanguage, ...this.configService.languagesMap];
 
     rec['abstracts'] = abstractsLanguage
       .sort((a: Record<string, unknown>, b: Record<string, unknown>) => {
-        const aIndex = languagesPriorities.findIndex(
-          (lang) => lang && a['language'] === lang.bibCode
-        );
-        const bIndex = languagesPriorities.findIndex(
-          (lang) => lang && b['language'] === lang.bibCode
-        );
+        const aIndex = languagesPriorities.findIndex((lang) => lang && a['language'] === lang.bibCode);
+        const bIndex = languagesPriorities.findIndex((lang) => lang && b['language'] === lang.bibCode);
         if (aIndex === bIndex) {
           return 0;
         }
@@ -279,8 +269,8 @@ export class DetailComponent implements OnDestroy {
       })
       .concat(
         abstractsCode.sort((a: Record<string, unknown>, b: Record<string, unknown>) =>
-          (a['language'] as string).localeCompare(b['language'] as string)
-        )
+          (a['language'] as string).localeCompare(b['language'] as string),
+        ),
       );
   }
 }

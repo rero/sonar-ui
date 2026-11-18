@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateLoader as BaseTranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader as BaseTranslateLoader, provideTranslateService } from '@ngx-translate/core';
+import { TagModule } from '@openng/optimus-ui/tag';
 import { CoreConfigService, CoreTranslateLoader } from '@rero/ng-core';
+
 import { AppConfigService } from '../../app-config.service';
 import { IdentifierComponent } from './identifier.component';
-import { TagModule } from 'primeng/tag';
 
 describe('IdentifierComponent', () => {
   let component: IdentifierComponent;
@@ -17,29 +18,26 @@ describe('IdentifierComponent', () => {
   appConfigServiceSpy.settings = {
     document_identifier_link: {
       'bf:Local': {
-        swisscovery: 'https://link_to_swisscovery'
-      }
-    }
+        swisscovery: 'https://link_to_swisscovery',
+      },
+    },
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [
-        TranslateModule.forRoot({
-            loader: {
-                provide: BaseTranslateLoader,
-                useClass: CoreTranslateLoader,
-            }
+      imports: [TagModule, IdentifierComponent],
+      providers: [
+        provideTranslateService({
+          loader: {
+            provide: BaseTranslateLoader,
+            useClass: CoreTranslateLoader,
+          },
         }),
-        TagModule,
-        IdentifierComponent
-    ],
-    providers: [
         { provide: CoreConfigService, useClass: AppConfigService },
         { provide: AppConfigService, useValue: appConfigServiceSpy },
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-}).compileComponents();
+        provideHttpClient(withInterceptorsFromDi()),
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -49,7 +47,7 @@ describe('IdentifierComponent', () => {
     fixture.componentRef.setInput('data', {
       type: 'bf:Local',
       value: '0000-1111111',
-      source: 'swisscovery'
+      source: 'swisscovery',
     });
     fixture.detectChanges();
   });

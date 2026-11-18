@@ -1,20 +1,19 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { SlicePipe } from '@angular/common';
+import { Component, computed, input, signal } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { ContributorsPipe } from '../../../../pipe/contributors.pipe';
 import { IContribution } from '../../contribution.interface';
 import { ContributionComponent } from '../../contribution/contribution.component';
-import { TranslateDirective, TranslatePipe } from '@ngx-translate/core';
-import { SlicePipe } from '@angular/common';
-import { ContributorsPipe } from '../../../../pipe/contributors.pipe';
 
 @Component({
-    selector: 'sonar-contributions',
-    templateUrl: './contributions.component.html',
-    imports: [ContributionComponent, TranslateDirective, SlicePipe, TranslatePipe, ContributorsPipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-contributions',
+  templateUrl: './contributions.component.html',
+  imports: [ContributionComponent, SlicePipe, TranslatePipe, ContributorsPipe],
 })
 export class ContributionsComponent {
-
   contributions = input.required<IContribution[]>();
 
   meeting = input<boolean>(false);
@@ -23,9 +22,7 @@ export class ContributionsComponent {
 
   showMore = signal<boolean>(true);
 
-  contributorsLength = computed(() =>
-    !this.showMore() || this.meeting() ? this.contributions().length : 5
-  );
+  contributorsLength = computed(() => (!this.showMore() || this.meeting() ? this.contributions().length : 5));
 
   showMoreContributors(event: MouseEvent): void {
     event.preventDefault();

@@ -1,25 +1,22 @@
 // SPDX-FileCopyrightText: Fondation RERO+
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
+import { FormlyFieldConfig, FormlyFormOptions, FormlyModule } from '@ngx-formly/core';
 import { FormlyJsonschema } from '@ngx-formly/core/json-schema';
-import { JSONSchemaService, processJsonSchema, resolve$ref } from '@rero/ng-core';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { FormlyModule } from '@ngx-formly/core';
-import { Bind } from 'primeng/bind';
-import { Button } from 'primeng/button';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Bind } from '@openng/optimus-ui/bind';
+import { Button } from '@openng/optimus-ui/button';
+import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog';
+import { JSONSchemaService, processJsonSchema, resolve$ref } from '@rero/ng-core/editor';
 
 @Component({
-    selector: 'sonar-file-item-editor',
-    templateUrl: './file-item-editor.component.html',
-    imports: [FormlyModule, Bind, Button, TranslatePipe],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'sonar-file-item-editor',
+  templateUrl: './file-item-editor.component.html',
+  imports: [FormlyModule, Bind, Button, TranslatePipe],
 })
 export class FileItemEditorComponent {
-
   private readonly formlyJSONSchema = inject(FormlyJsonschema);
   private readonly jsonschemaService = inject(JSONSchemaService);
   private readonly dynamicDialogConfig = inject(DynamicDialogConfig);
@@ -28,14 +25,14 @@ export class FileItemEditorComponent {
   readonly form = new FormGroup({});
   readonly options: FormlyFormOptions = {};
   readonly model = signal<Record<string, unknown>>(
-    this.dynamicDialogConfig.data.file.metadata as Record<string, unknown>
+    this.dynamicDialogConfig.data.file.metadata as Record<string, unknown>,
   );
   readonly fields = signal<FormlyFieldConfig[]>(this.createForm());
 
   private createForm(): FormlyFieldConfig[] {
     const schema = this.dynamicDialogConfig.data.schema as Record<string, unknown>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const processedSchema = processJsonSchema(resolve$ref(schema as any, (schema.properties as any)));
+    const processedSchema = processJsonSchema(resolve$ref(schema as any, schema.properties as any));
     const editorConfig = { longMode: false };
     return [
       this.formlyJSONSchema.toFieldConfig(processedSchema, {
